@@ -1,5 +1,20 @@
 # Swift 类型擦除
 
+ title: Type Erasure in Swift
+ date: 2017.12.18
+ tags: Swift, mikeash.com
+ categories: Swift, mikeash.com
+ permalink: https://www.mikeash.com/pyblog/friday-qa-2017-12-08-type-erasure-in-swift.html
+
+ ---
+
+ 原文链接=https://www.mikeash.com/pyblog/friday-qa-2017-12-08-type-erasure-in-swift.html
+ 作者=[Mike Ash](https://www.mikeash.com)
+ 原文日期=2017-12-18
+ 校对=[rsenjoyer](https://github.com/rsenjoyer)
+ 定稿=
+ 
+
 你也许曾听过**类型擦除**，甚至也使用过标准库提供的类型擦除类型如 `AnySequence`。但到底什么是类型擦除? 如何自定义类型擦除? 在这篇文章中，我将讨论如何使用类型擦除以及如何自定义。在此感谢 Lorenzo Boaro 提出这个主题。
 
 #### 前言
