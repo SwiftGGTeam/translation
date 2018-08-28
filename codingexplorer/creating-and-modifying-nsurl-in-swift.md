@@ -48,7 +48,7 @@ let article      = URL(string: "ios9/", relativeTo: NSHipster)             //返
 
 #### init(fileURLWithPath: String, isDirectory: Bool)
 
-这个构造器和上面的构造器类似，只是专门用于指向本地文件或者目录。我不太确定为什么会有一个本地文件的特殊版本，我猜有可能是做了一些优化（至少需要是文件 `scheme` 开头，而不应该是 `http` 之类的）。虽然有一个不需要传 `isDirectory` 参数的版本，但如果你知道它是否是一个目录时，头文件建议你使用这个这个方法。在我看来，有可能另外一个需要自己判断是否是一个目录，而这个方法通过传入参数避免了检查。
+该构造方法与上面类似，但是初始化对象指向的是本地文件或者目录。我不太确定为什么会有一个本地文件的特殊版本，我猜有可能是做了一些优化（至少需要是文件 `scheme` 开头，而不应该是 `http` 之类的）。虽然有一个不需要传 `isDirectory` 参数的版本，但如果你知道它是否是一个目录时，头文件建议你使用这个这个方法。在我看来，有可能另外一个需要自己判断是否是一个目录，而这个方法通过传入参数避免了检查。
 
 #### init(fileURLWithPath: String, isDirectory: Bool, relativeTo: URL?)
 
@@ -56,7 +56,7 @@ let article      = URL(string: "ios9/", relativeTo: NSHipster)             //返
 
 ## 将 URL 转回 Swift 字符串
 
-有时候，特别是在处理旧的 API 或者向用户展示时，你需要将 `URL` 对象转回 Swift 字符串。值得庆幸的是，`URL` 提供了一个简单的只读属性来解决这个问题: `absoluteString`。只需要在你的 `URL` 对象调用该属性即可：
+有时你需要将 `URL` 对象转回 Swift 字符串，特别是在处理旧的 API 或者向用户展示情形下。值得庆幸的是，`URL` 提供了一个简单的只读属性来解决这个问题: `absoluteString`。只需要在你的 `URL` 对象调用该属性即可：
 
 ```Swift 
 let articleString = article?.absoluteString
@@ -92,9 +92,9 @@ let deletePathComp = articleTwo?.deletingLastPathComponent
 
 ## 总结
 
-如果你对 URL 格式规范感兴趣的话，可以看一下在苹果关于 `URL` 类的参考文档关于如何处理 `URL` 章节中提及到的 `RFC` 文档。用于初始化的字符串必须符合 [RFC 2396](https://tools.ietf.org/html/rfc2396)，并且 `URL` 根据 [RFC 1738](https://tools.ietf.org/html/rfc1738) 和 [RFC 1808](https://tools.ietf.org/html/rfc1808) 进行解析。这些规范内容很多，但你能找到所有可能关于 URL，URI 等的信息。
+如果你对 URL 格式规范感兴趣的话，可以去查看在 Apple URL 参考文档如何处理 `URL` 部分提及到的 `RFC` 文档。用于初始化的字符串必须符合 [RFC 2396](https://tools.ietf.org/html/rfc2396)，并且 `URL` 根据 [RFC 1738](https://tools.ietf.org/html/rfc1738) 和 [RFC 1808](https://tools.ietf.org/html/rfc1808) 进行解析。这些规范内容很多，但你能找到所有可能关于 URL，URI 等的信息。
 
-如果你需要完整的解析 `URL`，`URL` 还有许多其他的属性，包括 `baseURL`，`host`，`query`，`fragment` 等，你可以在苹果提供的关于 `URL` 类的参考文档中查看它们。但我自己来说，主要使用 `absoluteString`，偶尔也会使用 `pathExtension`。
+如果你完整拆解 URL 对象的话，还能得到 `baseURL`，`host`，`query`，`fragment` 等等非常多的属性，所有这些属性都能在 Apple 文档中查询到。不过对我来说，日常使用最多的还是 `absoluteString`，偶尔也会用到 `pathExtension`
 
 我希望你能发现这篇文章很有帮助。如果你觉得有用，请不要犹豫，在 Twitter 或者其他社交媒体上分享这篇文章。当然，如果您有任何疑问，请随时通过[联系页面](http://www.codingexplorer.com/contact/) 或者 [Twitter@CodingExplorer](https://twitter.com/CodingExplorer) 与我联系。我会尽可能的帮助你。谢谢。
 
