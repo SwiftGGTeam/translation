@@ -1,46 +1,49 @@
 # Swift 类型擦除
 
- title: Type Erasure in Swift
- date: 2017.12.18
- tags: Swift, mikeash.com
- categories: Swift, mikeash.com
- permalink: https://www.mikeash.com/pyblog/friday-qa-2017-12-08-type-erasure-in-swift.html
+title: "Swift 类型擦除"
+date: 2017-12-18
+tags: [教程][Swift]
+categories: [iOS][iOS 开发]
+permalink: friday-qa-2017-12-08-type-erasure-in-swift
+keywords: swift, type-Erasure
+custom_title: Swift 类型擦除
+description: 详细说明 Swift 类型擦除
 
- ---
+---
+原文链接=https://www.mikeash.com/pyblog/friday-qa-2017-12-08-type-erasure-in-swift.html
+作者=[Mike Ash](https://www.mikeash.com)
+原文日期=2017-12-18
+译者=[rsenjoyer](https://github.com/rsenjoyer)
+校对=校对名
+定稿=定稿名
 
- 原文链接=https://www.mikeash.com/pyblog/friday-qa-2017-12-08-type-erasure-in-swift.html
- 作者=[Mike Ash](https://www.mikeash.com)
- 原文日期=2017-12-18
- 校对=[rsenjoyer](https://github.com/rsenjoyer)
- 定稿=
- 
 
 你也许曾听过**类型擦除**，甚至也使用过标准库提供的类型擦除类型如 `AnySequence`。但到底什么是类型擦除? 如何自定义类型擦除? 在这篇文章中，我将讨论如何使用类型擦除以及如何自定义。在此感谢 Lorenzo Boaro 提出这个主题。
 
 #### 前言
 
-有时你想对外部调用者隐藏某个类的具体类型或一些实现细节。在一些情况下，这样做能防止静态类型在项目中滥用，同时保证了类型间的交互。类型擦除就是移除某个类的具体类型使其变得更通用的过程。
+有时你想对外部调用者隐藏某个类的具体类型，或是一些实现细节。在一些情况下，这样做能防止静态类型在项目中滥用，或者保证了类型间的交互。类型擦除就是移除某个类的具体类型使其变得更通用的过程。
 
-协议或抽象父类可作为类型擦除简单的实现方式之一。例如标准库中的 `NSString`，每次声明一个的 `NSString` 实例，这个实例并不是一个普通的 `NSString` 。它通常是某个具体的子类的抽象，这个子类一般是私有的。这些细节通被隐藏起来后 `NSString` 也能运行正常。你可以使用子类提供的功能而不用知道它具体的类型，你也没必要将你的代码与它们具体类型联系起来。
+协议或抽象父类可作为类型擦除简单的实现方式之一。例如标准库中的 `NSString` 每次声明一个 `NSString` 实例，这个实例并不是一个普通的 `NSString` 。它通常是某个具体的子类的抽象，这个子类一般是私有的。这些细节通被隐藏起来后 `NSString` 也能正常运行。你可以使用子类提供的功能而不用知道它具体的类型，你也没必要将你的代码与它们具体类型联系起来。
 
-在处理 Swift 泛型以及关联类型协议的时候，就可能需要使用一些高级的内容。Swift 不允许把协议当做具体的类型来使用。例如: 如果你想编写一个参数为 `Int` 类型的序列的方法，下面这种做法是不正确的:
+在处理 Swift 泛型以及关联类型协议的时候，可能需要使用一些高级的内容。Swift 不允许把协议当做具体的类型来使用。例如: 如果你想编写一个参数为 `Int` 类型的序列的方法，下面这种做法是不正确的:
 
 ```swift
  func f(seq: Sequence<Int>) { ...
 ```
 
-你不能这样使用协议类型，这样会在编译时报错。但你可以使用泛型来替代协议来解决这个问题: 
+你不能这样使用协议类型，这样会在编译时报错。但你可以使用泛型来替代协议, 解决这个问题: 
 
 ```swift
 func f<S: Sequence>(seq: S) where S.Element == Int { ...
 ```
 
-有时候这样写完全可以，但还存在一些比较麻烦的情况。通常你不能只在一个地方添加泛型: 一个泛型函数对其他泛型要求更多... 更糟糕的是，你不能将泛型作为返回值或者属性。这就跟我们想的有点不一样了。
+有时候这样写完全可以，但有些地方还存在一些比较麻烦的情况，通常你不可能只在一个地方添加泛型: 一个泛型函数对其他泛型要求更多... 更糟糕的是，你不能将泛型作为返回值或者属性。这就跟我们想的有点不一样了。
 
 ```swift
  func g<S: Sequence>() -> S where S.Element == Int { ...
 ```
-我们希望函数 `g` 能返回任何的类型，同时调用者可选择他所需要的类型，值由函数 `g` 来提供。
+我们希望函数 `g` 能返回任何符合的类型，但这个不同，它允许调用者选择他所需要的类型，然后函数 `g` 来提供一个合适的值。
 
 Swift 标准库中提供了 `AnySequence` 来帮助我们解决这个问题。`AnySequence` 包装了一个任意类型的序列，并擦除了它的类型。使用 `AnySequence` 来访问这个序列，我们来重写一下函数 `f` 与 函数 `g`
 
@@ -148,7 +151,7 @@ Swift 标准库中提供了很多这样的类型，如 `AnyCollection`、`AnyHas
 
 
 ```
-在实际开发中，我们可能会做一些额外的操作来使 `MAnySequence` 提供一个初始化方法。
+在实际开发中，我们可能会做一些额外的操作来让 `MAnySequence` 提供一个初始化方法。
 
 我们来试试 `MAnySequence`：
 
@@ -177,7 +180,7 @@ Swift 标准库中提供了很多这样的类型，如 `AnyCollection`、`AnyHas
     struct MAnySequence<Element>: Sequence {
 ```
 
-跟之前的一样，`MAnySequence` 也需要一个可返回的迭代器(Iterator)。迭代器同样被设计为结构体，并持有一个参数为空返回 `Element?` 的存储型属性，实际上这个属性是一个函数，被用于 `IteratorProtocol` 协议的 `next` 方法中。接下来 `Iterator` 遵循  `IteratorProtocol` 协议，并在 `next` 方法中调用函数:
+跟之前一样，`MAnySequence` 也需要一个可返回的迭代器(Iterator)。迭代器同样被设计为结构体，并持有一个参数为空返回 `Element?` 的存储型属性，实际上这个属性是一个函数，被用于 `IteratorProtocol` 协议的 `next` 方法中。接下来 `Iterator` 遵循 `IteratorProtocol` 协议，并在 `next` 方法中调用函数:
 
 ```swift
         struct Iterator: IteratorProtocol {
@@ -210,7 +213,7 @@ Swift 标准库中提供了很多这样的类型，如 `AnyCollection`、`AnyHas
 ```swift
             _makeIterator = {           
 ```
-在这里我们如何生成一个迭代器呢？请求 `Seq` 序列生成:
+如何生成迭代器？请求 `Seq` 序列生成:
 
 ```swift
                 var iterator = seq.makeIterator()
@@ -226,7 +229,7 @@ Swift 标准库中提供了很多这样的类型，如 `AnyCollection`、`AnyHas
     }
 ```
 
-接下来展示如何使用 `MAnySequence` 
+接下来展示如何使用 `MAnySequence`
 
 ```swift
     func printInts(_ seq: MAnySequence<Int>) {
@@ -264,4 +267,4 @@ Swift 标准库中提供了很多这样的类型，如 `AnyCollection`、`AnyHas
 
 Swift标准库提供了几种可直接利用的类型擦除类型。如 `AnySequence` 包装一个 `Sequence`，正如其名，`AnySequence` 允许你对序列迭代而无需知道序列具体的类型。`AnyIterator` 也是类型擦除的类型，它提供一个类型擦除的迭代器。`AnyHashable` 也同样是类型擦除的类型，它提供了对Hashable类型访问功能。Swift还有很多基于集合擦除类型，你可以通过搜索 `Any` 来查阅。标准库中也为 `Codable` API 设计了类型擦除类型: KeyedEncodingContainer 和 KeyedDecodingContainer。它们都是容器协议类型包装器，可用来在不知道底层具体类型信息的情况下实现 `Encode` 和 `Decode`
 
-这就是今天全部的内容了，下次再见。你们的建议对 Friday Q&A 是最好的鼓励，所以如果你关于这个主题有什么好的想法，请[发邮件到这里](mailto:mike@mikeash.com)。
+这就是今天全部的内容了，下次再见。你们的建议对 Friday Q&A 是最好的鼓励，所以如果你关于这个主题有什么好的想法，请 [发邮件到这里](mailto:mike@mikeash.com)。
