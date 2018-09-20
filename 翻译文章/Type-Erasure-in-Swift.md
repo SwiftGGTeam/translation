@@ -14,7 +14,7 @@ description: 详细说明 Swift 类型擦除
 作者=[Mike Ash](https://www.mikeash.com)
 原文日期=2017-12-18
 译者=[rsenjoyer](https://github.com/rsenjoyer)
-校对=校对名
+校对=[Yousanflics](https://github.com/Yousanflics)
 定稿=定稿名
 
 
@@ -24,7 +24,7 @@ description: 详细说明 Swift 类型擦除
 
 有时你想对外部调用者隐藏某个类的具体类型，或是一些实现细节。在一些情况下，这样做能防止静态类型在项目中滥用，或者保证了类型间的交互。类型擦除就是移除某个类的具体类型使其变得更通用的过程。
 
-协议或抽象父类可作为类型擦除简单的实现方式之一。例如标准库中的 `NSString` 每次声明一个 `NSString` 实例，这个实例并不是一个普通的 `NSString` 。它通常是某个具体的子类的抽象，这个子类一般是私有的。这些细节通被隐藏起来后 `NSString` 也能正常运行。你可以使用子类提供的功能而不用知道它具体的类型，你也没必要将你的代码与它们具体类型联系起来。
+协议或抽象父类可作为类型擦除简单的实现方式之一。例如标准库中的 `NSString` 每次声明一个 `NSString` 实例，这个实例并不是一个普通的 `NSString` 对象。它通常是某个具体的子类的抽象，这个子类一般是私有的。这些细节通被隐藏起来后 `NSString` 也能正常运行。你可以使用子类提供的功能而不用知道它具体的类型，你也没必要将你的代码与它们具体类型联系起来。
 
 在处理 Swift 泛型以及关联类型协议的时候，可能需要使用一些高级的内容。Swift 不允许把协议当做具体的类型来使用。例如: 如果你想编写一个参数为 `Int` 类型的序列的方法，下面这种做法是不正确的:
 
@@ -43,7 +43,7 @@ func f<S: Sequence>(seq: S) where S.Element == Int { ...
 ```swift
  func g<S: Sequence>() -> S where S.Element == Int { ...
 ```
-我们希望函数 `g` 能返回任何符合的类型，但这个不同，它允许调用者选择他所需要的类型，然后函数 `g` 来提供一个合适的值。
+我们希望函数 `g` 能返回任何符合的类型，但上面这个不同，它允许调用者选择他所需要的类型，然后函数 `g` 来提供一个合适的值。
 
 Swift 标准库中提供了 `AnySequence` 来帮助我们解决这个问题。`AnySequence` 包装了一个任意类型的序列，并擦除了它的类型。使用 `AnySequence` 来访问这个序列，我们来重写一下函数 `f` 与 函数 `g`
 
@@ -67,7 +67,7 @@ Swift 标准库中提供了很多这样的类型，如 `AnyCollection`、`AnyHas
  class MAnySequence<Element>: Sequence {
 ```
 
-这个类需要一个 `iterator` 类型作为 `makeIterator`返回类型。我们必须要做两次类型擦除来隐藏底层的序列类型以及迭代器的类型。我们在 `MAnySequence` 内部定义了一个 `Iterator`类，该类遵循着 `IteratorProtocol`协议，并在  `next()` 方法中使用 `fatalError` 抛出异常。Swift 本身不支持抽象类型，但这样也够了:
+这个类需要一个 `iterator` 类型作为 `makeIterator` 返回类型。我们必须要做两次类型擦除来隐藏底层的序列类型以及迭代器的类型。我们在 `MAnySequence` 内部定义了一个 `Iterator` 类，该类遵循着 `IteratorProtocol` 协议，并在  `next()` 方法中使用 `fatalError` 抛出异常。Swift 本身不支持抽象类型，但这样也够了:
 
 ```swift
         class Iterator: IteratorProtocol {
@@ -87,7 +87,7 @@ Swift 标准库中提供了很多这样的类型，如 `AnyCollection`、`AnyHas
 
 ```
 
-这样就定义了一个基于类的类型擦除的API，私有的子类将来实现这些API。公共类通过元素类型参数化，但私有实现类由它包装的序列类型参数化:
+这样就定义了一个基于类的类型擦除的API，私有的子类将来实现这些API。公共类通过元素类型参数化，但私有实现类由它包装的序列类型进行参数化:
 
 ```swift
     private class MAnySequenceImpl<Seq: Sequence>: MAnySequence<Seq.Element> {
@@ -128,7 +128,7 @@ Swift 标准库中提供了很多这样的类型，如 `AnyCollection`、`AnyHas
 
 ```
 
-从序列中获取迭代器，然后将迭代器包装成`IteratorImpl`对象返回，这样就实现了 `makeIterator`的功能。
+从序列中获取迭代器，然后将迭代器包装成`IteratorImpl`对象返回，这样就实现了 `makeIterator` 的功能。
 
 ```swift
 
@@ -192,7 +192,7 @@ Swift 标准库中提供了很多这样的类型，如 `AnyCollection`、`AnyHas
         }
 ```
 
-`MAnySequence` 与 `Iterator` 很相似: 持有一个参数为空返回 `Iterator` 类型的存储型属性。遵循 `Sequence` 协议并在 `makeIterator`方法中调用这个属性。
+`MAnySequence` 与 `Iterator` 很相似: 持有一个参数为空返回 `Iterator` 类型的存储型属性。遵循 `Sequence` 协议并在 `makeIterator` 方法中调用这个属性。
 
 ```swift
         let _makeIterator: () -> Iterator
