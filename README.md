@@ -41,7 +41,7 @@ BigNerdCoding
 |森尼羊|[Sunnyyoung咩](https://weibo.com/34992577) | [Sunnyyoung](https://www.sunnyyoung.net)|[Sunnyyoung](https://github.com/Sunnyyoung) |
 |Darren ||| [DarrenChen123](https://github.com/DarrenChen123) |
 |jojo | [Jojotov](https://weibo.com/dingtongzhou/profile?rightmod=1&wvr=6&mod=personinfo)|[JOJOTOV](https://dingtz.com)|[jojotov](https://github.com/jojotov) |
-| Hale |[Hale0101](https://weibo.com/p/1005053233770040)|[Hale's Blog](http://wuqiuhao.github.io/)|[Hale](https://github.com/wuqiuhao)|
+| Hale |[Hale0101](https://weibo.com/p/1005053233770040)|[Hale's Blog](https://wuqiuhao.github.io/)|[Hale](https://github.com/wuqiuhao)|
 | 灰s | [灰s](https://weibo.com/u/2159669295)|[灰s](https://juejin.im/user/5862fa678d6d810065fe0efd)|[灰s](https://github.com/dzyding) |
 | MaxXD | [MaxXD不能使用](https://weibo.com/u/5029986118)|[认知即事实](http://robin4han.github.io/)|[dearbojack](https://github.com/dearbojack) |
 | Damonwong ||| [Damonvvong](https://github.com/Damonvvong) |
