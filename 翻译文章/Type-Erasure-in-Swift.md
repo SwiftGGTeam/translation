@@ -13,8 +13,8 @@ description: 详细说明 Swift 类型擦除
 原文链接=https://www.mikeash.com/pyblog/friday-qa-2017-12-08-type-erasure-in-swift.html
 作者=[Mike Ash](https://www.mikeash.com)
 原文日期=2017-12-18
-译者=[rsenjoyer](https://github.com/rsenjoyer)
-校对=[Yousanflics](https://github.com/Yousanflics)
+译者=rsenjoyer
+校对=Yousanflics
 定稿=定稿名
 
 
