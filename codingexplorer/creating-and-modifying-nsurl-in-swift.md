@@ -22,9 +22,9 @@ description: 本文介绍了基于 Swift 4.1.2 和 Xcode 9.2 如何创建或者�
 
 <!--more-->
 
-使用过地址栏或任何终端的时候，Swift 字符串将是一个不错的选择。我的意思是，将所有的文本都填写到地址栏中，理解吧？虽然在 `Cocoa` 和 `Cocoa Touch` SDKs 中许多旧的 API 同时采用 `URL` 和字符串 (对于这些 API 来说通常称为“路径”) 作为参数，但是越来越多的 API 倾向于只能用 `URL` 对象。相比较于字符串路径来说，`URL` 对象有很多的优势，最明显的优势就是你可以直接通过属性访问 `URL` 的不同的部分，而不需要自己编写一个解析组件来解析路径字符串的不同部分。
+使用过地址栏或任何终端的时候，Swift 字符串将是一个不错的选择。我的意思是，将所有的文本都填写到地址栏中。虽然在 `Cocoa` 和 `Cocoa Touch` SDKs 中许多旧的 API 同时采用 `URL` 和字符串 (对于这些 API 来说通常称为“路径”) 作为参数，但是越来越多的 API 倾向于只能用 `URL` 对象。相比较于字符串路径来说，`URL` 对象有更多的优势，最明显的优势就是你可以直接通过属性访问 `URL` 的不同的部分，而不需要自己编写一个解析组件来解析路径字符串的不同部分。
 
-请继续关注如何在 Swift 应用程序中学习创建和使用 `URL`。
+紧跟我的步伐，接下来我们学习如何在 Swift 应用中创建和使用 `URL` 对象。
 
 ## 在 Swift 中创建一个 `URL` 对象
 
@@ -35,8 +35,8 @@ description: 本文介绍了基于 Swift 4.1.2 和 Xcode 9.2 如何创建或者�
 这个是普通的，也是最常用的初始化方法。将一个用于表示 `URL` 的 Swift 字符串转变成一个 `URL` 对象。但并不是所有的字符串都可以有效的表示一个 `URL`，所以这是一个可失败构造器。由于有些字符不能在 `URL` 中使用，因此需要进行百分比编码，将这些不能使用的字符转化为可以在 `URL` 中发送的编码。我个人见过最多的是 `%20`，也就是“空格”字符。这个构造器需要有效的字符，它不会为你进行百分比编码转化。如果字符串中包含无法转换为有效 `URL` 的字符或者内容，构造器将会返回 `nil`。
 
 ```Swift 
-let NSHipster  = URL(string: "http://nshipster.com/")                 //返回一个有效的 URL
-let invalidURL = URL(string: "www.example.com/This is a sentence")    //返回 nil
+let NSHipster = URL(string: "http://nshipster.com/") //返回一个有效的 URL
+let invalidURL = URL(string: "www.example.com/This is a sentence") //返回 nil
 ```
 
 这个构造器其实是下面这个构造器的一个便利构造器。
@@ -46,8 +46,8 @@ let invalidURL = URL(string: "www.example.com/This is a sentence")    //返回 n
 这是一个指定构造器。和上面的构造器一样，也是一个可失败的构造器，而且需要一个类似 `URL` 的 Swift 字符串和一个可选的 `baseURL` 对象，这个 `baseURL` 本身也是一个 `URL` 对象。如果 `baseURL` 为 `nil`，那么内部会像第一个构造器一样，根据提供的 `URL` 字符串生成一个 `URL` 对象。
 
 ```Swift 
-let NSHipsterTwo = URL(string: "http://nshipster.com/", relativeTo: nil)   //返回一个有效的 NSHipster URL
-let article      = URL(string: "ios9/", relativeTo: NSHipster)             //返回 "http://nshipster.com/ios9/" URL 
+let NSHipsterTwo = URL(string: "http://nshipster.com/", relativeTo: nil) //返回一个有效的 NSHipster URL
+let article = URL(string: "ios9/", relativeTo: NSHipster) //返回 "http://nshipster.com/ios9/" URL 
 ```
 
 #### init(fileURLWithPath: String, isDirectory: Bool)
@@ -56,7 +56,7 @@ let article      = URL(string: "ios9/", relativeTo: NSHipster)             //返
 
 #### init(fileURLWithPath: String, isDirectory: Bool, relativeTo: URL?)
 
-在 iOS 9 中新增，这与前一个类似，但新增了 `relativeToURL` 参数。和之前的构造器一样，它将返回一个将路径附加到 `baseURL` 的 `URL` 对象。当你需要为了某个事情重复访问某个目录下的不同文件时，可以使用这个初始化方法。你可以将文件所在的目录作为 `baseURL`，然后只需要一个文件名作为 Swift 字符串路径来创建 `URL` 对象。
+这是在 iOS 9 中新加入的方法，这与前一个类似，但新增了 `relativeToURL` 参数。和之前的构造器一样，它将返回一个将路径附加到 `baseURL` 的 `URL` 对象。当你需要为了某个事情重复访问某个目录下的不同文件时，可以使用这个初始化方法。你可以将文件所在的目录作为 `baseURL`，然后只需要一个文件名作为 Swift 字符串路径来创建 `URL` 对象。
 
 ## 将 URL 转回 Swift 字符串
 
@@ -80,7 +80,7 @@ let articleString = article?.absoluteString
 
 #### func deletingLastPathComponent() -> URL
 
-这个方法将会返回删除了最后一个路径组件的新 `URL` 对象。这方法适用于 `URL` 的路径部分，`URL` 的其他部分不受影响， 比如域名。所以我们可以这样子做:
+这个方法将会返回删除了最后一个路径组件的新 `URL` 对象。这方法适用于 `URL` 的路径部分，`URL` 的其他部分不受影响，比如域名。所以我们可以这样子做:
 
 ```Swift
 let articleTwo = NSHipster?.appendingPathComponent("ios9", isDirectory: true)
