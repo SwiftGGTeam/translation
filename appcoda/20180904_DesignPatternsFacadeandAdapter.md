@@ -33,19 +33,19 @@ permalink: design-pattern-structural
 
 GoF 将 23 种设计模式归纳为三种类型，分别是“[**创建型**](https://www.appcoda.com/design-pattern-creational/)”、“[**行为型**](https://www.appcoda.com/design-pattern-behavorial/)”、“结构型”。本文会介绍两种**结构型**设计模式。先看一下结构这个词的定义：
 
-> “以一种确定方式构建的事物以及实体中各部分元素之间不同关系的汇总。 ”         https://www.merriam-webster.com/dictionary/structure
+> “以一种确定方式构建的事物以及实体中各部分元素之间不同关系的汇总。” https://www.merriam-webster.com/dictionary/structure
 
 结构型设计模式的主要作用是明确一段代码的功能，并说明如何使用。大部分的结构型设计模式可以通过编写易读接口，来实现对一段代码的简化使用。因为一段代码势必要与其它代码联系，如果要为代码段编写出良好的接口，必须明确清晰地定义代码之间的各种关系。
 
 ## *外观*设计模式
 
-> “外观可以定义为特殊结构化的建筑物表面或者错误的、表面上的、人为的外形或效果”。  https://www.merriam-webster.com/dictionary/facade  
+> “外观可以定义为特殊结构化的建筑物表面或者错误的、表面上的、人为的外形或效果”。https://www.merriam-webster.com/dictionary/facade
 
 大部分情况下，可以使用外观模式，为一组复杂接口创建一个简单接口。或许你已经写过“封装”代码。“封装”的意思就是对一段复杂代码的简化使用。
 
 ### *外观*设计模式的示例 app
 
-外观设计模式示例的 playground 文件，可以在  [**GitHub**](https://github.com/appcoda/swift-design-patterns/tree/master/Facade)  找到。在这个例子里展示了，如何通过外观设计模式，来为沙盒文件系统创建一个简单的接口，供所有的 iOS app 使用。iOS 文件系统是一个庞大的操作系统子系统，功能包括创建、读取、删除、移动、重命名、拷贝文件和目录。允许获取和设置文件和目录的元数据，比如列出在指定目录下的所有文件。允许查看文件和目录的状态，比如某个指定文件是否可写。提供苹果推荐、预定义的目录名。实际上其包含的功能远远不止上面提到的这些。
+外观设计模式示例的 playground 文件，可以在 [**GitHub**](https://github.com/appcoda/swift-design-patterns/tree/master/Facade) 找到。在这个例子里展示了，如何通过外观设计模式，来为沙盒文件系统创建一个简单的接口，供所有的 iOS app 使用。iOS 文件系统是一个庞大的操作系统子系统，功能包括创建、读取、删除、移动、重命名、拷贝文件和目录。允许获取和设置文件和目录的元数据，比如列出在指定目录下的所有文件。允许查看文件和目录的状态，比如某个指定文件是否可写。提供苹果推荐、预定义的目录名。实际上其包含的功能远远不止上面提到的这些。
 
 由于 iOS 文件系统是一个拥有如此多特性和功能的宏大主题，因此也是一个非常好的例子，用来讲解如何通过外观设计模式来简化代码的使用。外观接口会废弃掉无关功能和杂乱代码的部分。另一方面，外观接口只会定义在某个具体 app 需要使用到的功能。或者在我的例子中，我将功能缩减到只有经常使用的那部分。这样做的好处是保证代码在不同 app 中都是可复用、可扩展，可维护的。
 
@@ -376,9 +376,9 @@ extension AppFileManipulation {
 
 ## *适配器*设计模式
 
-> “适配”的含义是“通过修改让一个事物更适合（用于新用途）。” https://www.merriam-webster.com/dictionary/adapts  
+> “适配”的含义是“通过修改让一个事物更适合（用于新用途）。” https://www.merriam-webster.com/dictionary/adapts
 
-> “适配器”的含义是“用于适配不在初始使用意图范围内设备的一种附加装置。”  
+> “适配器”的含义是“用于适配不在初始使用意图范围内设备的一种附加装置。”
 https://www.merriam-webster.com/dictionary/adapter
 
 适配器设计模式的作用是在不修改已有代码库 "A" 的前提下，仍旧可以使用与代码库 "A" 不兼容的代码库 "B"，并保证 "A" 可以正常工作。我们可以创建适配器来保证 "A" 和 "B" 可以一起工作。其中一定要牢记的原则是代码库 "A" 是不能被修改的。（这是因为修改会破坏原有代码或者我们根本就没有这段源代码）
@@ -555,6 +555,6 @@ file:///Users/softwaretesting/Library/Developer/XCPGDevices/52E1A81A-98AF-42DE-A
 
 ## 结论
 
-设计模式不仅有利于代码复用，还能保证代码是不变、易读、松耦合，因而是可维护和可拓展的。当重复出现并且能加以概括的功能在你的 apps 中出现的时候，我希望你能应用一下设计模式方法，并[**封装进框架**](http://iosbrain.com/blog/2018/01/13/building-swift-4-frameworks-and-including-them-in-your-apps-xcode-9/)中。这样子你只需要写一次代码，就可以一直复用啦。
+设计模式不仅有利于代码复用，还能保证代码是不变、易读、松耦合，从而提高了可维护性和拓展性。当重复出现并且能加以概括的功能在你的 apps 中出现的时候，我希望你能应用一下设计模式方法，并[**封装进框架**](http://iosbrain.com/blog/2018/01/13/building-swift-4-frameworks-and-including-them-in-your-apps-xcode-9/)中。这样子你只需要写一次代码，就可以一直复用啦。
 
 再次感谢大家到 AppCoda 来加入我。享受工作，坚持学习，下次再见吧！
