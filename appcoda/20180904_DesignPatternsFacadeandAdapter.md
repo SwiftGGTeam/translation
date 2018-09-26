@@ -378,8 +378,7 @@ extension AppFileManipulation {
 
 > “适配”的含义是“通过修改让一个事物更适合（用于新用途）。” https://www.merriam-webster.com/dictionary/adapts
 
-> “适配器”的含义是“用于适配不在初始使用意图范围内设备的一种附加装置。”
-https://www.merriam-webster.com/dictionary/adapter
+> “适配器”的含义是“用于适配不在初始使用意图范围内设备的一种附加装置。” https://www.merriam-webster.com/dictionary/adapter
 
 适配器设计模式的作用是在不修改已有代码库 "A" 的前提下，仍旧可以使用与代码库 "A" 不兼容的代码库 "B"，并保证 "A" 可以正常工作。我们可以创建适配器来保证 "A" 和 "B" 可以一起工作。其中一定要牢记的原则是代码库 "A" 是不能被修改的。（这是因为修改会破坏原有代码或者我们根本就没有这段源代码）
 
@@ -468,7 +467,7 @@ file:///var/folders/5_/kd8__nv1139__dq_3nfvsmhh0000gp/T/com.apple.dt.Xcode.pg/co
 file:///Users/softwaretesting/Library/Developer/XCPGDevices/52E1A81A-98AF-42DE-ADCF-E69AC8FA2791/data/Containers/Data/Application/F08EFF4F-8C4F-4BB7-B220-980E16344F18/tmp/
 ```
 
-另一种方法是我比较倾向的一种。让字符串路径可以采用的适配器协议。这样的话，就可以很方便地使用`字符串`路径来替代 `URL` 路径。
+另外，我还倾向为字符串类型的路径设计一个适配器协议。这样就可以很方便地使用`字符串`路径来替代 `URL` 路径。
 
 ```
 // Protocol-oriented approach
@@ -557,4 +556,4 @@ file:///Users/softwaretesting/Library/Developer/XCPGDevices/52E1A81A-98AF-42DE-A
 
 设计模式不仅有利于代码复用，还能保证代码是不变、易读、松耦合，从而提高了可维护性和拓展性。当重复出现并且能加以概括的功能在你的 apps 中出现的时候，我希望你能应用一下设计模式方法，并 [**封装进框架**](http://iosbrain.com/blog/2018/01/13/building-swift-4-frameworks-and-including-them-in-your-apps-xcode-9/) 中。这样子你只需要写一次代码，就可以一直复用啦。
 
-再次感谢大家到 AppCoda 来加入我。享受工作，坚持学习，下次再见吧！
+再次感谢大家来 AppCoda 给我捧场。享受工作，坚持学习，下次再见吧！
