@@ -2,8 +2,8 @@
 
 title: "Swift 类型擦除"
 date: 2017-12-18
-tags: [教程][Swift]
-categories: [iOS][iOS 开发]
+tags: [教程, Swift]
+categories: [iOS, iOS 开发]
 permalink: friday-qa-2017-12-08-type-erasure-in-swift
 keywords: swift, type-Erasure
 custom_title: Swift 类型擦除
@@ -45,7 +45,7 @@ func f<S: Sequence>(seq: S) where S.Element == Int { ...
 ```
 我们希望函数 `g` 能返回任何符合的类型，但上面这个不同，它允许调用者选择他所需要的类型，然后函数 `g` 来提供一个合适的值。
 
-Swift 标准库中提供了 `AnySequence` 来帮助我们解决这个问题。`AnySequence` 包装了一个任意类型的序列，并擦除了它的类型。使用 `AnySequence` 来访问这个序列，我们来重写一下函数 `f` 与 函数 `g`
+Swift 标准库中提供了 `AnySequence` 来帮助我们解决这个问题。`AnySequence` 包装了一个任意类型的序列，并擦除了它的类型。使用 `AnySequence` 来访问这个序列，我们来重写一下函数 `f` 与 函数 `g`：
 
 ```swift
   func f(seq: AnySequence<Int>) { ...
@@ -53,7 +53,7 @@ Swift 标准库中提供了 `AnySequence` 来帮助我们解决这个问题。`A
   func g() -> AnySequence<Int> { ...
 
 ```
- 泛型部分不见了，同时具体的类型也被隐藏起来了。由于使用了 `AnySequence` 包装具体的值，它带来了一定的代码复杂性以及运行时间成本。但是代码却更简洁了。
+泛型部分不见了，同时具体的类型也被隐藏起来了。由于使用了 `AnySequence` 包装具体的值，它带来了一定的代码复杂性以及运行时间成本。但是代码却更简洁了。
 
 Swift 标准库中提供了很多这样的类型，如 `AnyCollection`、`AnyHashable` 及 `AnyIndex`。这些类型在你自定义泛型或协议的时候非常的管用，你也可以直接使用这些类型来简化你的代码。接下来让我们探索实现类型擦除的多种方式吧。
 
@@ -61,7 +61,7 @@ Swift 标准库中提供了很多这样的类型，如 `AnyCollection`、`AnyHas
 
 有时我们需要在不暴露类型信息的情况下从多个类型中包装一些公共的功能，这听起来就像是父类-子类的关系。事实上我们的确可以使用【抽象父类】来实现类型擦除。父类提供 API 接口，不用去管谁来实现。而子类根据具体的类型信息实现相应的功能。
 
-接下来我们将使用这种方式来自定义 `AnySequence`，我们将其命名为 `MAnySequence`
+接下来我们将使用这种方式来自定义 `AnySequence`，我们将其命名为 `MAnySequence`：
 
 ```swift
  class MAnySequence<Element>: Sequence {
@@ -109,7 +109,7 @@ Swift 标准库中提供了很多这样的类型，如 `AnyCollection`、`AnyHas
             }
 ```
 
-在 `next`方法中调用被包装的序列迭代器：
+在 `next` 方法中调用被包装的序列迭代器：
 
 ```swift
             override func next() -> Seq.Element? {
@@ -117,7 +117,7 @@ Swift 标准库中提供了很多这样的类型，如 `AnyCollection`、`AnyHas
             }
         }
 ```
-相似地，`MAnySequenceImpl`包装一个序列：
+相似地，`MAnySequenceImpl` 包装一个序列：
 
 ```swift
         var seq: Seq
@@ -128,7 +128,7 @@ Swift 标准库中提供了很多这样的类型，如 `AnyCollection`、`AnyHas
 
 ```
 
-从序列中获取迭代器，然后将迭代器包装成`IteratorImpl`对象返回，这样就实现了 `makeIterator` 的功能。
+从序列中获取迭代器，然后将迭代器包装成 `IteratorImpl` 对象返回，这样就实现了 `makeIterator` 的功能。
 
 ```swift
 
@@ -139,7 +139,7 @@ Swift 标准库中提供了很多这样的类型，如 `AnyCollection`、`AnyHas
     }
 
 ```
-我们需要一种方法来实际创建这些东西: 对 `MAnySequence`添加一个静态方法，该方法创建一个`MAnySequenceImpl`实例，并将其作为 `MAnySequence`类型返回给调用者。
+我们需要一种方法来实际创建这些东西: 对 `MAnySequence` 添加一个静态方法，该方法创建一个 `MAnySequenceImpl` 实例，并将其作为 `MAnySequence` 类型返回给调用者。
 
 ```swift
 
@@ -174,13 +174,13 @@ Swift 标准库中提供了很多这样的类型，如 `AnyCollection`、`AnyHas
 
 有时我们希望公开多个类型的功能，但又不想暴露它们的具体类型。很自然想到的办法就是存储那些签名仅涉及到我们想公开的类型的函数，函数主体在底层已知具体实现类型的上下文中创建。
 
-我们一起看看如何运用这种方法来设计`MAnySequence`，与前面的实现很类似。它是一个结构体而非类，这是因为它仅仅作为容器使用，不需要有任何的继承关系。
+我们一起看看如何运用这种方法来设计 `MAnySequence`，与前面的实现很类似。它是一个结构体而非类，这是因为它仅仅作为容器使用，不需要有任何的继承关系。
 
 ```swift
     struct MAnySequence<Element>: Sequence {
 ```
 
-跟之前一样，`MAnySequence` 也需要一个可返回的迭代器(Iterator)。迭代器同样被设计为结构体，并持有一个参数为空返回 `Element?` 的存储型属性，实际上这个属性是一个函数，被用于 `IteratorProtocol` 协议的 `next` 方法中。接下来 `Iterator` 遵循 `IteratorProtocol` 协议，并在 `next` 方法中调用函数:
+跟之前一样，`MAnySequence` 也需要一个可返回的迭代器（Iterator）。迭代器同样被设计为结构体，并持有一个参数为空返回 `Element?` 的存储型属性，实际上这个属性是一个函数，被用于 `IteratorProtocol` 协议的 `next` 方法中。接下来 `Iterator` 遵循 `IteratorProtocol` 协议，并在 `next` 方法中调用函数:
 
 ```swift
         struct Iterator: IteratorProtocol {
@@ -229,7 +229,7 @@ Swift 标准库中提供了很多这样的类型，如 `AnyCollection`、`AnyHas
     }
 ```
 
-接下来展示如何使用 `MAnySequence`
+接下来展示如何使用 `MAnySequence`：
 
 ```swift
     func printInts(_ seq: MAnySequence<Int>) {
@@ -265,6 +265,6 @@ Swift 标准库中提供了很多这样的类型，如 `AnyCollection`、`AnyHas
 
 类型擦除是一种非常有用的技术，它可用来阻止泛型对代码的侵入，也可用来保证接口简单明了。通过将底层类型包装起来，将API与具体的功能进行拆分。这可以通过使用抽象的公共超类和私有子类或将API包装在函数中来实现。对于只需要一些功能的简单情况，基于函数类型擦除及其有效。
 
-Swift标准库提供了几种可直接利用的类型擦除类型。如 `AnySequence` 包装一个 `Sequence`，正如其名，`AnySequence` 允许你对序列迭代而无需知道序列具体的类型。`AnyIterator` 也是类型擦除的类型，它提供一个类型擦除的迭代器。`AnyHashable` 也同样是类型擦除的类型，它提供了对Hashable类型访问功能。Swift还有很多基于集合擦除类型，你可以通过搜索 `Any` 来查阅。标准库中也为 `Codable` API 设计了类型擦除类型: KeyedEncodingContainer 和 KeyedDecodingContainer。它们都是容器协议类型包装器，可用来在不知道底层具体类型信息的情况下实现 `Encode` 和 `Decode`
+Swift标准库提供了几种可直接利用的类型擦除类型。如 `AnySequence` 包装一个 `Sequence`，正如其名，`AnySequence` 允许你对序列迭代而无需知道序列具体的类型。`AnyIterator` 也是类型擦除的类型，它提供一个类型擦除的迭代器。`AnyHashable` 也同样是类型擦除的类型，它提供了对Hashable类型访问功能。Swift还有很多基于集合擦除类型，你可以通过搜索 `Any` 来查阅。标准库中也为 `Codable` API 设计了类型擦除类型: KeyedEncodingContainer 和 KeyedDecodingContainer。它们都是容器协议类型包装器，可用来在不知道底层具体类型信息的情况下实现 `Encode` 和 `Decode`。
 
 这就是今天全部的内容了，下次再见。你们的建议对 Friday Q&A 是最好的鼓励，所以如果你关于这个主题有什么好的想法，请 [发邮件到这里](mailto:mike@mikeash.com)。
