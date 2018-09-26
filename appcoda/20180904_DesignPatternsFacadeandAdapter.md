@@ -13,19 +13,19 @@ permalink: design-pattern-structural
 校对=
 定稿=
 
-本文是我的设计模式系列教程的第三篇。在第一篇文章中，我介绍了[**创建型模式**中的*工厂模式*和*单例模式*](https://www.appcoda.com/design-pattern-creational/)。在第二篇文章中，又讨论了一下[**行为型模式**中的*观察者模式*和*备忘录模式*](https://www.appcoda.com/design-pattern-behavorial/)。
+本文是我的设计模式系列教程的第三篇。在第一篇文章中，我介绍了 [**创建型模式**中的*工厂模式*和*单例模式*](https://www.appcoda.com/design-pattern-creational/)。在第二篇文章中，又讨论了一下 [**行为型模式**中的*观察者模式*和*备忘录模式*](https://www.appcoda.com/design-pattern-behavorial/)。
 
-本文，我会就结构型模式中的**外观模式**和**适配器模式**分别举一个例子。首先，我建议你先去阅读前面提到的两篇文章，这会有助于你更熟悉软件设计模式的一些概念。除了简短地介绍一下设计模式的组成，我不会再重复介绍所有关于设计模式的概念了。如果需要了解，都可以在前面写的[**第一篇**](https://www.appcoda.com/design-pattern-creational/)、[**第二篇**](https://www.appcoda.com/design-pattern-behavorial/)中找到。
+本文，我会就结构型模式中的**外观模式**和**适配器模式**分别举一个例子。首先，我建议你先去阅读前面提到的两篇文章，这会有助于你更熟悉软件设计模式的一些概念。除了简短地介绍一下设计模式的组成，我不会再重复介绍所有关于设计模式的概念了。如果需要了解，都可以在前面写的 [**第一篇**](https://www.appcoda.com/design-pattern-creational/)、 [**第二篇**](https://www.appcoda.com/design-pattern-behavorial/) 中找到。
 
-接下来的几节，我们先来简单回顾一下设计模式的通用概念。“Gang of Four” (“GoF”) Erich Gamma，Richard Helm，Ralph Johonson，和 John Vlissides 在他们“[**设计模式：面向对象软件设计复用的基本原理**](https://smile.amazon.com/Design-Patterns-Object-Oriented-Addison-Wesley-Professional-ebook/dp/B000SEIBB8/)” 的重要著作里整理了 23 种经典的设计模式。今天我们重点关注的是两种结构型设计模式：**外观模式**和**适配器模式**。
+接下来的几节，我们先来简单回顾一下设计模式的通用概念。“Gang of Four” (“GoF”) Erich Gamma，Richard Helm，Ralph Johonson，和 John Vlissides 在他们“[**设计模式：面向对象软件设计复用的基本原理**](https://smile.amazon.com/Design-Patterns-Object-Oriented-Addison-Wesley-Professional-ebook/dp/B000SEIBB8/)”的重要著作里整理了 23 种经典的设计模式。今天我们重点关注的是两种结构型设计模式：**外观模式**和**适配器模式**。
 
 ## 值语义的面向协议编程
 
-你可能会发现世面上非常多设计模式教程的示例代码，仍然是基于面向对象编程原则(OOP)、引用语义和[**引用类型**](http://iosbrain.com/blog/2018/06/07/swift-4-memory-management-via-arc-for-reference-types-classes/)(classes)编写的。所以，我决定编写一套基于[**面向协议编程原则**](https://www.appcoda.com/pop-vs-oop/)(POP)、值语义和[**值类型**](https://developer.apple.com/videos/play/wwdc2015/414/)(structs)的设计模式系列教程。如果你已经看过了我之前写的两篇文章，我希望你还能够熟悉一下 OOP 和 POP，引用语义和值语义这些概念。如果你还不是特别熟悉，我强烈建议赶紧去了解一下这些主题。本文所举的例子是全部基于 POP 和值语义的。
+你可能会发现世面上非常多设计模式教程的示例代码，仍然是基于面向对象编程原则（OOP）、引用语义和 [**引用类型**](http://iosbrain.com/blog/2018/06/07/swift-4-memory-management-via-arc-for-reference-types-classes/)（classes）编写的。所以，我决定编写一套基于 [**面向协议编程原则**](https://www.appcoda.com/pop-vs-oop/)（POP）、值语义和 [**值类型**](https://developer.apple.com/videos/play/wwdc2015/414/)（structs）的设计模式系列教程。如果你已经看过了我之前写的两篇文章，我希望你还能够熟悉一下 OOP 和 POP，引用语义和值语义这些概念。如果你还不是特别熟悉，我强烈建议赶紧去了解一下这些主题。本文所举的例子是全部基于 POP 和值语义的。
 
 ## 设计模式
 
-设计模式是开发者用于管理软件复杂性极其重要的工具。作为常见的模板技术，它很好地对软件中类似的、重复出现的、容易识别的问题进行了概念化抽象。我们可以将它视作最佳实践，从而应用到日常中会遇到的那些编程场景中。举一个具体的例子，回想一下你在平常写代码过程中有多少次会使用或写了遵守[**观察者设计模式**](https://www.appcoda.com/design-pattern-behavorial/)的代码吧。
+设计模式是开发者用于管理软件复杂性极其重要的工具。作为常见的模板技术，它很好地对软件中类似的、重复出现的、容易识别的问题进行了概念化抽象。我们可以将它视作最佳实践，从而应用到日常中会遇到的那些编程场景中。举一个具体的例子，回想一下你在平常写代码过程中有多少次会使用或写了遵守 [**观察者设计模式**](https://www.appcoda.com/design-pattern-behavorial/) 的代码吧。
 
 在观察者模式中，被观察者（一般来说是一个关键资源）会给所有依赖于自己的观察者，广播通知其内部状态的变化。观察者必须告知被观察者自己想接收通知，换句话说，观察者必须订阅通知。用户授权的 iOS 弹窗推送通知，就是一个典型的观察者模式的例子。
 
@@ -51,13 +51,13 @@ GoF 将 23 种设计模式归纳为三种类型，分别是“[**创建型**](ht
 
 基于面向协议编程和值语义，我将 iOS 文件系统的主要特性进行了划分，从而将其变成可复用、可扩展的单元：协议和协议扩展。
 
-我[**将四个协议组合成一个结构体，这个结构体代表了可以在所有 iOS 应用中使用的沙盒 iOS 目录**](http://iosbrain.com/blog/2018/04/22/ios-file-management-with-filemanager-in-protocol-oriented-swift-4/)（还可以看[**这篇文章**](http://iosbrain.com/blog/2018/05/29/the-ios-file-system-in-depth/)）。因为未来你肯定会更多接触到更多面向协议编程和值语义相关的主题，要注意术语 **composed** 和 **composition** 在这里属于同义词。
+我 [**将四个协议组合成一个结构体，这个结构体代表了可以在所有 iOS 应用中使用的沙盒 iOS 目录**](http://iosbrain.com/blog/2018/04/22/ios-file-management-with-filemanager-in-protocol-oriented-swift-4/)（还可以看 [**这篇文章**](http://iosbrain.com/blog/2018/05/29/the-ios-file-system-in-depth/)）。因为未来你肯定会更多接触到更多面向协议编程和值语义相关的主题，要注意术语 **composed** 和 **composition** 在这里属于同义词。
 
 除此之外，为了让你更专注于理解外观设计模式的使用，在后面的代码中，我省略了 Swift 错误处理和通用错误检查的代码。
 
 ### 外观设计模式的示例代码
 
-接下来就看看我的代码吧。先确保已经下载了我在  [**GitHub**](https://github.com/appcoda/swift-design-patterns/tree/master/Facade)  上的 playground 文件。下面是苹果官方推荐的用于文件系统操作的预定义目录。
+接下来就看看我的代码吧。先确保已经下载了我在 [**GitHub**](https://github.com/appcoda/swift-design-patterns/tree/master/Facade) 上的 playground 文件。下面是苹果官方推荐的用于文件系统操作的预定义目录。
 
 ```
 enum AppDirectories : String {
@@ -70,7 +70,7 @@ enum AppDirectories : String {
 
 通过将文件操作限定在上述目录中，避免了复杂性，并遵循了人机界面指南的原则。
 
-在探究文件操作的核心代码之前，先来看看使用外观设计模式所设计出来的接口吧。我创建了 `iOSAppFileSystemDirectory` 结构体，作为文件系统常用功能的简单可读接口。这个接口适用于 `AppDirectories` 枚举下的所有目录。事实上，我原本还可以加入诸如[**符号化链接的创建**](https://developer.apple.com/documentation/foundation/filemanager/1414652-createsymboliclink)，或者使用 `FileHandle` 类实现对文件的精细控制。但是在实际情况中，我几乎不太使用到这些功能，更重要的一点是，我想要保持代码的简洁性。
+在探究文件操作的核心代码之前，先来看看使用外观设计模式所设计出来的接口吧。我创建了 `iOSAppFileSystemDirectory` 结构体，作为文件系统常用功能的简单可读接口。这个接口适用于 `AppDirectories` 枚举下的所有目录。事实上，我原本还可以加入诸如 [**符号化链接的创建**](https://developer.apple.com/documentation/foundation/filemanager/1414652-createsymboliclink)，或者使用 `FileHandle` 类实现对文件的精细控制。但是在实际情况中，我几乎不太使用到这些功能，更重要的一点是，我想要保持代码的简洁性。
 
 我创建了由四个协议组成的外观。（我知道你看到下面的代码中只遵循了三个协议，这其实是因为其中有一个协议继承自另一个协议）：
 
@@ -555,6 +555,6 @@ file:///Users/softwaretesting/Library/Developer/XCPGDevices/52E1A81A-98AF-42DE-A
 
 ## 结论
 
-设计模式不仅有利于代码复用，还能保证代码是不变、易读、松耦合，从而提高了可维护性和拓展性。当重复出现并且能加以概括的功能在你的 apps 中出现的时候，我希望你能应用一下设计模式方法，并[**封装进框架**](http://iosbrain.com/blog/2018/01/13/building-swift-4-frameworks-and-including-them-in-your-apps-xcode-9/)中。这样子你只需要写一次代码，就可以一直复用啦。
+设计模式不仅有利于代码复用，还能保证代码是不变、易读、松耦合，从而提高了可维护性和拓展性。当重复出现并且能加以概括的功能在你的 apps 中出现的时候，我希望你能应用一下设计模式方法，并 [**封装进框架**](http://iosbrain.com/blog/2018/01/13/building-swift-4-frameworks-and-including-them-in-your-apps-xcode-9/) 中。这样子你只需要写一次代码，就可以一直复用啦。
 
 再次感谢大家到 AppCoda 来加入我。享受工作，坚持学习，下次再见吧！
