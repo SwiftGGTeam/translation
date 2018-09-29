@@ -1,28 +1,13 @@
 
-# 流程
+# 不同角色操作流程
 
-### 文章录入流程
+#### [文章收集](https://github.com/SwiftGGTeam/translation/blob/master/%E7%BF%BB%E8%AF%91%E6%B5%81%E7%A8%8B%E8%AF%A6%E7%BB%86%E8%AF%B4%E6%98%8E.md#%E6%96%87%E7%AB%A0%E6%94%B6%E9%9B%86)
 
-1. 新建 issue，标题中最好带上【短】【中】【长】标签。
-2. 附上原文章链接（最好原文内容也附上）。
+#### [翻译](https://github.com/SwiftGGTeam/translation/blob/master/%E7%BF%BB%E8%AF%91%E6%B5%81%E7%A8%8B%E8%AF%A6%E7%BB%86%E8%AF%B4%E6%98%8E.md#%E7%BF%BB%E8%AF%91)
 
-### 译者翻译流程
+#### [校对](https://github.com/SwiftGGTeam/translation/blob/master/%E7%BF%BB%E8%AF%91%E6%B5%81%E7%A8%8B%E8%AF%A6%E7%BB%86%E8%AF%B4%E6%98%8E.md#%E6%A0%A1%E5%AF%B9)
 
-1. 选择 issue，将右边的 Assignees 修改为自己，Labels 修改为 『翻译中』。
-2. 翻译完成后将译文直接 Comment 在 issue 中，将右边的 Labels 修改为『待校对』。
-
-### 校对者流程
-
-
-1. 进入相关 issue，在 comment 中加入校对评论。
-2. 第一人校对后将 Labels 改为『已初步校对』
-3. 超过两人评论后，视为校对完成，最后一个校对者将 Labels 改为『待发布』。
-
-### 发布者流程
-
-1. 进入相关 issue，整理下最新的文章内容。
-2. 发布文章并 close issue。
-
+#### [发布](https://github.com/SwiftGGTeam/translation/blob/master/%E7%BF%BB%E8%AF%91%E6%B5%81%E7%A8%8B%E8%AF%A6%E7%BB%86%E8%AF%B4%E6%98%8E.md#%E5%8F%91%E5%B8%83)
 
 # 分工
 
@@ -44,6 +29,7 @@ BigNerdCoding
 
 ### 相关文档
 
+- [翻译流程说明](https://github.com/SwiftGGTeam/translation/blob/master/%E7%BF%BB%E8%AF%91%E6%B5%81%E7%A8%8B%E8%AF%A6%E7%BB%86%E8%AF%B4%E6%98%8E.md#%E7%BF%BB%E8%AF%91)
 - 书写规范及Demo：https://github.com/SwiftGGTeam/GGHexo/tree/master/
 - Cee 翻译指南（需要翻墙）：https://speakerdeck.com/cee/guan-yu-pai-ban
 
@@ -51,44 +37,30 @@ BigNerdCoding
 
 |群ID|微博|个站|Github|
 |---- |---- |---- |---- |
-| BigNerdCoding |[BigNerdCoding](https://weibo.com/1314ddml)|[BigNerdCoding](https://bignerdcoding.com)|[BigNerdCoding](https://github.com/BigNerdCoding)|
-|森尼羊|[Sunnyyoung咩](https://weibo.com/34992577)|[Sunnyyoung](https://www.sunnyyoung.net)|[Sunnyyoung](https://github.com/Sunnyyoung)|
-|Darren||||
-|jojo|[Jojotov](https://weibo.com/dingtongzhou/profile?rightmod=1&wvr=6&mod=personinfo)|[JOJOTOV](https://dingtz.com)|[jojotov](https://github.com/jojotov)|
-|imiem|[imiem](https://weibo.com/u/3822885844?is_all=1)|[imiem](https://imiem.github.io/)|[imiem](https://github.com/imiem)|
-|\_ixxichai\_||||
-|Tuccuay||||
-| ennisk ||||
-| focus |[叫我丁丁就好](https://weibo.com/u/2510419843/home)|暂时没有，是真的懒...|[Pancf](https://github.com/Pancf)|
-| ennisk |[ennisk](https://weibo.com/u/1771329710)|||
-| focus ||||
-| Hale |[Hale0101](https://weibo.com/p/1005053233770040)|[Hale's Blog](http://wuqiuhao.github.io/)|[Hale](https://github.com/wuqiuhao)|
-| 灰s |[灰s](https://weibo.com/u/2159669295)|[灰s](https://juejin.im/user/5862fa678d6d810065fe0efd)|[灰s](https://github.com/dzyding)|
-| Lefe_x |[Lefe_x](https://weibo.com/u/5953150140)|[LefeWork](https://github.com/lefex/LefexWork)|[Lefex](https://github.com/lefex)|
-| MaxXD |[MaxXD不能使用](https://weibo.com/u/5029986118)|[认知即事实](http://robin4han.github.io/)|[dearbojack](https://github.com/dearbojack)|
-| muhlenXi ||||
-| √3 ||||
-| 微信的“龙” ||||
-| 木瓜先森 |[p_pizzy](https://weibo.com/u/2705025465) | 暂时没有, 我马上去建...简书我就不传了, 大家懂| [chuckern](https://github.com/chuckern)
-| LE ||||
-| 李凯 ||||
-| Damonwong ||||
-| 阳仔 |[一只羊的北京](https://weibo.com/u/1967612625/home?wvr=5&lf=reg)|[Sheep's Blog](https://yanggao1991.github.io)|[shift_sheep](https://github.com/YangGao1991)|
-| Khala-wan|[]()|[Khala-Wan`](http://khala-wan.com)|[Khala-wan](https://github.com/Khala-wan)|
-
-| 小袋子   | [小袋子](https://weibo.com/chunai520/home?wvr=5&lf=reg) | [Daizi](https://www.daizi.me/)    | [小袋子](https://github.com/lin493369)  |
-| -------- | ------------------------------------------------------- | --------------------------------- | --------------------------------------- |
-| muhlenXi | [muhlenXi](https://weibo.com/523545319)                 | [muhlenXi](http:www.muhlenxi.com) | [muhlenXi](https://github.com/muhlenXi) |
-
-
-
+| BigNerdCoding | [BigNerdCoding](https://weibo.com/1314ddml) | [BigNerdCoding](https://bignerdcoding.com)|[BigNerdCoding](https://github.com/BigNerdCoding) |
+|森尼羊|[Sunnyyoung咩](https://weibo.com/34992577) | [Sunnyyoung](https://www.sunnyyoung.net)|[Sunnyyoung](https://github.com/Sunnyyoung) |
+|Darren ||| [DarrenChen123](https://github.com/DarrenChen123) |
+|jojo | [Jojotov](https://weibo.com/dingtongzhou/profile?rightmod=1&wvr=6&mod=personinfo)|[JOJOTOV](https://dingtz.com)|[jojotov](https://github.com/jojotov) |
+| Hale |[Hale0101](https://weibo.com/p/1005053233770040)|[Hale's Blog](https://wuqiuhao.github.io/)|[Hale](https://github.com/wuqiuhao)|
+| 灰s | [灰s](https://weibo.com/u/2159669295)|[灰s](https://juejin.im/user/5862fa678d6d810065fe0efd)|[灰s](https://github.com/dzyding) |
+| MaxXD | [MaxXD不能使用](https://weibo.com/u/5029986118)|[认知即事实](http://robin4han.github.io/)|[dearbojack](https://github.com/dearbojack) |
+| Damonwong ||| [Damonvvong](https://github.com/Damonvvong) |
+| 阳仔 | [一只羊的北京](https://weibo.com/u/1967612625/home?wvr=5&lf=reg)|[Sheep's Blog](https://yanggao1991.github.io)|[shift_sheep](https://github.com/YangGao1991) |
+| Khala-wan||[Khala-Wan`](http://khala-wan.com)|[Khala-wan](https://github.com/Khala-wan) |
+| 小袋子 | [小袋子](https://weibo.com/chunai520/home?wvr=5&lf=reg) | [Daizi](https://www.daizi.me/) | [小袋子](https://github.com/lin493369)  |
+| muhlenXi | [muhlenXi](https://weibo.com/523545319) | [muhlenXi](http:www.muhlenxi.com) | [muhlenXi](https://github.com/muhlenXi) |
+|  大罗  ||| [Adolf-L](https://github.com/Adolf-L) |
+|mobilefellow | || [mobilefellow](https://github.com/mobilefellow) |
+| rsenjoyer | | | [rsenjoyer](https://github.com/rsenjoyer) |
+| 郑一一| [郑一一二二](https://weibo.com/u/1709901614) |[郑一一一一](https://www.jianshu.com/u/076cc5e18bb8)|[郑一一](https://github.com/YiYiZheng) |
 
 ## 校对
 
 ### 原则
 
-- 非常明确的在原 comment 直接 update
-- 不明确的增加一个 comment
+- 确保翻译内容正确
+- 确保排版格式正确
+- 翻译内容通顺、易读
 
 ### owner
 
@@ -106,7 +78,7 @@ BigNerdCoding
 | MM |画喵程序猿mmoaay||mmoaay|
 | shanksyang ||||
 | 冬瓜 | [冬瓜争做全栈瓜](https://weibo.com/desgard/profile?rightmod=1&wvr=6&mod=personinfo) | [Guardia · 瓜地](http://www.desgard.com/) | [Desgard](https://github.com/desgard) |
-|小铁匠||||
+|小铁匠|[小铁匠Linus](https://weibo.com/linusling)|[小铁匠Linus](http://linusling.com/)|[小铁匠Linus](https://github.com/linusling)|
 | littledogboy ||||
 | Forelax |[ForelaxMe](https://weibo.com/3889029090/profile)|[Forelax's Blog](http://forelax.space/)|[ForelaxX](https://github.com/ForelaxX)|
 | pmst ||||
@@ -117,7 +89,7 @@ BigNerdCoding
 | 智多芯 |[智多芯](https://weibo.com/hulz)|[智多芯的博客](http://blog.hulizhen.me/)|[智多芯](https://github.com/hulizhen)|
 |numbbbbb | [梁杰_numbbbbb](https://weibo.com/numbbbbb) | [numbbbbb](http://numbbbbb.com/) | [numbbbbb](https://github.com/numbbbbb/) |
 |MaxXD |[MaxXD不能使用](https://weibo.com/u/5029986118)|[认知即事实](http://robin4han.github.io/)|[dearbojack](https://github.com/dearbojack)|
-|muhlenXi |---- |---- |---- |
+|muhlenXi |[muhlenXi](https://weibo.com/523545319) |[muhlenXi的博客](http:www.muhlenxi.com) |[muhlenXi](https://github.com/muhlenXi)  |
 
 ## 文章更新
 
@@ -135,7 +107,7 @@ BigNerdCoding
 - swift evolution
 - 斯坦福 iOS 教程翻译
 
-## 定稿发布
+## 发布
 
 ### 名单
 

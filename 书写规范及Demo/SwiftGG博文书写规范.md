@@ -1,8 +1,8 @@
 title: "标题"（记得这里有双引号）
 date: 发布时间（例如：2016-01-01）
-tags: [标签]（例如：[Swift 跨平台]，可以参照网站上面的标签）
-categories: [分类]（例如：[iAchieved.it]，对照网站上面的分类）
-permalink: 永久链接（一般取URL最后一部分，例如 URL：http://www.appcoda.com/calayer-introduction/，则 permalink 为：calayer-introduction）
+tags: [标签1, 标签2]（例如：[Swift 跨平台]，可以参照网站上面的标签，多个标签用英文逗号分隔）
+categories: [分类1, 分类2]（例如：[iAchieved.it]，对照网站上面的分类，多个分类用英文逗号分隔）
+permalink: 永久链接（一般取URL最后一部分，例如 URL：http://www.appcoda.com/calayer-introduction/，则 permalink 为：calayer-introduction，也可以自定义，确保不使用特殊符号即可）
 keywords: 关键字（多个关键字用逗号隔开）
 custom_title: 自定义标题
 description: 文章描述
