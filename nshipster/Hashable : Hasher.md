@@ -21,7 +21,7 @@ description: 本文介绍了 Hashable 和相关的新类型 Hasher
 
 根据某位前零售店员工表示，关于如何描述客户有严格的指导方针。他们的外貌特征并没有被使用：年龄、性别、种族、身高 —— 甚至连头发的颜色都没有。相反，通过顾客的着装来描述，例如“黑色的高领毛衣，牛仔裤和眼镜”。
 
-这种描述顾客的方式和编程中的哈希函数有很多共同之处。同优秀的哈希函数一样，它是连续和易计算的，可用于快速找到你正在寻找的内容(或者人)。这比队列要好多了，我想你一定会同意的。
+这种描述顾客的方式和编程中的哈希函数有很多共同之处。同优秀的哈希函数一样，它是连续和易计算的，可用于快速找到你正在寻找的内容(或者人)。这比使用队列要好多了，我想你一定会同意的。
 
 这周我们的主题是 `Hashable` 和相关的新类型 `Hasher`。它们共同组成了 **Swift** 最受喜爱的两个集合类: `Dictionary` 和 `Set` 的基础功能。
 
@@ -103,7 +103,7 @@ struct Color: Hashable {
 
 在 **Swift Evolution** 提案 [SE-0185: 合成 `Equatable` 和 `Hashable` 的实现](https://github.com/apple/swift-evolution/blob/master/proposals/0185-synthesize-equatable-hashable.md) 中， [Tony Allevato](https://github.com/allevato) 给哈希函数提供了这个注释: 
 
-> 哈希函数的选择应该作为实现细节，而不是设计的固定部分；因此，使用者不应该依赖于其行为的特征。最可能的实现是在每个成员的哈希值上调用标准库中的 `_mixInt` 函数，然后将他们异或组合，如同目前 `Collection` 类型的哈希方式一样。
+> 哈希函数的选择应该作为实现细节，而不是设计的固定部分；因此，使用者不应该依赖于其行为的具体特征。最可能的实现是在每个成员的哈希值上调用标准库中的 `_mixInt` 函数，然后将他们异或组合，如同目前 `Collection` 类型的哈希方式一样。
 
 幸运的是，**Swift** 没多久就能解决这个问题。我们将在下一个版本得到答案:
 
@@ -113,13 +113,13 @@ struct Color: Hashable {
 
 在 **Swift Evolution** 提案 [SE-0206: Hashable 增强](https://github.com/apple/swift-evolution/blob/master/proposals/0206-hashable-enhancements.md) 中：
 
->使用一个好的哈希函数时，简单的查找，插入，删除操作都只需要常量级时间即可完成。然而，如果没有为当前数据选择一个合适的哈希函数，这些操作的预期时间就会和哈希表中存储的数据数量成正比。
+> 使用一个好的哈希函数时，简单的查找，插入，删除操作都只需要常量级时间即可完成。然而，如果没有为当前数据选择一个合适的哈希函数，这些操作的预期时间就会和哈希表中存储的数据数量成正比。
 
 正如 [Karoy Lorentey](https://github.com/lorentey) 和 [Vincent Esche](https://github.com/regexident) 所指出的那样，`Set` 和 `Dictionary` 等基于哈希的集合主要特点是它们能够在常量级时间内查找值。如果哈希函数不能产生一个均匀的值分布，这些集合实际上就变成了链表。
 
-**Swift 4.2** 中的哈希函数是基于伪随机函数 [SipHash](https://en.wikipedia.org/wiki/SipHash) 系列实现的，特别是 [SipHash-1-3 and SipHash-2-4](https://github.com/apple/swift/blob/master/stdlib/public/core/SipHash.swift)，每个消息块有 1 或 2 轮哈希，分别有 3 或 4 轮最后确定。
+**Swift 4.2** 中的哈希函数是基于伪随机函数族 [SipHash](https://en.wikipedia.org/wiki/SipHash) 系列实现的，特别是 [SipHash-1-3 and SipHash-2-4](https://github.com/apple/swift/blob/master/stdlib/public/core/SipHash.swift)，每个消息块有 1 或 2 轮哈希，分别有 3 或 4 轮最后确定。
 
-现在，如果你要自定义类型实现 `Hashable` 的方式，可以重写 `hash(into:)` 方法而不是 `hashValue`。`hash(into:)` 通过传递了一个 `Hasher` 引用对象，然后通过这个对象调用 `combine(_:)` 来添加类型的基本状态信息。
+现在，如果你要自定义类型实现 `Hashable` 的方式，可以重写 `hash(into:)` 方法而不是 `hashValue`。`hash(into:)` 通过传递了一个 `Hasher` 引用对象，然后通过这个对象调用 `combine(_:)` 来添加类型的必要状态信息。
 
 ```Swift
 // Swift >= 4.2
@@ -144,7 +144,7 @@ struct Color: Hashable {
 }
 ```
 
-通过抽象隔离底层的位操作细节，开发人员可以利用 **Swift** 内置的哈希函数，这样可以避免我们原有的基于异或的冲突：
+通过抽象隔离底层的位操作细节，开发人员可以利用 **Swift** 内置的哈希函数，这样可以避免再现我们原有的基于异或实现的冲突：
 
 ```Swift
 // Swift >= 4.2
@@ -166,7 +166,7 @@ cyan.hashValue == yellow.hashValue // false, no collision
 
 为了使事情变的更加安全，`Hasher` 会在每次启动应用程序时生成一个随机种子值，使得哈希值更难以预测。
 
->你不应该依赖特定的哈希值或者在执行中保存它们。在极少数情况下，你确定要这么做的话，可以设置标识符 SWIFT_DETERMINISTIC_HASHING 以禁用随机哈希种子。
+> 你不应该依赖特定的哈希值或者在执行中保存它们。在极少数情况下，你确定要这么做的话，可以设置标识符 SWIFT_DETERMINISTIC_HASHING 以禁用随机哈希种子。
 
 编程类推的挑战在于它们通过边界情况来使反社会行为规范化。
 
@@ -178,4 +178,4 @@ cyan.hashValue == yellow.hashValue // false, no collision
 
 相反的，希望你有下面的收获：
 
-当你在天才吧等候的时候，远离那些和自己穿同色衬衫的人。这会让每个人做事都变得容易多了。
+当你在天才吧等候的时候，远离那些和自己穿同色衬衫的人。这会让每个人做事都变得容易得多。
