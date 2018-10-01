@@ -1,10 +1,10 @@
 title: "Hashable / Hasher"
-date: 2018-09-29
+date: 2018-10-01
 tags: [Swift, NSHipster]
 categories: [Swift, NSHipster]
-permalink: hashable
+permalink: hashable_hahser
 keywords: Swift,Hashable,Hasher,NSHipster
-custom_title: Hashable / Hasher
+custom_title: Hashable / Hasher2
 description: 本文介绍了 Hashable 和相关的新类型 Hasher
 
 ---
@@ -12,8 +12,8 @@ description: 本文介绍了 Hashable 和相关的新类型 Hasher
 作者=Matt
 原文日期=2018-08-13
 译者=Damonwong
-校对=
-定稿=
+校对=Lision,Yousanflics
+定稿=Forelax
 
 <!--此处开始正文-->
 
