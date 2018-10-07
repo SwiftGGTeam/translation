@@ -32,14 +32,14 @@ permalink: design-pattern-structural
 GoF 将 23 种设计模式归纳为三种类型，分别是“[**创建型**](https://www.appcoda.com/design-pattern-creational/)”、“[**行为型**](https://www.appcoda.com/design-pattern-behavorial/)”、“结构型”。本文会介绍两种**结构型**设计模式。先看一下结构这个词的定义：
 
 > “以一种确定方式构建的事物以及实体中各部分元素之间不同关系的汇总。”
-> * https://www.merriam-webster.com/dictionary/structure
+> \- https://www.merriam-webster.com/dictionary/structure
 
 结构型设计模式的主要作用是明确一段代码的功能，并说明如何使用。大部分的结构型设计模式可以通过编写易读接口，来实现对一段代码的简化使用。因为一段代码势必要与其它代码联系，如果要为代码段编写出良好的接口，必须明确清晰地定义代码之间的各种关系。
 
 ## *外观*设计模式
 
 > “外观可以定义为特殊结构化的建筑物表面或者错误的、表面上的、人为的外形或效果”。
-> * https://www.merriam-webster.com/dictionary/facade
+> \- https://www.merriam-webster.com/dictionary/facade
 
 大部分情况下，可以使用外观模式，为一组复杂接口创建一个简单接口。或许你已经写过“封装”代码。“封装”的意思就是对一段复杂代码的简化使用。
 
@@ -377,10 +377,10 @@ extension AppFileManipulation {
 ## *适配器*设计模式
 
 > “适配”的含义是“通过修改让一个事物更适合（用于新用途）。”
-> * https://www.merriam-webster.com/dictionary/adapts
+> \- https://www.merriam-webster.com/dictionary/adapts
 
 > “适配器”的含义是“用于适配不在初始使用意图范围内设备的一种附加装置。”
-> * https://www.merriam-webster.com/dictionary/adapter
+> \- https://www.merriam-webster.com/dictionary/adapter
 
 适配器设计模式的作用是在不修改已有代码库 "A" 的前提下，仍旧可以使用与代码库 "A" 不兼容的代码库 "B"，并保证 "A" 可以正常工作。我们可以创建适配器来保证 "A" 和 "B" 可以一起工作。其中一定要牢记的原则是代码库 "A" 是不能被修改的。（这是因为修改会破坏原有代码或者我们根本就没有这段源代码）
 
