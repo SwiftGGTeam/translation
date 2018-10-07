@@ -1,6 +1,4 @@
-# Swift 中的设计模式 #3 外观模式与适配器模式
-title: "Design Patterns in Swift #3: Facade and Adapter"
-date: 2018-09-04
+title: Swift 中的设计模式 #3 外观模式与适配器模式
 tags: [Design Patterns]
 categories: [Swift]
 permalink: design-pattern-structural
@@ -33,13 +31,15 @@ permalink: design-pattern-structural
 
 GoF 将 23 种设计模式归纳为三种类型，分别是“[**创建型**](https://www.appcoda.com/design-pattern-creational/)”、“[**行为型**](https://www.appcoda.com/design-pattern-behavorial/)”、“结构型”。本文会介绍两种**结构型**设计模式。先看一下结构这个词的定义：
 
-> “以一种确定方式构建的事物以及实体中各部分元素之间不同关系的汇总。” https://www.merriam-webster.com/dictionary/structure
+> “以一种确定方式构建的事物以及实体中各部分元素之间不同关系的汇总。”
+> * https://www.merriam-webster.com/dictionary/structure
 
 结构型设计模式的主要作用是明确一段代码的功能，并说明如何使用。大部分的结构型设计模式可以通过编写易读接口，来实现对一段代码的简化使用。因为一段代码势必要与其它代码联系，如果要为代码段编写出良好的接口，必须明确清晰地定义代码之间的各种关系。
 
 ## *外观*设计模式
 
-> “外观可以定义为特殊结构化的建筑物表面或者错误的、表面上的、人为的外形或效果”。https://www.merriam-webster.com/dictionary/facade
+> “外观可以定义为特殊结构化的建筑物表面或者错误的、表面上的、人为的外形或效果”。
+> * https://www.merriam-webster.com/dictionary/facade
 
 大部分情况下，可以使用外观模式，为一组复杂接口创建一个简单接口。或许你已经写过“封装”代码。“封装”的意思就是对一段复杂代码的简化使用。
 
@@ -51,7 +51,7 @@ GoF 将 23 种设计模式归纳为三种类型，分别是“[**创建型**](ht
 
 基于面向协议编程和值语义，我将 iOS 文件系统的主要特性进行了划分，从而将其变成可复用、可扩展的单元：协议和协议扩展。
 
-我 [**将四个协议组合成一个结构体，这个结构体代表了可以在所有 iOS 应用中使用的沙盒 iOS 目录**](http://iosbrain.com/blog/2018/04/22/ios-file-management-with-filemanager-in-protocol-oriented-swift-4/)（还可以看 [**这篇文章**](http://iosbrain.com/blog/2018/05/29/the-ios-file-system-in-depth/)）。因为未来你肯定会更多接触到更多面向协议编程和值语义相关的主题，要注意术语 **composed** 和 **composition** 在这里属于同义词。
+我[**将四个协议组合成一个结构体，这个结构体代表了可以在所有 iOS 应用中使用的沙盒 iOS 目录**](http://iosbrain.com/blog/2018/04/22/ios-file-management-with-filemanager-in-protocol-oriented-swift-4/)（还可以看 [**这篇文章**](http://iosbrain.com/blog/2018/05/29/the-ios-file-system-in-depth/)）。因为未来你肯定会更多接触到更多面向协议编程和值语义相关的主题，要注意术语 **composed** 和 **composition** 在这里属于同义词。
 
 除此之外，为了让你更专注于理解外观设计模式的使用，在后面的代码中，我省略了 Swift 错误处理和通用错误检查的代码。
 
@@ -59,7 +59,7 @@ GoF 将 23 种设计模式归纳为三种类型，分别是“[**创建型**](ht
 
 接下来就看看我的代码吧。先确保已经下载了我在 [**GitHub**](https://github.com/appcoda/swift-design-patterns/tree/master/Facade) 上的 playground 文件。下面是苹果官方推荐的用于文件系统操作的预定义目录。
 
-```
+```swift
 enum AppDirectories : String {
     case Documents = "Documents"
     case Inbox = "Inbox"
@@ -74,7 +74,7 @@ enum AppDirectories : String {
 
 我创建了由四个协议组成的外观。（我知道你看到下面的代码中只遵循了三个协议，这其实是因为其中有一个协议继承自另一个协议）：
 
-```
+```swift
 struct iOSAppFileSystemDirectory : AppFileManipulation, AppFileStatusChecking, AppFileSystemMetaData {
 
     let workingDirectory: AppDirectories
@@ -112,7 +112,7 @@ struct iOSAppFileSystemDirectory : AppFileManipulation, AppFileStatusChecking, A
 
 下面是一些用于测试 `iOSAppFileSystemDirectory` 结构体的代码： 
 
-```
+```swift
 var iOSDocumentsDirectory = iOSAppFileSystemDirectory(using: .Documents)
 
 iOSDocumentsDirectory.writeFile(containing: "New file created.", withName: "myFile3.txt")
@@ -153,9 +153,9 @@ File created with contents: New file created.
 File deleted.
 ```
 
-我们来简单讨论下 `iOSAppFileSystemDirectory` 结构体所遵循的几个协议。 `AppDirectoryNames` 协议和扩展实现了 `AppDirectories` 枚举定义下的目录的完整路径 `URL` 的获取方法。
+我们来简单讨论下 `iOSAppFileSystemDirectory` 结构体所遵循的几个协议。`AppDirectoryNames` 协议和扩展定义和实现了以 `URL` 类型获取 `AppDirectories` 枚举中目录完整路径的方法。
 
-```
+```swift
 protocol AppDirectoryNames {
 
     func documentsDirectoryURL() -> URL
@@ -212,7 +212,7 @@ extension AppDirectoryNames {
 
 `AppFileStatusChecking` 协议和扩展封装了获取文件状态数据的方法。这些文件同样存储于 `AppDirectories` 枚举定义下的目录。通过“状态”，可以确定某个文件是否存在，是否可读等。
 
-```
+```swift
 protocol AppFileStatusChecking {
     func isWritable(file at: URL) -> Bool
     
@@ -257,7 +257,7 @@ extension AppFileStatusChecking {
 
 `AppFileSystemMetaData` 协议和扩展实现了列出目录内容和获取扩展文件的功能。 其目录也是定义在 `AppDirectories` 枚举下。
 
-```
+```swift
 protocol AppFileSystemMetaData {
     func list(directory at: URL) -> Bool
 
@@ -294,7 +294,7 @@ extension AppFileSystemMetaData
 
 最后是 `AppFileManipulation` 协议和扩展，封装了 `AppDirectories` 枚举目录下的所有文件操作方法，包括了读、写、删除、重命名、移动、拷贝修改文件扩展名等。
 
-```
+```swift
 protocol AppFileManipulation : AppDirectoryNames {
     func writeFile(containing: String, to path: AppDirectories, withName name: String) -> Bool
     
@@ -376,21 +376,23 @@ extension AppFileManipulation {
 
 ## *适配器*设计模式
 
-> “适配”的含义是“通过修改让一个事物更适合（用于新用途）。” https://www.merriam-webster.com/dictionary/adapts
+> “适配”的含义是“通过修改让一个事物更适合（用于新用途）。”
+> * https://www.merriam-webster.com/dictionary/adapts
 
-> “适配器”的含义是“用于适配不在初始使用意图范围内设备的一种附加装置。” https://www.merriam-webster.com/dictionary/adapter
+> “适配器”的含义是“用于适配不在初始使用意图范围内设备的一种附加装置。”
+> * https://www.merriam-webster.com/dictionary/adapter
 
 适配器设计模式的作用是在不修改已有代码库 "A" 的前提下，仍旧可以使用与代码库 "A" 不兼容的代码库 "B"，并保证 "A" 可以正常工作。我们可以创建适配器来保证 "A" 和 "B" 可以一起工作。其中一定要牢记的原则是代码库 "A" 是不能被修改的。（这是因为修改会破坏原有代码或者我们根本就没有这段源代码）
 
 ### *适配器*设计模式示例 app
 
-适配器的 playground 文件，可以在 [**GitHub**](https://github.com/appcoda/swift-design-patterns/tree/master/Adapter) 上找到。在这部分代码中，展示了如何在使用 iOS 文件系统时，讨论和设计适配器模式。之前一章，我们已经实现了将 iOS 文件系统中所有目录和文件的路径表示为 `URL` 实例。想象一下下面的场景，在原有工程中已经存在了大量关于 iOS 文件系统的代码，但是所有目录和文件的路径都表示成了字符串形式。那我们就必须要让基于 URL 和基于 String 的代码可以协同工作。
+适配器的 playground 文件，可以在 [**GitHub**](https://github.com/appcoda/swift-design-patterns/tree/master/Adapter) 上找到。在这部分代码中，我们基于 iOS 文件系统进行适配器模式的讨论，并基于 iOS 文件系统设计了一个适配器模式的例子。之前一章，我们已经实现了将 iOS 文件系统中所有目录和文件的路径表示为 `URL` 实例。想象一下下面的场景，在原有工程中已经存在了大量关于 iOS 文件系统的代码，但是所有目录和文件的路径都表示成了字符串形式。那我们就必须要让基于 URL 和基于 String 的代码可以协同工作。
 
 #### *适配器*设计模式的示例代码
 
 接下来就看看代码吧。先确保已经下载了在 [**GitHub**](https://github.com/appcoda/swift-design-patterns/tree/master/Adapter) 上的 playground 文件。为了在接下来的分析中更加专注于适配器模式的讨论，下面会使用简化版本的 `AppDirectories` 枚举和 `AppDirectoryNames` 协议和扩展。
 
-```
+```swift
 enum AppDirectories : String {
     case Documents = "Documents"
     case Temp = "tmp"
@@ -415,8 +417,8 @@ extension AppDirectoryNames {
 
 一种方法是创建一个“专用”适配器。这个适配器会返回字符串路径，这些路径全部归属于在 `AppDirectories` 下的目录和文件。
 
-```
-// A dedicated adapter
+```swift
+// 专用适配器
 struct iOSFile : AppDirectoryNames {
     let fileName: URL
     var fullPathInDocuments: String {
@@ -440,7 +442,7 @@ struct iOSFile : AppDirectoryNames {
 
 下一部分是用于测试 `iOSFile` “专用”适配器的代码，请注意代码中的注释。 
 
-```
+```swift
 let iOSfile = iOSFile(fileName: "myFile.txt")
 iOSfile.fullPathInDocuments
 iOSfile.documentsStringPath
@@ -469,7 +471,7 @@ file:///Users/softwaretesting/Library/Developer/XCPGDevices/52E1A81A-98AF-42DE-A
 
 另外，我还倾向为字符串类型的路径设计一个适配器协议。这样就可以很方便地使用`字符串`路径来替代 `URL` 路径。
 
-```
+```swift
 // Protocol-oriented approach
 protocol AppDirectoryAndFileStringPathNamesAdpater : AppDirectoryNames {
     
@@ -520,7 +522,7 @@ struct AppDirectoryAndFileStringPathNames : AppDirectoryAndFileStringPathNamesAd
 
 接下来是用于测试 `AppDirectoryAndFileStringPathNames` 结构体的代码。这个结构体遵守了 `AppDirectoryAndFileStringPathNamesAdpater` 适配器协议。协议继承自 `AppDirectoryNames` 协议。注意在代码中的两段注释。 
 
-```
+```swift
 let appFileDocumentsDirectoryPaths = AppDirectoryAndFileStringPathNames(fileName: "myFile.txt", workingDirectory: .Documents)
 appFileDocumentsDirectoryPaths.fullPath()
 appFileDocumentsDirectoryPaths.documentsDirectoryStringPath()
@@ -554,6 +556,6 @@ file:///Users/softwaretesting/Library/Developer/XCPGDevices/52E1A81A-98AF-42DE-A
 
 ## 结论
 
-设计模式不仅有利于代码复用，还能保证代码是不变、易读、松耦合，从而提高了可维护性和拓展性。当重复出现并且能加以概括的功能在你的 apps 中出现的时候，我希望你能应用一下设计模式方法，并 [**封装进框架**](http://iosbrain.com/blog/2018/01/13/building-swift-4-frameworks-and-including-them-in-your-apps-xcode-9/) 中。这样子你只需要写一次代码，就可以一直复用啦。
+设计模式不仅有利于代码复用，还能保证代码是不变、易读、松耦合的，从而提高了可维护性和拓展性。当重复出现并且能加以抽象的功能在你的 app 中出现的时候，我希望你能应用一下设计模式，并 [**封装进框架**](http://iosbrain.com/blog/2018/01/13/building-swift-4-frameworks-and-including-them-in-your-apps-xcode-9/) 中。这样子你只需要写一次代码，就可以一直复用啦。
 
 再次感谢大家来 AppCoda 给我捧场。享受工作，坚持学习，下次再见吧！
