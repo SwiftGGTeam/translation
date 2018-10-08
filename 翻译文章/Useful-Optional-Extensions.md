@@ -5,7 +5,7 @@ categories: [APPVENTURE]
 permalink: optional-extensions
 keywords: Swift,Optional
 custom_title: 实用的可选项（Optional）扩展
-description: 关于 Swift 可选项(Optional) 扩展
+description: 关于 Swift 可选项（Optional）扩展
 
 ---
 原文链接=https://appventure.me/2018/01/10/optional-extensions/
@@ -17,7 +17,7 @@ description: 关于 Swift 可选项(Optional) 扩展
 
 <!--此处开始正文-->
 
-可选值（Optional）是 Swift 语言最基础内容。我想每个人都同意它带来巨大的福音，因为它迫使我们妥善处理边缘情况。可选值的语言特性能使开发者在开发阶段发现并处理整个类别的 bug。
+可选值（Optional）是 Swift 语言最基础内容。我想每个人都同意它带来巨大的福音，因为它迫使开发者妥善处理边缘情况。可选值的语言特性能让发者在开发阶段发现并处理整个类别的 bug。
 
 然而，Swift 标准库中可选值的 API 相当的有限。如果忽略 `customMirror` 和 `debugDescription` 属性，[Swift 文档](https://developer.apple.com/documentation/swift/optional#topics) 仅仅列出了几个方法/属性：
 
@@ -28,7 +28,7 @@ func flatMap<U>(_ transform: (Wrapped) throws -> U?) rethrows -> U?
 ```
 <!--more-->
 
-即使方法如此少，可选值仍然非常有用，这是因为 Swift 在语法上通过 [可选链](https://appventure.me/2014/06/13/swift-optionals-made-simple/)、[模式匹配](https://appventure.me/2015/08/20/swift-pattern-matching-in-detail/)、`if let` 或 `guard let` 等功能来弥补它。但在某些情况下，这表现在不必要的分支条件中。有时，一个非常简洁的方法允许你用一行代码表达概念，而不是用多行组合的 `if let` 语句。
+即使方法如此少，可选值仍然非常有用，这是因为 Swift 在语法上通过 [可选链](https://appventure.me/2014/06/13/swift-optionals-made-simple/)、[模式匹配](https://appventure.me/2015/08/20/swift-pattern-matching-in-detail/)、`if let` 或 `guard let` 等功能来弥补它。但在某些情况下，可选值容易造成多分支条件。有时，一个非常简洁的方法允许你用一行代码表达概念，而不是用多行组合的 `if let` 语句。
 
 我筛选了 Github 上的 Swift 项目以及 Rust、Scala 或 C＃ 等其他语言的可选实现，目的是为 Optional 找一些有用的补充。以下 14 个有用的可选扩展，我将分类逐一解释，同时给每个类别举几个例子。最后，我将编写一个更复杂的示例，它同时使用多个可选扩展。
 
@@ -52,8 +52,7 @@ extension Optional {
     }
 }
 ```
-
-这是对可选类型最基础的补充。我很喜欢这些补充，因为它们将可选项为空的概念从代码中移除了。这可能也是一些实现的细节， 使用 `optional.isSome` 比 `if optional == nil` 更简洁明了。
+这是对可选类型最基础的补充。我很喜欢这些补充，因为它们将可选项为空的概念从代码中移除了。在使用的细节上， 使用 `optional.isSome` 比 `if optional == nil` 更简洁明了。
 
 ```swift
 // Compare
@@ -196,10 +195,10 @@ func build_car() throws -> Car {
 ```swift
 func should(_ do: () throws -> Void) -> Error? {
     do {
-	try `do`()
-	return nil
+		try `do`()
+		return nil
     } catch let error {
-	return error
+		return error
     }
 }
 ```
@@ -274,31 +273,31 @@ extension Optional {
     /// Tries to unwrap `self` and if that succeeds continues to unwrap the parameter `optional`
     /// and returns the result of that.
     func and<B>(_ optional: B?) -> B? {
-	guard self != nil else { return nil }
+		guard self != nil else { return nil }
 	    return optional
     }
 
     /// Executes a closure with the unwrapped result of an optional.
     /// This allows chaining optionals together.
     func and<T>(then: (Wrapped) throws -> T?) rethrows -> T? {
-	guard let unwrapped = self else { return nil }
+		guard let unwrapped = self else { return nil }
 	    return try then(unwrapped)
     }
 
     /// Zips the content of this optional with the content of another
     /// optional `other` only if both optionals are not empty
     func zip2<A>(with other: Optional<A>) -> (Wrapped, A)? {
-	guard let first = self, let second = other else { return nil }
+		guard let first = self, let second = other else { return nil }
 	    return (first, second)
     }
 
     /// Zips the content of this optional with the content of another
     /// optional `other` only if both optionals are not empty
     func zip3<A, B>(with other: Optional<A>, another: Optional<B>) -> (Wrapped, A, B)? {
-	guard let first = self,
-	      let second = other,
-	      let third = another else { return nil }
-	return (first, second, third)
+		guard let first = self,
+	      	let second = other,
+	      	let third = another else { return nil }
+		return (first, second, third)
     }
 }
 
@@ -391,12 +390,12 @@ func buildProduct() -> Product? {
 
 ```swift
 extension Optional {
-    /// Executes the closure `some` if and only if the optional has a value
+    /// 当可选值不为空时，执行 `some` 闭包
     func on(some: () throws -> Void) rethrows {
 	if self != nil { try some() }
     }
 
-    /// Executes the closure `none` if and only if the optional has no value
+    /// 当可选值为空时，执行 `none` 闭包
     func on(none: () throws -> Void) rethrows {
 	if self == nil { try none() }
     }
@@ -405,29 +404,27 @@ extension Optional {
 不论可选值是否为空，上面两个扩展都允许你执行一些额外的操作。与上面讨论过的方法相反，这两个方法忽略可选值。`on(some:)` 会在可选值不为空的时候执行闭包 `some`，但是闭包 `some` 不会获取可选项的值。
 
 ```swift
-/// Logout if there is no user anymore
+/// 如果用户不存在将登出
 self.user.on(none: { AppCoordinator.shared.logout() })
 
-/// self.user is not empty when we are connected to the network
+/// 当用户不为空时，连接网络
 self.user.on(some: { AppCoordinator.shared.unlock() })
 ```
 
 ### Various
 ```swift
 extension Optional {
-    /// Returns the unwrapped value of the optional only if
-    /// - The optional has a value
-    /// - The value satisfies the predicate `predicate`
+    /// 可选值不为空且可选值满足 `predicate` 条件才返回，否则返回 `nil`
     func filter(_ predicate: (Wrapped) -> Bool) -> Wrapped? {
-	guard let unwrapped = self,
-	    predicate(unwrapped) else { return nil }
-	return self
+		guard let unwrapped = self,
+	    	predicate(unwrapped) else { return nil }
+		return self
     }
 
-    /// Returns the wrapped value or crashes with `fatalError(message)`
+    /// 可选值不为空时返回，否则 crash
     func expect(_ message: String) -> Wrapped {
-	guard let value = self else { fatalError(message) }
-	return value
+        guard let value = self else { fatalError(message) }
+        return value
     }
 }
 ```
@@ -572,8 +569,8 @@ func parseGamesFromXML(from root: XMLImportNode, into database: Database) throws
 ```
 如果我们对比下，至少会有两点映入眼帘：
 
-    1. 代码量更少
-    2. 代码看起来更复杂了
+1. 代码量更少
+2. 代码看起来更复杂了
 
 
 在组合使用可选扩展时，我故意造成一种过载状态。其中的一部分使用很恰当，但是另一部分却不那么合适。然而，使用扩展的关键不在于过度依赖(正如我上面做的那样)，而在于这些扩展是否使语义更加清晰明了。比较上面的两个实现方式，
