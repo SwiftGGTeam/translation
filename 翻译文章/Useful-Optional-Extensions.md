@@ -36,23 +36,24 @@ func flatMap<U>(_ transform: (Wrapped) throws -> U?) rethrows -> U?
 
 ```swift
 extension Optional {
-    /// Returns true if the optional is empty
+    /// 可选值为空的时候返回 true
     var isNone: Bool {
-	return self == .none
+        switch self {
+        case .none:
+            return true
+        case .some:
+            return false
+        }
     }
 
-    /// Returns true if the optional is not empty
+    /// 可选值非空返回 true
     var isSome: Bool {
-	return self != .none
+        return !isNone
     }
 }
-
 ```
 
-
-<!-- Those are the most basic additions to the optional type. The implementation could also use a switch pattern match instead, but the nil comparison is much shorter. What I like about these additions is that they move the concept of an empty optional being nil away from your code. This might just as well be an implementation detail. Using optional.isSome feels much cleaner and less noisy than if optional == nil: -->
-
-这些是可选类型最基础的补充。实现也可以使用 `switch` 进行匹配。但空值(`nil`) 比较简短很多。我很喜欢这些补充内容， 因为它们将可选项为空的概念从代码中移除了。这可能也是一些实现的细节， 使用 `optional.isSome` 比 `if optional == nil` 更加简洁， 噪音更小。
+这是对可选类型最基础的补充。我很喜欢这些补充，因为它们将可选项为空的概念从代码中移除了。这可能也是一些实现的细节， 使用 `optional.isSome` 比 `if optional == nil` 更简洁明了。
 
 ```swift
 // Compare
@@ -68,38 +69,36 @@ guard leftButton.isSome, rightButton.isSome else { fatalError("Missing Interface
 ```swift
 
 extension Optional {
-    /// Return the value of the Optional or the `default` parameter
-    /// - param: The value to return if the optional is empty
+    /// 返回可选值或者 `default` 参数值
+    /// - 参数: 如果可选值为空，将会返回这个值
     func or(_ default: Wrapped) -> Wrapped {
-	return self ?? `default`
+	    return self ?? `default`
     }
 
-    /// Returns the unwrapped value of the optional *or*
-    /// the result of an expression `else`
-    /// I.e. optional.or(else: print("Arrr"))
+    /// 返回可选值或者 `else` 表达式返回的值
+    /// 例如. optional.or(else: print("Arrr"))
     func or(else: @autoclosure () -> Wrapped) -> Wrapped {
-	return self ?? `else`()
+	    return self ?? `else`()
     }
 
-    /// Returns the unwrapped value of the optional *or*
-    /// the result of calling the closure `else`
-    /// I.e. optional.or(else: { 
+    /// 返回可选值或者 `else` 闭包返回的值
+    // 例如. optional.or(else: { 
     /// ... do a lot of stuff
     /// })
     func or(else: () -> Wrapped) -> Wrapped {
-	return self ?? `else`()
+	    return self ?? `else`()
     }
 
-    /// Returns the unwrapped contents of the optional if it is not empty
-    /// If it is empty, throws exception `throw`
+    /// 当可选值不为空时，返回可选值
+    /// 如果为空，抛出 exception 异常
     func or(throw exception: Error) throws -> Wrapped {
-	guard let unwrapped = self else { throw exception }
-	return unwrapped
+        guard let unwrapped = self else { throw exception }
+        return unwrapped
     }
 }
 
 extension Optional where Wrapped == Error {
-    /// Only perform `else` if the optional has a non-empty error value
+    /// 当可选值有一个非空值的时，执行 `else`
     func or(_ else: (Error) -> Void) {
 	guard let error = self else { return }
 	`else`(error)
@@ -107,18 +106,13 @@ extension Optional where Wrapped == Error {
 }
 
 ```
-
-<!-- Another abstraction on the isNone / isSome concept is being able to specify instructions to be performed when the invariant doesn't hold. This saves us from having to write out if or guard branches and instead codifies the logic into a simple-to-understand method.
-
-This concept is so useful, that it is defined in three distinct functions. -->
-
-`isNone / isSome`另一个抽象的概念是能够指定当变量不成立的时需要执行的指令。 这能让我们避免编写 `if` 或 `guard` 分支，而是将逻辑封装为一个易于理解的方法。
+`isNone / isSome` 的另一个抽象概念是能够指定当变量不成立的时需要执行的指令。这能让我们避免编写 `if` 或 `guard` 分支，而是将逻辑封装为一个易于理解的方法。
 
 这个概念非常的有用，它可在四个不同功能中被定义。
 
 ### 默认值(Default Value)
 
-第一个是返回可选项的包装值或者默认值:
+第一个扩展方法是返回可选值或者默认值：
 
 ```swift
 let optional: Int? = nil
@@ -133,10 +127,7 @@ print(optional.or(10)) // Prints 10
 let optional: Int? = nil
 optional.or(else: secretValue * 32)
 ```
-
-<!-- Since this uses the @autoclosure parameter we could actually use just the second or implementation. Then, using a just a default value would automatically be converted into a closure returning the value. However, I prefer having two separate implementations as that allows users to also write closures with more complex logic. -->
-
-由于使用了 `@autoclosure` 参数, 我们实际上可以只使用默认闭包。使用默认值将会自动转换为返回值的闭包。 然而，我倾向于将两个实现单独分开， 因为它可以让用户用更加复杂的逻辑编写闭包。
+由于使用了 `@autoclosure` 参数, 我们实际上使用的是默认闭包。使用默认值将会自动转换为返回值的闭包。然而，我倾向于将两个实现单独分开，因为它可以让用户用更加复杂的逻辑编写闭包。
 
 ```swift
 let cachedUserCount: Int? = nil
@@ -149,9 +140,6 @@ return cachedUserCount.or(else: {
 })
 
 ```
-
-<!-- A really nice use case for or is code where you only want to set a value on an optional if it is empty: -->
-
 当你对一个为空的可选值赋值的时候，使用 `or` 就是一个不错的选择。
 
 ```swift
@@ -160,16 +148,15 @@ if databaseController == nil {
 }
 
 ```
-以上代码可以写的更加优雅: 
+上面的代码可以写的更加优雅: 
 
 ```swift
 databaseController = databaseController.or(DatabaseController(config: config)
 ```
 
 ### 抛出异常(Throw an error)
-<!-- 
-This is a very useful addition as it allows to merge the chasm between Optionals and Error Handling in Swift. Depending on the code that you're using, a method or function may express invalid behaviour by returning an empty optional (imagine accessing a non-existing key in a Dictionary) or by throwing an Error. Combining these two oftentimes leads to a lot of unnecessary line noise: -->
-这也是一个非常有用的补充， 因为它连接着 Swift 可选项与错误处理。 根据项目中的代码，当一个方法或函数表述无效的行为通过返回一个为空的可选值(例如访问字典中不存在的键)或抛出一个异常。 【【【将两者结合起来能避免很多不必要的线路噪声。】】】
+
+这也是一个非常有用的补充，因为它将 Swift 中可选值与错误处理连接起来。根据项目中的代码，方法或函数通过返回一个为空的可选值（例如访问字典中不存在的键）时，抛出错误来表述这一无效的行为。将两者连接起来能够使代码更加清晰：
 
 ```swift
 
@@ -188,9 +175,7 @@ func buildCar() throws -> Car {
 }
 
 ```
-<!-- In this example, we're building a car by combining internal and external code. The external code (external_machine and manufacturer) choose to use optionals instead of error handling. This makes the code unnecessary complicated. Our or(throw:) function makes this much more readable: -->
-
-在这个例子中，我们通过组内部和调用外部代码来构建汽车，外部代码(`external_machine` 和 `manufacturer`) 选择使用可选值而不是错误处理。这使得代码变得很复杂， 我们可使用 `or(throw:)` 使函数更具有可读性。
+在这个例子中，我们通过调用内部及外部代码共同构建汽车对象，外部代码（`external_machine` 和 `manufacturer`）选择使用可选值而不是错误处理。这使得代码变得很复杂，我们可使用 `or(throw:)` 使函数可读性更高。
 
 ```swift
 
@@ -206,8 +191,6 @@ func build_car() throws -> Car {
 
 ### 错误处理(Handling Errors)
 
-<!-- The code from the Throw an error section above becomes even more useful when you include the following free function that was proposed by Stijn Willems on Github. Thanks for the suggestion! -->
-
 当代码中包含 [Stijn Willems 在 Github](https://github.com/doozMen) 自由函数，上面抛出异常部分的代码变更加有用。感谢 Stijn Willems 的建议。
 
 ```swift
@@ -220,7 +203,7 @@ func should(_ do: () throws -> Void) -> Error? {
     }
 }
 ```
-这个自由函数(可选的，可将它当做一个可选项的类方法)使用 `do {} catch {}` 块并返回一个错误。当且仅当 `do` 代码块捕捉到异常。以下面 Swift 代码为例：
+这个自由函数（可选的，可将它当做一个可选项的类方法）使用 `do {} catch {}` 块并返回一个错误。当且仅当 `do` 代码块捕捉到异常。以下面 Swift 代码为例：
 
 ```swift
 do {
@@ -229,17 +212,16 @@ do {
   print(error)
 }
 ```
-这是 `Swift` 中错误处理的基本原则之一， 
-这是Swift中错误处理的基本原则之一，它引入了相当多的线路噪声。使用上面的免费功能，您可以将其减少到这个简单的线上：
+这是 Swift 中错误处理的基本原则之一，但它不够简单明了。使用上面的提供的函数，你可以使代码变得足够简单。
 
 ```swift
 should { try throwingFunction) }.or(print($0))
 ```
-我觉得在很多情况下，这样的错误处理单行程会非常有益。
+我觉得在很多情况下，这样进行错误处理效果更好。
 
 ### 变换(Map)
 
-正如上面所见, `map` 和 `flatMap` 是 Swift 在可选项上面提供的唯一的方法。然而，在多数情况下，也可以稍微改进使它们变得更加通用。这有两个变体 `map` 允许定义一个默认值，类似于上面 `or` 变体的实现方式：
+正如上面所见，`map` 和 `flatMap` 是 Swift 在可选项上面提供的唯一的方法。然而，在多数情况下，也可以对它们稍微改进使得更加通用。这有两个扩展 `map` 允许定义一个默认值，类似于上面 `or` 的实现方式：
 
 ```swift
 extension Optional {
@@ -247,18 +229,19 @@ extension Optional {
     /// - parameter fn: The function to map over the value
     /// - parameter or: The value to use if the optional is empty
     func map<T>(_ fn: (Wrapped) throws -> T, default: T) rethrows -> T {
-	return try map(fn) ?? `default`
+	    return try map(fn) ?? `default`
     }
 
     /// Maps the output *or* returns the result of calling `else`
     /// - parameter fn: The function to map over the value
     /// - parameter else: The function to call if the optional is empty
     func map<T>(_ fn: (Wrapped) throws -> T, else: () throws -> T) rethrows -> T {
-	return try map(fn) ?? `else`()
+	    return try map(fn) ?? `else`()
     }
 }
 ```
-第一个允许你将 `map` 可选内容添加到新类型 `T`。如果 `optional` 是空的，您可提供一个相应的默认值：
+
+第一个方法允许你将可选值 `map` 成一个新的类型 `T`. 如果可选值为空，你可以提供一个 `T` 类型的默认值：
 
 ```swift
 let optional1: String? = "appventure"
@@ -273,18 +256,18 @@ print(optional1.map({ $0.count }, default: 0)) // prints 10
 print(optional2.map({ $0.count }, default: 0)) // prints 0
 ```
 
-这个改动很小，但我们不在需要使用 `??` 操作符，而是使用一个 `default` 关键词来更能表达意图。
+这里改动很小，我们再也不需要使用 `??` 操作符，取而代之的是更能表达意图的 `default` 值。
 
-第二种变体非常相似。主要区别在于它接受（再次）闭包返回值 `T` 而不是值 `T`。这是一个简短的例子：
+第二个方法也与第一个很相似，主要区别在于它接受（再次）返回 `T` 类型的闭包，而不是使用一个默认值。这里有个简单的例子：
 
 ```swift
 let optional: String? = nil
 print(optional.map({ $0.count }, else: { "default".count })
 ```
 
-### 组合可选项(Combining Optionals)
+## 组合可选项(Combining Optionals)
 
-这个类别包含了四个函数，它们允许你定义多个可选项之间的关系.
+这个类别包含了四个函数，允许你定义多个可选项之间的关系。
 
 ```swift
 extension Optional {
@@ -292,21 +275,21 @@ extension Optional {
     /// and returns the result of that.
     func and<B>(_ optional: B?) -> B? {
 	guard self != nil else { return nil }
-	return optional
+	    return optional
     }
 
     /// Executes a closure with the unwrapped result of an optional.
     /// This allows chaining optionals together.
     func and<T>(then: (Wrapped) throws -> T?) rethrows -> T? {
 	guard let unwrapped = self else { return nil }
-	return try then(unwrapped)
+	    return try then(unwrapped)
     }
 
     /// Zips the content of this optional with the content of another
     /// optional `other` only if both optionals are not empty
     func zip2<A>(with other: Optional<A>) -> (Wrapped, A)? {
 	guard let first = self, let second = other else { return nil }
-	return (first, second)
+	    return (first, second)
     }
 
     /// Zips the content of this optional with the content of another
@@ -320,10 +303,11 @@ extension Optional {
 }
 
 ```
-上面的四个函数都是讲另外一个可选值当做参数，并返回一个可选值， 然而，它们的实现方式完全不同。
+上面的四个函数都以传入可选值当做参数，最终都返回一个可选值，然而，他们的实现方式完全不同。
 
-#### 依赖(Dependencies)
+### 依赖(Dependencies)
 
+若一个可选值的解包仅作为另一个可选值解包的前提
 <!-- and<B>(_ optional) is useful if the unpacking of an optional is only required as a invariant for unpacking another optional: -->
 
 ```swift
@@ -334,14 +318,11 @@ if user != nil, let account = userAccount() ...
 if let account = user.and(userAccount()) ...
 
 ```
+在上面的例子中，我们对 `user` 的具体内容不感兴趣，但是要求在调用 `userAccount` 函数前保证它非空。虽然这种关系也可以使用 `user != nil`，但我觉得 `and` 使它们的意图更加清晰。
 
-<!-- In the example above, we're not interested in the unwrapped contents of the user optional. We just need to make sure that there is a valid user before we call the userAccount function. While this relationship is kinda codified in the user != nil line, I personally feel that the and makes it more clear. -->
+### 链接(Chaining)
 
-#### 链接(Chaining)
-
-<!-- and<T>(then:) is another very useful function. It allows to chain optionals together so that the output of unpacking optional A becomes the input of producing optional B. Lets start with a simple example: -->
-
-`and<T>(then:)` 是另一个非常有用的函数, 它将多个可选项链接起来，以便将可选项 `A` 的解包输出当做可选项 `B` 的输入。我们从一个简单的例子开始：
+`and<T>(then:)` 是另一个非常有用的函数, 它将多个可选项链接起来，以便将可选项 `A` 的解包值当做可选项 `B` 的输入。我们从一个简单的例子开始：
 
 ```swift
 protocol UserDatabase {
@@ -376,14 +357,14 @@ let children = database.current().and(then: { database.spouse($0) })
      .or(0)
 ```
 
-使用 `and(then)` 函数对代码有很大的提升。首先，你没必要声明很多的临时变量名（user, father1, father2, spouse, children）, 其次，代码更加的简洁。而且，使用 `or(0)` 比 `let childrenCount` 可读性更好。
+使用 `and(then)` 函数对代码有很大的提升。首先，你没必要声明临时变量名（user, father1, father2, spouse, children），其次，代码更加的简洁。而且，使用 `or(0)` 比 `let childrenCount` 可读性更好。
 
-最后，原始的 Swift 示例很容易导致逻辑错误。 也许你还没有注意到，但示例中存在一个 bug。在写那样的代码时，可以很容易地引入复制粘贴错误。 你观察到了么？
+最后，原来的 Swift 代码很容易导致逻辑错误。也许你还没有注意到，但示例中存在一个 bug。在写那样的代码时，就很容易地引入复制粘贴错误。你观察到了么？
 
-是的， `children` 属性应该由调用 `database.childrenCount(spouse)` 创建， 但我写成了 `database.childrenCount(father2)`。很难发现这样的错误。使用 `and(then:)` 使得发现错误更加容易， 因为它使用依赖于变量 `$0`。
+是的，`children` 属性应该由调用 `database.childrenCount(spouse)` 创建，但我写成了 `database.childrenCount(father2)`。很难发现这样的错误。使用 `and(then:)` 就容易发现这个错误，因为它使用的是变量 `$0`。
 
-#### 组合(Zipping)
-这是现有 Swift 概念的另一个变体，`zip` 可以让我们组合多个可选项，将他们一起解包或者解包失败。在上面的代码片段中，我提供了 `zip2` 与 `zip3` 函数，但你也可以命名为 `zip22`(好吧，也许是合理性和编译速度)。
+### 组合(Zipping)
+这是现有 Swift 概念的另一个扩展，`zip` 可以组合多个可选值，它们一起解包成功或解包失败。在上面的代码片段中，我提供了 `zip2` 与 `zip3` 函数，但你也可以命名为 `zip22`(好吧，也许对合理性和编译速度有一点点影响)。
 
 ```swift
 // Lets start again with a normal Swift example
@@ -404,7 +385,7 @@ func buildProduct() -> Product? {
      .map { finalMachine.produce($0.1, $0.2, $0.3) }
 }
 ```
-代码量更少，代码更清晰，更优雅。然而，也存一个缺点，就是更加的复杂了。读者必须了解并理解 `zip` 才能掌握完全掌握它。
+代码量更少，代码更清晰，更优雅。然而，也存一个缺点，就是更复杂了。读者必须了解并理解 `zip` 才能完全掌握它。
 
 #### On
 
@@ -421,7 +402,7 @@ extension Optional {
     }
 }
 ```
-不论可选值是否为空，上面两个简短的方法都可以让你执行一些额外的操作。与上面讨论过的方法相反，这两个方法忽略可选项的值。因此 `on(some:)` 只会在可选项不为空的时候执行闭包 `some`，但是闭包 `some` 不会获取可选项的值。
+不论可选值是否为空，上面两个扩展都允许你执行一些额外的操作。与上面讨论过的方法相反，这两个方法忽略可选值。`on(some:)` 会在可选值不为空的时候执行闭包 `some`，但是闭包 `some` 不会获取可选项的值。
 
 ```swift
 /// Logout if there is no user anymore
@@ -451,7 +432,7 @@ extension Optional {
 }
 ```
 #### 过滤(Filter)
-这个方法类似于一个守护者一样，只有可选项的值满足 `predicate` 条件时才进行解包。比如说，我们希望所有的老用户都升级为高级账户，以便与我们保持更长久的联系。
+这个方法类似于一个守护者一样，只有可选值满足 `predicate` 条件时才进行解包。比如说，我们希望所有的老用户都升级为高级账户，以便与我们保持更长久的联系。
 
 ```swift
 // Only affect old users with id < 1000
@@ -461,13 +442,13 @@ if let aUser = user, user.id < 1000 { aUser.upgradeToPremium() }
 // Using `filter`
 user.filter({ $0.id < 1000 })?.upgradeToPremium()
 ```
-在这里，`user.filter` 使用更加自然。此外，它只实现了 Swift 集合中已有的功能。
+在这里，`user.filter` 使用起来更加自然。此外，它的实现类似于 Swift 集合中的功能。
 
 #### 期望(Expect)
 
-这是我最喜欢的功能之一。这是我从 `Rush` 语言中借鉴而来的。我试图避免强行解包代码库中的任何东西。类似与隐式解包可选项。
+这是我最喜欢的功能之一。这是我从 `Rush` 语言中借鉴而来的。我试图避免强行解包代码库中的任何东西。类似于隐式解包可选项。
 
-然而，当使用可视化界面构建时会很棘手。我观察到下面的这种方式在项目中很常见：
+然而，当在项目中使用可视化界面构建 UI 时，下面的这种方式很常见：
 
 ```swift
 func updateLabel() {
@@ -478,7 +459,7 @@ func updateLabel() {
 }
 ```
 
-显然，另一种方式是强制解包 `label`, 这么做可能会造成应用程序崩溃类似于 `fatalError`。 然而，我必须插入 `!`, 当造成程序崩溃后，`!` 并不能给明确的描述。 在这里，使用 上面实现的 `expect` 函数就是一个更好的选择：
+显然，另一种方式是强制解包 `label`, 这么做可能会造成应用程序崩溃类似于 `fatalError`。 然而，我必须插入 `!`, 当造成程序崩溃后，`!` 并不能给明确的错误信息。在这里，使用上面实现的 `expect` 函数就是一个更好的选择：
 
 ```swift
 func updateLabel() {
@@ -488,4 +469,114 @@ func updateLabel() {
 
 ### 示例(Example)
 
-至此我们已经实现了一系列非常有用的可选项的扩展。 我将会给出个示例，以便更好的了解如何组合这些扩展
+至此我们已经实现了一系列非常有用的可选项扩展。我将会给出个综合示例，以便更好的了解如何组合使用这些扩展。首先，我们需要先说明一下这个示例，原谅我使用这个非常规且不太现实的例子：
+
+<!-- You're working in the 80s at a shareware distributor. A lot of student programmers are working for you and writing new shareware apps and games every month. You need to keep track of how many were sold. For that, you recieve an XML file from accounting and you need to parse it and insert it into the database (isn't it awesome how in this version of the 80s there's Swift to love but also XML to hate?). Your software system has an XML parser and a database (both written in 6502 ASM of course) that implement the following protocols: -->
+假如你是为 80 年代的软件商工作。每个月都有很多的人为你编写应用软件和游戏。你需要追踪销售量，你从会计那里收到一个 XML 文件，你需要解析它并存入到数据库中
+
+```swift
+protocol XMLImportNode {
+    func firstChild(with tag: String) -> XMLImportNode?
+    func children(with tag: String) -> [XMLImportNode]
+    func attribute(with name: String) -> String?
+}
+
+typealias DatabaseUser = String
+typealias DatabaseSoftware = String
+protocol Database {
+    func user(for id: String) throws -> DatabaseUser
+    func software(for id: String) throws -> DatabaseSoftware
+    func insertSoftware(user: DatabaseUser, name: String, id: String, type: String, amount: Int) throws
+    func updateSoftware(software: DatabaseSoftware, amount: Int) throws
+}
+```
+XML 文件可能看起来像这样：
+
+```xml
+<users>
+ <user name="" id="158">
+  <software>
+   <package type="game" name="Maniac Mansion" id="4332" amount="30" />
+   <package type="game" name="Doom" id="1337" amount="50" />
+   <package type="game" name="Warcraft 2" id="1000" amount="10" />
+  </software>
+ </user>
+</users>
+```
+解析 XML 的代码如下：
+
+```swift
+enum ParseError: Error {
+    case msg(String)
+}
+
+func parseGamesFromXML(from root: XMLImportNode, into database: Database) throws {
+    guard let users = root.firstChild(with: "users")?.children(with: "user") else {
+	throw ParseError.msg("No Users")
+    }
+    for user in users {
+	guard let software = user.firstChild(with: "software")?
+		.children(with: "package"),
+	    let userId = user.attribute(with: "id"),
+	    let dbUser = try? database.user(for: userId)
+	    else { throw ParseError.msg("Invalid User") }
+	for package in software {
+	    guard let type = package.attribute(with: "type"),
+	    type == "game",
+	    let name = package.attribute(with: "name"),
+	    let softwareId = package.attribute(with: "id"),
+	    let amountString = package.attribute(with: "amount")
+	    else { throw ParseError.msg("Invalid Package") }
+	    if let existing = try? database.software(for: softwareId) {
+		try database.updateSoftware(software: existing, 
+					      amount: Int(amountString) ?? 0)
+	    } else {
+		try database.insertSoftware(user: dbUser, name: name, 
+					      id: softwareId, 
+					    type: type, 
+					  amount: Int(amountString) ?? 0)
+	    }
+	}
+    }
+}
+
+```
+让我们运用下上面学到的内容：
+
+```swift
+func parseGamesFromXML(from root: XMLImportNode, into database: Database) throws {
+    for user in try root.firstChild(with: "users")
+		    .or(throw: ParseError.msg("No Users")).children(with: "user") {
+	let dbUser = try user.attribute(with: "id")
+		    .and(then: { try? database.user(for: $0) })
+		    .or(throw: ParseError.msg("Invalid User"))
+	for package in (user.firstChild(with: "software")?
+		    .children(with: "package")).or([]) {
+	    guard (package.attribute(with: "type")).filter({ $0 == "game" }).isSome
+		else { continue }
+	    try package.attribute(with: "name")
+		.zip3(with: package.attribute(with: "id"), 
+		   another: package.attribute(with: "amount"))
+		.map({ (tuple) -> Void in
+		    switch try? database.software(for: tuple.1) {
+		    case let e?: try database.updateSoftware(software: e, 
+							       amount: Int(tuple.2).or(0))
+		    default: try database.insertSoftware(user: dbUser, name: tuple.0, 
+							   id: tuple.1, type: "game", 
+						       amount: Int(tuple.2).or(0))
+		    }
+		}, or: { throw ParseError.msg("Invalid Package") })
+	}
+    }
+}
+```
+如果我们对比下，至少会有两点映入眼帘：
+
+    1. 代码量更少
+    2. 代码看起来更复杂了
+
+
+在组合使用可选扩展时，我故意造成一种过载状态。其中的一部分使用很恰当，但是另一部分却不那么合适。然而，使用扩展的关键不在于过度依赖(正如我上面做的那样)，而在于这些扩展是否使语义更加清晰明了。比较上面的两个实现方式，
+在第二个实现中，考虑下是使用 Swift 本身提供的功能好还是使用可选扩展更佳。
+
+这就是本文的全部内容，感谢阅读！
