@@ -1,5 +1,5 @@
-title: "Tagged Pointer 字符串"
-date: 2018-04-29
+title:Tagged Pointer 字符串
+date:2018-10-08
 tags: [iOS 开发, Objective-C]
 categories: [Mike Ash]
 permalink: tagged-pointer-strings
@@ -11,9 +11,9 @@ description: Tagged pointer 是一项用于提高性能并减少内存使用的�
 原文链接=https://www.mikeash.com/pyblog/friday-qa-2015-07-31-tagged-pointer-strings.html
 作者=Mike Ash
 原文日期=2015-07-31
-译者=Jojo
-校对=
-定稿=
+译者=jojotov
+校对=Forelax,冬瓜
+定稿=Forelax
 
 <!--此处开始正文-->
 
