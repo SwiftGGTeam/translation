@@ -17,7 +17,7 @@ description: 关于 Swift 可选项（Optional）扩展
 
 <!--此处开始正文-->
 
-可选值（Optional）是 Swift 语言最基础内容。我想每个人都同意它带来巨大的福音，因为它迫使开发者妥善处理边缘情况。可选值的语言特性能让发者在开发阶段发现并处理整个类别的 bug。
+可选值（Optional）是 Swift 语言最基础内容。我想每个人都同意它带来了巨大的福音，因为它迫使开发者妥善处理边缘情况。可选值的语言特性能让发者在开发阶段发现并处理整个类别的 bug。
 
 然而，Swift 标准库中可选值的 API 相当的有限。如果忽略 `customMirror` 和 `debugDescription` 属性，[Swift 文档](https://developer.apple.com/documentation/swift/optional#topics) 仅仅列出了几个方法/属性：
 
@@ -28,9 +28,9 @@ func flatMap<U>(_ transform: (Wrapped) throws -> U?) rethrows -> U?
 ```
 <!--more-->
 
-即使方法如此少，可选值仍然非常有用，这是因为 Swift 在语法上通过 [可选链](https://appventure.me/2014/06/13/swift-optionals-made-simple/)、[模式匹配](https://appventure.me/2015/08/20/swift-pattern-matching-in-detail/)、`if let` 或 `guard let` 等功能来弥补它。但在某些情况下，可选值容易造成多分支条件。有时，一个非常简洁的方法允许你用一行代码表达概念，而不是用多行组合的 `if let` 语句。
+即使方法如此少，可选值仍然非常有用，这是因为 Swift 在语法上通过 [可选链](https://appventure.me/2014/06/13/swift-optionals-made-simple/)、[模式匹配](https://appventure.me/2015/08/20/swift-pattern-matching-in-detail/)、`if let` 或 `guard let` 等功能来弥补它。但在某些情况下，可选值容易造成多分支条件。有时，一个非常简洁的方法通常允许你用一行代码表达某个概念，而不是用多行组合的 `if let` 语句。
 
-我筛选了 Github 上的 Swift 项目以及 Rust、Scala 或 C＃ 等其他语言的可选实现，目的是为 Optional 找一些有用的补充。以下 14 个有用的可选扩展，我将分类逐一解释，同时给每个类别举几个例子。最后，我将编写一个更复杂的示例，它同时使用多个可选扩展。
+我筛选了 Github 上的 Swift 项目以及 Rust、Scala 或 C＃ 等其他语言的可选实现，目的是为 Optional 找一些有用的补充。以下 14 个可选扩展，我将分类逐一解释，同时给每个类别举几个例子。最后，我将编写一个更复杂的示例，它同时使用多个可选扩展。
 
 ## 判空(Emptiness)
 
@@ -55,10 +55,10 @@ extension Optional {
 这是对可选类型最基础的补充。我很喜欢这些补充，因为它们将可选项为空的概念从代码中移除了。在使用的细节上， 使用 `optional.isSome` 比 `if optional == nil` 更简洁明了。
 
 ```swift
-// Compare
+// 使用前
 guard leftButton != nil, rightButton != nil else { fatalError("Missing Interface Builder connections") }
 
-// With
+// 使用后
 guard leftButton.isSome, rightButton.isSome else { fatalError("Missing Interface Builder connections") }
 
 ```
@@ -68,13 +68,13 @@ guard leftButton.isSome, rightButton.isSome else { fatalError("Missing Interface
 ```swift
 
 extension Optional {
-    /// 返回可选值或者 `default` 参数值
-    /// - 参数: 如果可选值为空，将会返回这个值
+    /// 返回可选值或默认值
+    /// - 参数: 如果可选值为空，将会默认值
     func or(_ default: Wrapped) -> Wrapped {
 	    return self ?? `default`
     }
 
-    /// 返回可选值或者 `else` 表达式返回的值
+    /// 返回可选值或 `else` 表达式返回的值
     /// 例如. optional.or(else: print("Arrr"))
     func or(else: @autoclosure () -> Wrapped) -> Wrapped {
 	    return self ?? `else`()
@@ -89,7 +89,7 @@ extension Optional {
     }
 
     /// 当可选值不为空时，返回可选值
-    /// 如果为空，抛出 exception 异常
+    /// 如果为空，抛出异常
     func or(throw exception: Error) throws -> Wrapped {
         guard let unwrapped = self else { throw exception }
         return unwrapped
@@ -97,7 +97,7 @@ extension Optional {
 }
 
 extension Optional where Wrapped == Error {
-    /// 当可选值有一个非空值的时，执行 `else`
+    /// 当可选值不为空时，执行 `else`
     func or(_ else: (Error) -> Void) {
 	guard let error = self else { return }
 	`else`(error)
@@ -115,7 +115,7 @@ extension Optional where Wrapped == Error {
 
 ```swift
 let optional: Int? = nil
-print(optional.or(10)) // Prints 10
+print(optional.or(10)) // 打印 10
 ```
 
 ### 默认闭包(Default Closure)
@@ -220,20 +220,20 @@ should { try throwingFunction) }.or(print($0))
 
 ### 变换(Map)
 
-正如上面所见，`map` 和 `flatMap` 是 Swift 在可选项上面提供的唯一的方法。然而，在多数情况下，也可以对它们稍微改进使得更加通用。这有两个扩展 `map` 允许定义一个默认值，类似于上面 `or` 的实现方式：
+正如上面所见，`map` 和 `flatMap` 是 Swift 标准库在可选项上面提供的的全部方法。然而，在多数情况下，也可以对它们稍微改进使得更加通用。这有两个扩展 `map` 允许定义一个默认值，类似于上面 `or` 的实现方式：
 
 ```swift
 extension Optional {
-    /// Maps the output *or* returns the default value if the optional is nil
-    /// - parameter fn: The function to map over the value
-    /// - parameter or: The value to use if the optional is empty
+    /// 可选值变换返回，如果可选值为空，则返回默认值
+    /// - 参数 fn: 映射值的闭包
+    /// - 参数 default: 可选值为空时，将作为返回值
     func map<T>(_ fn: (Wrapped) throws -> T, default: T) rethrows -> T {
 	    return try map(fn) ?? `default`
     }
 
-    /// Maps the output *or* returns the result of calling `else`
-    /// - parameter fn: The function to map over the value
-    /// - parameter else: The function to call if the optional is empty
+    /// 可选值变换返回，如果可选值为空，则调用 `else` 闭包
+    /// - 参数 fn: 映射值的闭包
+    /// - 参数 else: The function to call if the optional is empty
     func map<T>(_ fn: (Wrapped) throws -> T, else: () throws -> T) rethrows -> T {
 	    return try map(fn) ?? `else`()
     }
@@ -246,11 +246,11 @@ extension Optional {
 let optional1: String? = "appventure"
 let optional2: String? = nil
 
-// Without
+// 使用前
 print(optional1.map({ $0.count }) ?? 0)
 print(optional2.map({ $0.count }) ?? 0)
 
-// With 
+// 使用后 
 print(optional1.map({ $0.count }, default: 0)) // prints 10
 print(optional2.map({ $0.count }, default: 0)) // prints 0
 ```
@@ -270,29 +270,28 @@ print(optional.map({ $0.count }, else: { "default".count })
 
 ```swift
 extension Optional {
-    /// Tries to unwrap `self` and if that succeeds continues to unwrap the parameter `optional`
-    /// and returns the result of that.
+    ///  当可选值不为空时，解包并返回参数 `optional`
     func and<B>(_ optional: B?) -> B? {
 		guard self != nil else { return nil }
 	    return optional
     }
 
-    /// Executes a closure with the unwrapped result of an optional.
-    /// This allows chaining optionals together.
+    /// 解包可选值，当可选值不为空时，执行 `then` 闭包，并返回执行结果
+    /// 允许你将多个可选项连接在一起
     func and<T>(then: (Wrapped) throws -> T?) rethrows -> T? {
 		guard let unwrapped = self else { return nil }
 	    return try then(unwrapped)
     }
 
-    /// Zips the content of this optional with the content of another
-    /// optional `other` only if both optionals are not empty
+    /// 将当前可选值与其他可选值组合在一起
+    /// 当且仅当两个可选值都不为空时组合成功，否则返回空
     func zip2<A>(with other: Optional<A>) -> (Wrapped, A)? {
 		guard let first = self, let second = other else { return nil }
 	    return (first, second)
     }
 
-    /// Zips the content of this optional with the content of another
-    /// optional `other` only if both optionals are not empty
+    /// 将当前可选值与其他可选值组合在一起
+    /// 当且仅当三个可选值都不为空时组合成功，否则返回空
     func zip3<A, B>(with other: Optional<A>, another: Optional<B>) -> (Wrapped, A, B)? {
 		guard let first = self,
 	      	let second = other,
@@ -306,14 +305,13 @@ extension Optional {
 
 ### 依赖(Dependencies)
 
-若一个可选值的解包仅作为另一个可选值解包的前提
-<!-- and<B>(_ optional) is useful if the unpacking of an optional is only required as a invariant for unpacking another optional: -->
+若一个可选值的解包仅作为另一可选值解包的前提，`and<B>(_ optional)` 就显得非常使用：
 
 ```swift
-// Compare
+// 使用前
 if user != nil, let account = userAccount() ...
 
-// With
+// 使用后
 if let account = user.and(userAccount()) ...
 
 ```
@@ -333,10 +331,10 @@ protocol UserDatabase {
 
 let database: UserDatabase = ...
 
-// Imagine we want to know the children of the following relationship:
+// 想想一下如下关系该如何表达：
 // Man -> Spouse -> Father -> Father -> Spouse -> children
 
-// Without
+// 使用前
 let childrenCount: Int
 if let user = database.current(), 
    let father1 = database.father(user),
@@ -348,7 +346,7 @@ if let user = database.current(),
   childrenCount = 0
 }
 
-// With
+// 使用后
 let children = database.current().and(then: { database.spouse($0) })
      .and(then: { database.father($0) })
      .and(then: { database.spouse($0) })
@@ -366,7 +364,7 @@ let children = database.current().and(then: { database.spouse($0) })
 这是现有 Swift 概念的另一个扩展，`zip` 可以组合多个可选值，它们一起解包成功或解包失败。在上面的代码片段中，我提供了 `zip2` 与 `zip3` 函数，但你也可以命名为 `zip22`(好吧，也许对合理性和编译速度有一点点影响)。
 
 ```swift
-// Lets start again with a normal Swift example
+// 正常示例
 func buildProduct() -> Product? {
   if let var1 = machine1.makeSomething(),
     let var2 = machine2.makeAnotherThing(),
@@ -377,7 +375,7 @@ func buildProduct() -> Product? {
   }
 }
 
-// The alternative using our extensions
+// 使用扩展
 func buildProduct() -> Product? {
   return machine1.makeSomething()
      .zip3(machine2.makeAnotherThing(), machine3.createThing())
@@ -432,11 +430,11 @@ extension Optional {
 这个方法类似于一个守护者一样，只有可选值满足 `predicate` 条件时才进行解包。比如说，我们希望所有的老用户都升级为高级账户，以便与我们保持更长久的联系。
 
 ```swift
-// Only affect old users with id < 1000
-// Normal Swift
+// 仅会影响 id < 1000 的用户
+// 正常写法
 if let aUser = user, user.id < 1000 { aUser.upgradeToPremium() }
 
-// Using `filter`
+// 使用 `filter`
 user.filter({ $0.id < 1000 })?.upgradeToPremium()
 ```
 在这里，`user.filter` 使用起来更加自然。此外，它的实现类似于 Swift 集合中的功能。
@@ -466,10 +464,9 @@ func updateLabel() {
 
 ### 示例(Example)
 
-至此我们已经实现了一系列非常有用的可选项扩展。我将会给出个综合示例，以便更好的了解如何组合使用这些扩展。首先，我们需要先说明一下这个示例，原谅我使用这个非常规且不太现实的例子：
+至此我们已经实现了一系列非常有用的可选项扩展。我将会给出个综合示例，以便更好的了解如何组合使用这些扩展。首先，我们需要先说明一下这个示例，原谅我使用这个不太恰当的例子：
 
-<!-- You're working in the 80s at a shareware distributor. A lot of student programmers are working for you and writing new shareware apps and games every month. You need to keep track of how many were sold. For that, you recieve an XML file from accounting and you need to parse it and insert it into the database (isn't it awesome how in this version of the 80s there's Swift to love but also XML to hate?). Your software system has an XML parser and a database (both written in 6502 ASM of course) that implement the following protocols: -->
-假如你是为 80 年代的软件商工作。每个月都有很多的人为你编写应用软件和游戏。你需要追踪销售量，你从会计那里收到一个 XML 文件，你需要解析它并存入到数据库中
+假如你是为 80 年代的软件商工作。每个月都有很多的人为你编写应用软件和游戏。你需要追踪销售量，你从会计那里收到一个 XML 文件，你需要进行解析并将结果存入到数据库中（如果在 80 年代就有 Swift 语言 以及 XML，这将是多么奇妙）。你的软件系统有一个XML解析器和一个数据库（当然都是用6502 ASM编写的），它们实现了以下协议：
 
 ```swift
 protocol XMLImportNode {
