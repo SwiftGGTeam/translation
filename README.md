@@ -42,7 +42,7 @@ BigNerdCoding
 |Darren ||| [DarrenChen123](https://github.com/DarrenChen123) |
 |jojo | [Jojotov](https://weibo.com/dingtongzhou/profile?rightmod=1&wvr=6&mod=personinfo)|[JOJOTOV](https://dingtz.com)|[jojotov](https://github.com/jojotov) |
 | Hale |[Hale0101](https://weibo.com/p/1005053233770040)|[Hale's Blog](https://wuqiuhao.github.io/)|[Hale](https://github.com/wuqiuhao)|
-| 灰s | [灰s](https://weibo.com/u/2159669295)|[灰s](https://juejin.im/user/5862fa678d6d810065fe0efd)|[灰s](https://github.com/dzyding) |
+| 灰s | [灰s](https://weibo.com/u/2159669295)||[灰s](https://github.com/dzyding) |
 | MaxXD | [MaxXD不能使用](https://weibo.com/u/5029986118)|[认知即事实](http://robin4han.github.io/)|[dearbojack](https://github.com/dearbojack) |
 | Damonwong ||| [Damonvvong](https://github.com/Damonvvong) |
 | 阳仔 | [一只羊的北京](https://weibo.com/u/1967612625/home?wvr=5&lf=reg)|[Sheep's Blog](https://yanggao1991.github.io)|[shift_sheep](https://github.com/YangGao1991) |
@@ -74,7 +74,7 @@ BigNerdCoding
 
 |群ID|微博|个站|Github|
 |---- |---- |---- |---- |
-| 水水 | Zx_Young027 | [曦息地](blog.yousanflics.com.cn) | [Yousanflics](https://github.com/yousanflics) |
+| 水水 | [Zx_Young027](https://weibo.com/u/2836576672?is_hot=1) | [曦息地](yousanflics.com.cn) | [Yousanflics](https://github.com/yousanflics) |
 | MM |画喵程序猿mmoaay||mmoaay|
 | shanksyang ||||
 | 冬瓜 | [冬瓜争做全栈瓜](https://weibo.com/desgard/profile?rightmod=1&wvr=6&mod=personinfo) | [Guardia · 瓜地](http://www.desgard.com/) | [Desgard](https://github.com/desgard) |
@@ -82,7 +82,7 @@ BigNerdCoding
 | littledogboy ||||
 | Forelax |[ForelaxMe](https://weibo.com/3889029090/profile)|[Forelax's Blog](http://forelax.space/)|[ForelaxX](https://github.com/ForelaxX)|
 | pmst ||||
-| Lision ||||
+| Lision | [Lision](https://weibo.com/lisioncode) | [聊宅](https://lision.me/) | [L君](https://github.com/Lision) |
 | liberalism |[Liberalisman](https://weibo.com/1743643682/profile?topnav=1&wvr=6)|[Liberalism](http://www.xiaolu520.com)|[Liberalisman](https://github.com/liberalisman)|
 | pmst |[pmst](https://weibo.cn/u/2085734687)|[pmst](https://www.jianshu.com/u/596f2ba91ce9)|[pmst](https://github.com/colourful987)|
 | saitjr |[saitjr](https://weibo.com/u/1918545437)|[saitjr](http://saitjr.com/)|[saitjr](github.com/saitjr)|
