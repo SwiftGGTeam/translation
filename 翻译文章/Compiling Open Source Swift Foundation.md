@@ -1,10 +1,10 @@
 title: "编译开源 Swift Foundation 库"
-date: 2016-06-30
+date: 2018-10-22
 tags: [Swift, iOS]
 categories: [iAchieved.it]
 permalink: compiling-open-source-swift-foundation
 keywords: Swift
-custom_title: ""
+custom_title: "编译开源 Swift Foundation 库"
 description: 这是一篇关于编译 Swift 开源的 Foundation 库的文章
 
 ---
@@ -41,7 +41,7 @@ while true {
 }
 
 ```
-我所期望是每 2 秒都会创建并销毁一个线程。不幸的是在大约启动 230 个线程之后，系统资源已经耗尽，不再有新的线程被创建。解决的方式正如 [SR-1908](https://bugs.swift.org/browse/SR-1908) 所提到的，初始化具有系统范围的分离状态的线程
+我所期望的是每 2 秒都会创建并销毁一个线程。不幸的是在大约启动 230 个线程之后，系统资源已经耗尽，不再有新的线程被创建。解决的方式正如 [SR-1908](https://bugs.swift.org/browse/SR-1908) 所提到的，初始化具有系统范围的分离状态的线程
 
 <!--more-->
 
@@ -89,9 +89,9 @@ BUILD_DIR=build ./configure Debug
 
 ```
 
-首先，我们将环境变量 `PREBUILT_ROOT` 设置到预构建 Swift 及相关工具所在的位置，还可以在下一步操作前配置 `./configure` 为 `Debug` 模式（你也配置为 `Release`）。我们还需要将环境变量 `SWIFTC`，`CLANG`，`SWIFT` 和 `SDKROOT` 配置脚本指向我们的“工具链”。最后，环境变量 `BUILD_DIR` 设置所有中间件和最终输出（libFoundation.so）的放置位置。
+首先，我们将环境变量 `PREBUILT_ROOT` 设置到预构建 Swift 及相关工具所在的位置，还可以在下一步操作前配置 `./configure` 为 `Debug` 模式（你也可以配置为 `Release`）。我们还需要将环境变量 `SWIFTC`，`CLANG`，`SWIFT` 和 `SDKROOT` 配置脚本指向我们的“工具链”。最后，环境变量 `BUILD_DIR` 设置为所有中间件和最终输出（libFoundation.so）的放置位置。
 
-注意：也许有时你会惊讶于评论中的某些内容。你的 `PREBUILT_ROOT` 是你预工具链的位置。不要期望在 `/root/workspace/Swift-3.0-Pi3-ARM-Incremental` 上找到你系统上的任何内容！
+注意：也许有时你会惊讶于评论中的某些内容。你的 `PREBUILT_ROOT` 是你工具链的位置。不要期望在 `/root/workspace/Swift-3.0-Pi3-ARM-Incremental` 上找到你系统上的任何内容！
 
 最后，执行 `/usr/bin/ninja` 来运行我们的构建。一旦构建结束后，在 `build/Foundation/` 目录中会有一个 `libFoundation.so` 共享库。
 要使用已安装的 Swift 来测试它，只需将 `libFoundation.so` 复制到 `$YOUR_SWIFT_ROOT/usr/lib/swift/linux/ libFoundation.so`。
@@ -120,8 +120,8 @@ LD_LIBRARY_PATH= lldb build/TestFoundation/TestFoundation
 
 ```
 
-运行测试需要为 `LD_LIBRARY_PATH` 提供两个路径：连接到 `libXCTest.so` 共享库以及“library under test”的路径。
-如果 `libFoundation.so` 位于 `./build/Foundation` 目录中，我们可按以下方式操作。如果我们按照上述步骤操作，那就一定在。
+运行测试需要为 `LD_LIBRARY_PATH` 提供两个路径：`libXCTest.so` 共享库和“library under test”的路径。
+如果我们按照上述步骤操作，`libFoundation.so` 就一定位于 `./build/Foundation` 目录中。
 
 ```shell
 # LD_LIBRARY_PATH=./build/Foundation:$PREBUILT_ROOT/xctest-linux-armv7 ./build/TestFoundation/TestFoundation
