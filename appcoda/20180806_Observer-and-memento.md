@@ -1,6 +1,16 @@
-# Design Patterns in Swift #2: Observer and Memento
 
-# Swift 设计模式 #2： 观察者模式与备忘录模式
+title: Swift 设计模式 #2： 观察者模式与备忘录模式
+date: 2018.08.06
+tags: [Design Patterns]
+categories:[Swift]
+permalink: https://www.appcoda.com/design-pattern-behavorial/
+
+原文链接=https://www.appcoda.com/design-pattern-behavorial/
+作者=ANDREW JAFFEE
+原文日期=2018.08.06
+译者=JOJO
+校对=
+定稿=
 
 This tutorial is the second installment in an AppCoda series on design patterns [started last week](https://www.appcoda.com/design-pattern-creational/). There are 23 classic software development design patterns probably first identified, collected, and explained all in one place by the “Gang of Four” (“GoF”), Erich Gamma, Richard Helm, Ralph Johnson, and John Vlissides in their seminal book, [“Design Patterns: Elements of Reusable Object-Oriented Software.”](https://smile.amazon.com/Design-Patterns-Object-Oriented-Addison-Wesley-Professional-ebook/dp/B000SEIBB8/). Today, we’ll focus on two of these patterns, “observer” and “memento,” which fall into what the GoF calls the “behavioral” category.
 
@@ -8,7 +18,7 @@ This tutorial is the second installment in an AppCoda series on design patterns 
 
 Software development is an endeavor into modeling real world scenarios in the hopes of creating tools to enhance the human experience in such scenarios. Tools for managing finances, e.g., banking apps and shopping aids like Amazon or eBay’s iOS apps, definitely make life much simpler than it was for consumers just ten years ago. Think of how far we’ve come. While software apps have generally gotten more powerful and simpler to use for consumers, development of said apps has gotten [much more complex](http://iosbrain.com/blog/2018/04/29/controlling-chaos-why-you-should-care-about-adding-error-checking-to-your-ios-apps/#chaos) for developers.
 
-软件开发领域致力于对真实世界的场景进行建模，并期望能创造出一系列工具来提高人类对这些场景的理解与体验。与 10 年前相比，一些类似银行应用和辅助购物应用（如亚马逊或 eBay 的 iOS 客户端应用）的财务类工具的出现，无疑让顾客们的生活变得更加简单。当我们回望过去，定会感叹我们在软件开发领域上走过了漫长而又成功的道路。如今，软件应用的功能普遍变得强大且易用，但对于开发者来说，开发这些软件却变得[越来越复杂](http://iosbrain.com/blog/2018/04/29/controlling-chaos-why-you-should-care-about-adding-error-checking-to-your-ios-apps/#chaos)
+软件开发领域致力于对真实世界的场景进行建模，并期望能创造出一系列工具来提高人类对这些场景的理解与体验。与 10 年前相比，一些类似银行应用和辅助购物应用（如亚马逊或 eBay 的 iOS 客户端应用）的财务类工具的出现，无疑让顾客们的生活变得更加简单。当我们回顾软件开发的发展历程，定会感叹我们在软件开发领域上走过了漫长而又成功的道路。如今，软件应用的功能普遍变得强大且易用，但对于开发者来说，开发这些软件却变得[越来越复杂](http://iosbrain.com/blog/2018/04/29/controlling-chaos-why-you-should-care-about-adding-error-checking-to-your-ios-apps/#chaos)
 
 So developers have created an arsenal of best practices to manage complexity, like object-oriented programming, protocol-oriented programming, value semantics, local reasoning, breaking large pieces of code into smaller ones with well-defined interfaces (like with Swift extensions), syntactic sugar, to name some of the most popular. One of the most important best practices that I didn’t mention, but that merits much attention, is the use of design patterns.
 
@@ -20,7 +30,7 @@ So developers have created an arsenal of best practices to manage complexity, li
 
 Design patterns are an extremely important tool with which developers can manage complexity. It’s best to conceptualize them as generally templated techniques, each tailored to solving a corresponding, recurring, and readily identifiable problem. Look at them as a list of best practices you would use for coding scenarios that you see over and over again, like how to create objects from a related family of objects without having to understand all the gory implementation details of that family. The whole point of design patterns is that they apply to commonly occurring scenarios. They’re reusable because they’re generalized. A specific example should help.
 
-对于开发者来说，设计模式是管理代码复杂度问题的一个尤其重要的工具。我们理解设计模式最好的办法，就是把设计模式概念化为 —— 有固定模版的通用技术，每一个设计模式的模版都是为一个常见且易于辨别的特定问题而量身打造的。你可以把设计模式看作是一系列最佳实践的集合，它们可以用于一些经常出现的编码场景：例如如何利用一系列有关联的对象创建出新的对象，并且不需要去理解原本那一系列对象中“又臭又长”的代码实现。设计模式最重要的意义是其可以应用于那些常见的场景。同时，由于设计模式都是已经创造出来的固定模式，拿来即用的特质令它具有很高的易用性。为了能更好的理解设计模式，我们来看一个例子。
+对于开发者来说，设计模式是管理代码复杂度问题的一个尤其重要的工具。我们理解设计模式最好的办法，就是把设计模式概念化为 —— 有固定模版的通用技术，每一个设计模式的模版都是为一个常见且易于辨别的特定问题而量身打造的。你可以把设计模式看作是一系列最佳实践的集合，它们可以用于一些经常出现的编码场景：例如如何利用一系列有关联的对象创建出新的对象，并且不需要去理解原本那一系列对象中“又臭又长”的代码实现。设计模式最重要的意义是其可以应用于那些常见的场景。同时，由于设计模式都是已经创造出来的固定模式，拿来即用的特质令它具有很高的易用性。为了能更好的理解设计模式，我们来看一个例子：
 
 Design patterns are not specific to some use case like iterating over a Swift array of 11 integers (`Int`). For example, the GoF defined the *iterator* pattern to provide a common interface for traversing through all items in some collection without knowing the intricacies (i.e., type) of the collection. A design pattern is not programming language code. It is a set of guidelines or rule of thumb for solving a common software scenario.
 
@@ -36,7 +46,7 @@ These two patterns are generally applied to *entire applications*. MVVM and MVC 
 
 While the GoF book has taken on biblical connotations for many developers, it is not without its detractors. We’ll talk about that in the conclusion to this article.
 
-虽然 GoF 关于设计模式的书已经被众多开发者视为圣经般的存在，但仍有一些对其批判的声音存在。我们会在本文结尾的部分讨论这个问题。
+虽然 GoF 关于设计模式的书已经被众多开发者视为圣经般的存在，但仍存在一些对其批判的声音。我们会在本文结尾的部分讨论这个问题。
 
 ### Design pattern categories
 
@@ -52,7 +62,7 @@ Before I wax too far theoretical, let me provide tangible examples to assure you
 
 The whole notion of *consistency* should be self-evident to you when discussing design *patterns*. Keep in mind a theme that was highlighted in [last week’s post](https://www.appcoda.com/design-pattern-creational/), a theme that will occur over and over as we discuss more and more design patterns: [hiding complexity (encapsulation)](http://iosbrain.com/blog/2017/02/26/intro-to-object-oriented-principles-in-swift-3-via-a-message-box-class-hierarchy/#advantages). It is one the highest goals of smart developers. For example, object-oriented (OOP) classes can provide very complex, sophisticated, and powerful functionality without requiring the developer to know anything about the internal workings of those classes. In the same vein, Swift [protocol-oriented programming](https://www.appcoda.com/pop-vs-oop/) is an extremely important yet relatively new technique for controlling complexity. Managing [complexity](http://iosbrain.com/blog/2018/01/02/understanding-swift-4-generics-and-applying-them-to-your-code/#complexity) is a developer’s greatest burden, but here we are talking about taming that beast!
 
-当你讨论设计模式时，你应该把一致性当成最显而易见的基本概念。在[上周的推送](https://www.appcoda.com/design-pattern-creational/)中，我们着重讨论了一个概念：[高复杂度（封装）]()(http://iosbrain.com/blog/2017/02/26/intro-to-object-oriented-principles-in-swift-3-via-a-message-box-class-hierarchy/#advantages)。你必须把这个概念当作中心思想牢记于心，因为它会随着我们更深入地讨论设计模式而出现地越发频繁。举个例子，面向对象（OOP）中的众多类，可以在不需要开发者知道任何其内部实现的前提下，提供非常复杂、成熟且强大的功能。同样， Swift 的[面向协议编程](https://www.appcoda.com/pop-vs-oop/)也是一项对于控制复杂度来说极为重要的新技术。对开发者来说，想要管理好[复杂度](http://iosbrain.com/blog/2018/01/02/understanding-swift-4-generics-and-applying-them-to-your-code/#complexity)是一件异常困难的事情，但我们现在即将把这头野兽驯服！
+当你讨论设计模式时，你应该把一致性当成最显而易见的基本概念。在[上周的推送](https://www.appcoda.com/design-pattern-creational/)中，我们着重讨论了一个概念：[高复杂度（封装）](http://iosbrain.com/blog/2017/02/26/intro-to-object-oriented-principles-in-swift-3-via-a-message-box-class-hierarchy/#advantages)。你必须把这个概念当作中心思想牢记于心，因为它会随着我们更深入地讨论设计模式而出现地越发频繁。举个例子，面向对象（OOP）中的众多类，可以在不需要开发者知道任何其内部实现的前提下，提供非常复杂、成熟且强大的功能。同样， Swift 的[面向协议编程](https://www.appcoda.com/pop-vs-oop/)也是一项对于控制复杂度来说极为重要的新技术。对开发者来说，想要管理好[复杂度](http://iosbrain.com/blog/2018/01/02/understanding-swift-4-generics-and-applying-them-to-your-code/#complexity)是一件异常困难的事情，但我们现在即将把这头野兽驯服！
 
 ### A note on this tutorial’s prose and definitions
 
@@ -60,7 +70,7 @@ The whole notion of *consistency* should be self-evident to you when discussing 
 
 For this tutorial, I’ve decided to concentrate my explanatory prose as inline commentary in my sample apps’ code. While I will provide brief explanations of today’s design pattern concepts, I very much want you to look at my code, read the comments, and fully internalize the techniques I’m sharing with you. After all, if you can’t write the code, and can only talk about the code, you’re not going to make it through very many job interviews — and you’re not really a hardcore developer.
 
-在这次的教程中，我决定把文字聚焦于对我的示例代码的解释。我将对我今天要介绍的设计模式概念进行一些简单明了的陈述，但同时为了能够让你更好地理解我所分享的技术，希望你可以认真看看我的代码和注释。毕竟作为一名程序员，如果你只能谈论代码而不能编写代码，那你可能会在很多面试中失利 —— 因为你还不够硬核。
+在这次的教程中，我决定把文字聚焦于对示例代码的解释。我将对今天所要介绍的设计模式概念进行一些简单明了的陈述，但同时为了能够让你更好地理解我所分享的技术，希望你可以认真看看代码和注释。毕竟作为一名程序员，如果你只能谈论代码而不能编写代码，那你可能会在很多面试中失利 —— 因为你还不够硬核。
 
 You probably noticed in my definition of the behavioral design pattern that I’m following Apple’s [documentation convention](https://docs.swift.org/swift-book/LanguageGuide/ClassesAndStructures.html):
 
@@ -413,7 +423,7 @@ The memento design pattern is meant to capture, represent, and store the interna
 
 To keep things simple, I used iOS’s [`UserDefaults`](https://developer.apple.com/documentation/foundation/userdefaults) as the core of my instance state storage and recovery process.
 
-为了减少不必要的工作，我使用 iOS 系统提供的 `UserDefaults` 作为我存储和恢复实例状态的核心工具。
+为了简单起见，我使用 iOS 系统提供的 `UserDefaults` 作为我存储和恢复实例状态的核心工具。
 
 ### Use case for memento design pattern app
 
@@ -455,11 +465,11 @@ My memento code is straightforward. It provides the `Memento` protocol and proto
 
 Notice that I added `persist()` and `recover()` methods to the `Memento` protocol, which *must*be implemented by any class that adopts the `Memento` protocol. These methods provide developers with the opportunity to archive and de-archive `Memento` protocol-adopting class’s *specific* properties, *by name*. In other words, the elements of the `state` property of type `Dictionary<String, String>` can be matched one-to-one with the `Memento` protocol-adopting class’s properties. Each property name corresponds to a dictionary element key and each property value corresponds to the dictionary element’s value which matches said key. Just look at the code and you’ll understand.
 
-需要注意我为 `Memento` 协议加了一个 `persist()` 方法和一个 `recover()` 方法，任何遵循此协议的类都必须实现它们。这两个方法让开发者可以根据实际需要，通过名字来归档和解档某个遵循 `Memento` 协议的类中的特定属性。换句话说，`Memento` 中类型为 ``Dictionary<String, String>` 的 `state` 属性可以一对一地对应到某个遵循此协议的类中的属性，这些属性的名称对应字典中元素的 key，属性的值对应字典中元素的 value。相信你在看完具体的代码后肯定能完全理解。
+需要注意我为 `Memento` 协议加了一个 `persist()` 方法和一个 `recover()` 方法，任何遵循此协议的类都必须实现它们。这两个方法让开发者可以根据实际需要，通过名字来归档和解档某个遵循 `Memento` 协议的类中的特定属性。换句话说，`Memento` 中类型为 `Dictionary<String, String>` 的 `state` 属性可以一对一地对应到某个遵循此协议的类中的属性，这些属性的名称对应字典中元素的 key，属性的值对应字典中元素的 value。相信你在看完具体的代码后肯定能完全理解。
 
 Since the `persist()` and `recover()` methods *must* be implemented by any class that adopts the `Memento` protocol, properties of all access levels, e.g., `public`, `private`, and `fileprivate` are visible to, and accessible by, these methods.
 
-由于遵循 `Memento` 协议的类必须实现  `persist()` 和 `recover()` 方法，因此这两个方法必须可以访问所有可见的属性，无论它具有什么样的访问权限 ——  `public` 、`privatge`  还是  `fileprivate`。
+由于遵循 `Memento` 协议的类必须实现  `persist()` 和 `recover()` 方法，因此这两个方法必须可以访问所有可见的属性，无论它具有什么样的访问权限 ——  `public` 、`private`  还是  `fileprivate`。
 
 You may wonder why I made the `Memento` protocol class-only. I did so because of that horrible Swift compiler message, “Cannot use mutating member on immutable value: ‘self’ is immutable.” Discussing it is way beyond the scope of this tutorial, but if you’d like to torture yourself, read a great description of the issue [here](https://www.bignerdranch.com/blog/protocol-oriented-problems-and-the-immutable-self-error/).
 
