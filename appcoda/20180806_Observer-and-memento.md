@@ -1,14 +1,16 @@
 
-title: Swift 设计模式 #2： 观察者模式与备忘录模式
-date: 2018.08.06
+title: "Swift 设计模式 #2： 观察者模式与备忘录模式"
+date:
 tags: [Design Patterns]
 categories:[Swift]
 permalink: https://www.appcoda.com/design-pattern-behavorial/
 
+---
+
 原文链接=https://www.appcoda.com/design-pattern-behavorial/
 作者=ANDREW JAFFEE
-原文日期=2018.08.06
-译者=JOJO
+原文日期=2018-08-06
+译者=jojotov
 校对=
 定稿=
 
@@ -30,11 +32,11 @@ So developers have created an arsenal of best practices to manage complexity, li
 
 Design patterns are an extremely important tool with which developers can manage complexity. It’s best to conceptualize them as generally templated techniques, each tailored to solving a corresponding, recurring, and readily identifiable problem. Look at them as a list of best practices you would use for coding scenarios that you see over and over again, like how to create objects from a related family of objects without having to understand all the gory implementation details of that family. The whole point of design patterns is that they apply to commonly occurring scenarios. They’re reusable because they’re generalized. A specific example should help.
 
-对于开发者来说，设计模式是管理代码复杂度问题的一个尤其重要的工具。我们理解设计模式最好的办法，就是把设计模式概念化为 —— 有固定模版的通用技术，每一个设计模式的模版都是为一个常见且易于辨别的特定问题而量身打造的。你可以把设计模式看作是一系列最佳实践的集合，它们可以用于一些经常出现的编码场景：例如如何利用一系列有关联的对象创建出新的对象，并且不需要去理解原本那一系列对象中“又臭又长”的代码实现。设计模式最重要的意义是其可以应用于那些常见的场景。同时，由于设计模式都是已经创造出来的固定模式，拿来即用的特质令它具有很高的易用性。为了能更好的理解设计模式，我们来看一个例子：
+对于开发者来说，设计模式是管理代码复杂度问题的一个极其重要的工具。我们理解设计模式最好的办法，就是把设计模式概念化为 —— 有固定模版的通用技术，每个设计模式都旨在解决相应的一个反复出现且易于辨别的特定问题。你可以把设计模式看作是一系列最佳实践的集合，它们可以用于一些经常出现的编码场景：例如如何利用一系列有关联的对象创建出新的对象，并且不需要去理解原本那一系列对象中“又臭又长”的代码实现。设计模式最重要的意义是其可以应用于那些常见的场景。同时，由于设计模式都是已经创造出来的固定模式，拿来即用的特质令它具有很高的易用性。为了能更好的理解设计模式，我们来看一个例子：
 
 Design patterns are not specific to some use case like iterating over a Swift array of 11 integers (`Int`). For example, the GoF defined the *iterator* pattern to provide a common interface for traversing through all items in some collection without knowing the intricacies (i.e., type) of the collection. A design pattern is not programming language code. It is a set of guidelines or rule of thumb for solving a common software scenario.
 
-设计模式并不能解决一些非常具体的问题。例如 “如何在 Swift 中遍历一个包含 11 个整型（`Int`）的 数组”之类的的问题。我们从一个例子来更好地理解为什么设计模式不能解决此类具体问题 —— 为了给 “便捷地（例如不需要知道集合中元素的类型）遍历集合的所有元素” 提出通用的解决方案，GoF 定义了*迭代器*模式。因此，我们不能单纯地把设计模式当作某种语言的代码，它只是用于解决通用软件开发场景的规则和指引。
+设计模式并不能解决一些非常具体的问题。例如 “如何在 Swift 中遍历一个包含 11 个整型（`Int`）的 数组”之类的的问题。我们从一个例子来更好地理解为什么设计模式不能解决此类具体问题 —— GoF 定义了*迭代器*模式，为“便捷地遍历集合的所有元素，而不需要知道集合中元素的类型” 的问题提出通用的解决方案，。因此，我们不能单纯地把设计模式当作某种语言的代码，它只是用于解决通用软件开发场景的规则和指引。
 
 Remember that I discussed the [“Model-View-ViewModel” or “MVVM”](https://www.appcoda.com/mvvm-vs-mvc/) design pattern here on AppCoda — and of course the very well-known [“Model-View-Controller” or “MVC”](https://www.appcoda.com/mvvm-vs-mvc/) design pattern, long favored by Apple and many iOS developers.
 
@@ -151,6 +153,8 @@ import UIKit
  
 // Make notification names consistent and avoid stringly-typing.
 // Try to use constants instead of strings or numbers.
+// 定义通知名常量。
+// 使用常量作为通知名，不要使用字符串或者数字。
 extension Notification.Name {
     
     static let networkConnection = Notification.Name("networkConnection")
@@ -160,6 +164,7 @@ extension Notification.Name {
 }
  
 // Various network connection states -- made consistent.
+// 定义网络状态常量。
 enum NetworkConnectionStatus: String {
     
     case connected
@@ -171,6 +176,7 @@ enum NetworkConnectionStatus: String {
 }
  
 // The key to the notification's "userInfo" dictionary.
+// 定义 userInfo 中的 key 值。
 enum StatusKey: String {
     case networkStatusKey
 }
@@ -180,6 +186,9 @@ enum StatusKey: String {
 // on the status of some other, usually single, entity.
 // Adopters of this protocol SUBSCRIBE to and RECEIVE
 // notifications about that critical entity/resource.
+// 此协议定义了*观察者*的基本结构。
+// 观察者即一些实体的集合，它们的操作严格依赖于其他实体的状态。
+// 遵循此协议的实例会向某些重要的实体/资源*订阅*并*接收*通知。
 protocol ObserverProtocol {
     
     var statusValue: String { get set }
@@ -199,24 +208,36 @@ protocol ObserverProtocol {
 // they need to do when specific notifications are received.
 // This is basically an "abstract" class, not detectable
 // at compile time, but I felt this was an exceptional case.
+// 此模版类抽象如何*订阅*和*接受*重要实体/资源的通知的所有必要细节。
+// 此类提供了一个钩子方法（handleNotification()），
+// 所有的子类可以通过此方法在接收到特定通知时进行各种需要的操作。
+// 此类基为一个*抽象*类，并不会在编译时被检测，但这似乎是一个异常场景。
 class Observer: ObserverProtocol {
     
     // This specific state reported by "notificationOfInterest."
     // I use String for maximum portability. Yeah, yeah...
     // stringly-typed...
+    // 此变量与 notificationOfInterest 通知关联。
+    // 使用字符串以尽可能满足需要。
     var statusValue: String
     // The key to the notification's "userInfo" dictionary, with
     // which we can read the specific state and store in "statusValue."
     // I use String for maximum portability. Yeah, yeah...
     // stringly-typed...
+    // 通知的 userInfo 中的 key 值，
+    // 通过此 key 值读取到特定的状态值并存储到 statusValue 变量。
+    // 使用字符串以尽可能满足需要。
     let statusKey: String
     // The name of the notification this class has registered
     // to receive whenever messages are broadcast.
+    // 此类所注册的通知名。
     let notificationOfInterest: Notification.Name
     
     // Initializer which registers/subscribes/listens for a specific
     // notification and then watches for a specific state as reported
     // by notifications when received.
+    // 通过传入的通知名和需要观察的状态的 key 值进行初始化。
+    // 初始化时会注册/订阅/监听特定的通知并观察特定的状态。
     init(statusKey: StatusKey, notification: Notification.Name) {
         
         self.statusValue = "N/A"
@@ -230,6 +251,8 @@ class Observer: ObserverProtocol {
     // all notifications with the name stored in "notificationOfInterest."
     // Whenever one of those notifications is received, the
     // "receiveNotification(_:)" method is called.
+    // 向 NotificationCenter 注册 self(this) 来接收所有存储在 notificationOfInterest 中的通知。
+    // 当接收到任意一个注册的通知时，会调用 receiveNotification(_:) 方法。
     func subscribe() {
         NotificationCenter.default.addObserver(self, selector: #selector(receiveNotification(_:)), name: notificationOfInterest, object: nil)
     }
@@ -237,6 +260,8 @@ class Observer: ObserverProtocol {
     // It's a good idea to un-register from notifications when we no
     // longer need to listen, but this is more of a historic curiosity
     // as, since iOS 9.0, the OS does some type of cleanup.
+    // 在不需要监听时注销所有已注册的通知是一个不错的做法，
+    // 但这主要是由于历史原因造成的，iOS 9.0 之后 OS 系统会自动做一些清理。
     func unsubscribe() {
         NotificationCenter.default.removeObserver(self, name: notificationOfInterest, object: nil)
     }
@@ -246,6 +271,9 @@ class Observer: ObserverProtocol {
     // state of that critical resource we're observing changes.
     // This method "must have one and only one argument (an instance
     // of NSNotification)."
+    // 在任意一个 notificationOfInterest 所定义的通知接收到时调用。
+    // 在此方法中可以根据所观察的重要资源的改变进行任意操作。
+    // 此方法**必须有且仅有一个参数（NSNotification 实例）。**
     @objc func receiveNotification(_ notification: Notification) {
         
         if let userInfo = notification.userInfo, let status = userInfo[statusKey] as? String {
@@ -257,30 +285,38 @@ class Observer: ObserverProtocol {
             
         }
         
-    } // end func receiveNotification
+    } // end func receiveNotification 
+    // receiveNotification 方法结束
     
     // YOU MUST OVERRIDE THIS METHOD; YOU MUST SUBCLASS THIS CLASS.
     // I've MacGyvered this class into being "abstract" so you
     // can subclass and specialize as much as you want and not
     // have to worry about NotificationCenter details.
+    // **必须重写此方法；且必须继承此类**
+    // 我使用了些"技巧"来让此类达到抽象类的形式，因此你可以在子类中做其他任何事情而不需要关心关于 NotificationCenter 的细节。
     func handleNotification() {
         fatalError("ERROR: You must override the [handleNotification] method.")
     }
     
     // Be kind and stop tapping a resource (NotificationCenter)
     // when we don't need to anymore.
+    // 析构时取消对 Notification 的关联，此时已经不需要进行观察了。
     deinit {
         print("Observer unsubscribing from notifications.")
         unsubscribe()
     }
     
 } // end class Observer
+// Observer 类结束
  
 // An example of an observer, usually one of several
 // (many?) that are all listening for notifications
 // from some usually single critical resource. Notice that
 // it's brief and can serve as a model for creating
 // handlers for all sorts of notifications.
+// 一个具体观察者的例子。
+// 通常来说，会有一系列（许多？）的观察者都会监听一些单独且重要的资源发出的通知。
+// 需要注意此类已经简化了实现，并且可以作为所有通知的 handler 的模板。
 class NetworkConnectionHandler: Observer {
     
     var view: UIView
@@ -288,6 +324,7 @@ class NetworkConnectionHandler: Observer {
     // As long as you call "super.init" with valid
     // NotificationCenter-compatible values, you can
     // create whatever type of initializer you want.
+    // 你可以创建任意类型的构造器，只需要调用 super.init 并传入合法且可以配合 NotificationCenter 使用的通知。
     init(view: UIView) {
         
         self.view = view
@@ -298,6 +335,8 @@ class NetworkConnectionHandler: Observer {
     // YOU MUST OVERRIDE THIS METHOD, but that
     // gives you the chance to handle notifications
     // in whatever way you deem fit.
+    // **必须重写此方法**
+    // 此方法中可以加入任何处理通知的逻辑。
     override func handleNotification() {
         
         if statusValue == NetworkConnectionStatus.connected.rawValue {
@@ -308,13 +347,17 @@ class NetworkConnectionHandler: Observer {
         }
         
     } // end func handleNotification()
+    // handleNotification() 结束
     
 } // end class NetworkConnectionHandler
+// NetworkConnectionHandler 结束
  
 // An template for a subject, usually a single
 // critical resource, that broadcasts notifications
 // about a change in its state to many
 // subscribers that depend on that resource.
+// 一个被观察者的模板。
+// 通常被观察者都是一些重要资源，在其自身某些状态发生改变时会广播通知给所有订阅者。
 protocol ObservedProtocol {
     var statusKey: StatusKey { get }
     var notification: Notification.Name { get }
@@ -324,6 +367,8 @@ protocol ObservedProtocol {
 // When an adopter of this ObservedProtocol
 // changes status, it notifies ALL subsribed
 // observers. It BROADCASTS to ALL SUBSCRIBERS.
+// 在任意遵循 ObservedProtocol 示例的某些状态发生改变时，会通知*所有*已订阅的观察者。
+// **向所有订阅者广播**
 extension ObservedProtocol {
  
     func notifyObservers(about changeTo: String) -> Void {
@@ -331,8 +376,9 @@ extension ObservedProtocol {
     }
     
 } // end extension ObservedProtocol
+// ObservedProtocol 扩展结束
 ```
-
+3
 I had intended to put most of the observer’s notification handling logic into an extension of `ObserverProtocol` but ran into `@objc` when setting my `#selector`, then thought about using the block-based version of [`addObserver(forName:object:queue:using:)`](https://developer.apple.com/documentation/foundation/notificationcenter/1411723-addobserver), then passing in a notification handler closure, blah, blah, blah… I decided that my notification handling code would be much more intelligible and educational as an abstract class.
 
 我把大部分关于观察者的通知处理逻辑放在了 `ObserverProtocol` 的扩展当中，并且这段逻辑会在一个 `@objc` 修饰的方法中运行（此方法同时会设置为通知的 `#selector` 的方法）。作为虚类中的方法，相较于使用基于 block 的 [`addObserver(forName:object:queue:using:)`](https://developer.apple.com/documentation/foundation/notificationcenter/1411723-addobserver) 并把处理通知的闭包传进去，使用 selector 可以让这段通知处理代码显得更加容易理解以及更加适合教学。
@@ -354,6 +400,9 @@ import UIKit
 // WHOLE APP whom are interested in receiving those notifications.
 // Notice how little this class needs to do to gain
 // notification capability?
+// 此 view controller 遵循 ObservedProtocol 协议，因此在*整个应用期间*
+// 其可以通过 NotificationCenter 向*任意*有意接收的实体广播通知。
+// 可以看到这个类仅仅需要很少量的代码便可以实现通知的功能。
 class ViewController: UIViewController, ObservedProtocol {
     
     @IBOutlet weak var topBox: UIView!
@@ -363,11 +412,13 @@ class ViewController: UIViewController, ObservedProtocol {
     // Mock up three entities whom are dependent upon a
     // critical resource: network connectivity. They need
     // to observe the status of the critical resource.
+    // Mock 一些负责观察网络状况的实体对象。
     var networkConnectionHandler0: NetworkConnectionHandler?
     var networkConnectionHandler1: NetworkConnectionHandler?
     var networkConnectionHandler2: NetworkConnectionHandler?
     
     // ObservedProtocol conformance -- two properties.
+    // 遵循 ObservedProtocol 的两个属性。
     let statusKey: StatusKey = StatusKey.networkStatusKey
     let notification: Notification.Name = .networkConnection
     
@@ -377,6 +428,7 @@ class ViewController: UIViewController, ObservedProtocol {
         
         // Here are three entities now listening for notifications
         // from the enclosing ViewController class.
+        // 初始化负责监听的实体对象。
         networkConnectionHandler0 = NetworkConnectionHandler(view: topBox)
         networkConnectionHandler1 = NetworkConnectionHandler(view: middleBox)
         networkConnectionHandler2 = NetworkConnectionHandler(view: bottomBox)
@@ -393,6 +445,9 @@ class ViewController: UIViewController, ObservedProtocol {
     // When we have a network connection, all interested
     // listeners are informed. When network access is lost,
     // all interested listeners are informed.
+    // Mock 一个可以改变状态的重要资源。
+    // 此处模拟此 ViewController 可以检测网络连接状况，
+    // 当网络可以连接或者网络连接丢失时，通知所有有兴趣的监听者。
     @IBAction func switchChanged(_ sender: Any) {
         
         let swtich:UISwitch = sender as! UISwitch
@@ -405,8 +460,10 @@ class ViewController: UIViewController, ObservedProtocol {
         }
         
     } // end func switchChanged
+    // switchChanged 函数结束
     
 } // end class ViewController
+// ViewController 类结束
 ```
 
 ## The *memento* design pattern
@@ -415,11 +472,11 @@ class ViewController: UIViewController, ObservedProtocol {
 
 Most iOS developers are familiar with the memento pattern. Think of iOS facilities for [archives and serialization](https://developer.apple.com/documentation/foundation/archives_and_serialization) which allow you to “Convert objects and values to and from property list, JSON, and other flat binary representations.” Think of the iOS [state preservation and restoration](https://developer.apple.com/documentation/uikit/view_controllers/preserving_your_app_s_ui_across_launches)feature, which remembers and then returns “your app to its previous state after it is terminated by the system.”
 
-大部分 iOS 开发者对备忘录模式都很熟悉。回忆一下 iOS 中十分便利的[归档和序列化功能](https://developer.apple.com/documentation/foundation/archives_and_serialization)，让你能够 “在对象和 plist、JSON 或者其他二进制形式的值之间相互转换”。再回忆一下 iOS 中的[状态保存和恢复功能](https://developer.apple.com/documentation/uikit/view_controllers/preserving_your_app_s_ui_across_launches)，它能够记住你的应用被系统强制杀死时的状态，并在之后恢复此状态。
+大部分 iOS 开发者对备忘录模式都很熟悉。回忆一下 iOS 中十分便利的[归档和序列化功能](https://developer.apple.com/documentation/foundation/archives_and_serialization)，让你能够 “在对象和基本数据类型在 plist、JSON 和其他二进制形式之间自由转换”。再回忆一下 iOS 中的[状态保存和恢复功能](https://developer.apple.com/documentation/uikit/view_controllers/preserving_your_app_s_ui_across_launches)，它能够记住你的应用被系统强制杀死时的状态，并在之后恢复此状态。
 
 The memento design pattern is meant to capture, represent, and store the internal state of an instance at a specific point in time and then allow you to find that instance’s state representation at a later time and restore it. When you restore the state of an instance, it should exactly reflect it’s state at the time of capture. While this may sound obvious, you should ensure that all instance property access levels should be respected during capture and restoration, e.g., `public` data should be restored to `public` properties and `private` data should be restored to `private`properties.
 
-备忘录模式可以理解为在某个时刻捕捉、展示以及储存任意实例的内部状态，同时允许你可以在随后的时间内查找这些保存下来的状态并恢复它。当你恢复一个实例的某个状态时，它应当完全反映出这个实例在被捕捉时的状态。显然，要达到此效果，你必须保证所有实例属性的访问权限在捕捉和恢复时都是一样的 —— 例如，`public` 的数据应恢复为 `public` 的属性，`private`  的数据应恢复为`private` 的属性。
+备忘录模式可以理解为在某个时刻捕捉、展示以及储存任意实例的内部状态，同时允许你可以在随后的时间内查找这些保存下来的状态并恢复它。当你恢复一个实例的某个状态时，它应当完全反映出这个实例在被捕捉时的状态。显然，要达到此效果，你必须保证所有实例属性的访问权限在捕捉和恢复时都是一样的 —— 例如，`public` 的数据应恢复为 `public` 的属性，`private`  的数据应恢复为 `private` 的属性。
 
 To keep things simple, I used iOS’s [`UserDefaults`](https://developer.apple.com/documentation/foundation/userdefaults) as the core of my instance state storage and recovery process.
 
@@ -435,7 +492,7 @@ While I understand that iOS already has facilities for archiving and serializati
 
 My memento example project, available on [GitHub](https://github.com/appcoda/Memento-Pattern-Swift), showcases how a `User` class instance’s state, with `firstName`, `lastName`, and `age` properties, can be persisted to `UserDefaults` and then later recovered. At first, no `User` instance is available to recover, but then I enter one, archive it, and then recover it, as shown here:
 
-你可以在 Github 上找到我的[示例项目](https://github.com/appcoda/Memento-Pattern-Swift)。这个项目展示了一个包含`firstName`、`lastName`  和 `age` 属性的 `User` 类实例保存在 `UserDefaults` 中，并随后从 `UserDefaults` 恢复的过程。如同下面的效果一样，一开始，并没有任何 `User` 实例提供给我进行恢复，随后我输入了一个并把它归档，然后再恢复它：
+你可以在 Github 上找到我的 [示例项目](https://github.com/appcoda/Memento-Pattern-Swift)。这个项目展示了一个包含`firstName`、`lastName`  和 `age` 属性的 `User` 类实例保存在 `UserDefaults` 中，并随后从 `UserDefaults` 恢复的过程。如同下面的效果一样，一开始，并没有任何 `User` 实例提供给我进行恢复，随后我输入了一个并把它归档，然后再恢复它：
 
 ![MementoDemoApp](https://www.appcoda.com/wp-content/uploads/2018/08/MementoDemoApp.gif)
 
@@ -485,32 +542,40 @@ import Foundation
 // I've only limited this protocol to reference types because of the
 // "Cannot use mutating member on immutable value: ‘self’ is immutable"
 // conundrum.
+// 由于"Cannot use mutating member on immutable value: ‘self’ is immutable"报错问题，
+// 此协议定义为类协议，仅适用于引用类型。
 protocol Memento : class {
     
     // Key for accessing the "state" property
     // from UserDefaults.
+    // 访问 UserDefaults 中 state 属性的 key 值。
     var stateName: String { get }
     
     // Current state of adopting class -- all
     // property names (keys) and property values.
+    // 存储遵循此协议的类当前状态下的所有属性名（key）和属性值。
     var state: Dictionary<String, String> { get set }
     
     // Save "state" property with key as specified
     // in "stateName" into UserDefaults ("generic" save).
+    // 以特定的 stateName 为 key 将 state 属性存入 UserDefaults 中。
     func save()
     
     // Retrieve "state" property using key as specified
     // in "stateName" from UserDefaults ("generic" restore).
+    // 以特定的 stateName 为 key 从 UserDefaults 中读取 state。
     func restore()
     
     // Customized, "specific" save of "state" dictionary with
     // keys corresponding to member properties of adopting
     // class, and save of each property value (class-specific).
+    // 可自定义，以特定方式把遵循此协议的类的属性存储到 state 字典。
     func persist()
     
     // Customized, "specific" retrieval of "state" dictionary using
     // keys corresponding to member properties of adopting
     // class, and retrieval of each property value  (class-specific).
+   // 可自定义，以特定方式从 state 字典读取属性。
     func recover()
     
     // Print all adopting class's member properties by
@@ -519,18 +584,25 @@ protocol Memento : class {
     //
     // Property 1 name (key): property 1 value
     // Property 2 name (key): property 2 value ...
+    // 遍历 state 字典并打印所有成员属性，格式如下：
+    // 
+    // 属性 1 名字（key）：属性 1 的值
+    // 属性 2 名字（key）：属性 2 的值
     func show()
     
 } // end protocol Memento
+// Memento 协议结束
  
 extension Memento {
     
     // Save state into dictionary archived on disk.
+    // 保存 state 到磁盘中。
     func save() {
         UserDefaults.standard.set(state, forKey: stateName)
     }
     
     // Read state into dictionary archived on disk.
+    // 从磁盘中读取 state。
     func restore() {
         
         if let dictionary = UserDefaults.standard.object(forKey: stateName) as! Dictionary<String, String>? {
@@ -541,9 +613,11 @@ extension Memento {
         }
         
     } // end func restore()
+    // restore() 函数结束
     
     // Storing state in dictionary makes display
     // of object state so easy and intuitive.
+    // 以字典的形式保存当前状态可以很方便地进行可视化输出。
     func show() {
         
         var line = ""
@@ -563,21 +637,27 @@ extension Memento {
         }
             
     } // end func show()
+    // show() 函数结束
     
 } // end extension Memento
+// Memento 扩展结束
  
 // By adopting the Memento protocol, we can, with relative
 // ease, save the state of an entire class to persistant
 // storage and then retrieve that state at a later time, i.e.,
 // across different instances of this app running.
+// 通过遵循 Memento 协议，任何类都可以方便地在整个应有运行期间
+// 保存其完整状态，并能随后任意时间进行读取。
 class User: Memento {
     
     // These two properties are required by Memento.
+    // Memento 必须遵循的属性。
     let stateName: String
     var state: Dictionary<String, String>
     
     // These properties are specific to a class that
     // represents some kind of system user account.
+    // 此类独有的几个属性，用于保存系统用户账号。
     var firstName: String
     var lastName: String
     var age: String
@@ -585,6 +665,8 @@ class User: Memento {
     // Initializer for persisting a new user to disk, or for
     // updating an existing user. The key value used for accessing
     // persistent storage is property "stateName."
+    // 此构造器可用于保存新用户到磁盘，或者更新一个现有的用户。
+    // 持久化储存所用的 key 值为 stateName 属性。
     init(firstName: String, lastName: String, age: String, stateName: String) {
         
         self.firstName = firstName
@@ -597,10 +679,13 @@ class User: Memento {
         persist()
         
     } // end init(firstName...
+    // 构造器定义结束
     
     // Initializer for retrieving a user from disk, if one
     // exists. The key value used for retrieving state from
     // persistent storage is property "stateName."
+    // 此构造器可以从磁盘中读取出一个已存在的用户信息。
+    // 读取所使用的 key 值为 stateName 属性。
     init(stateName: String) {
         
         self.stateName = stateName
@@ -613,11 +698,14 @@ class User: Memento {
         recover()
         
     } // end init(stateName...
+    // 构造器定义结束
  
     // Save the user's properties to persistent storage.
     // We intuitively save each property value by making
     // the keys in the dictionary correspond one-to-one with
     // this class's property names.
+    // 持久化存储用户属性。
+    // 此处很直观地将每个属性一对一地以"属性名-属性值"的形式存入字典中。
     func persist() {
         
         state["firstName"] = firstName
@@ -627,12 +715,16 @@ class User: Memento {
         save() // leverage protocol extension
         
     } // end func persist()
+    // persist() 函数结束
     
     // Read existing user's properties from persistent storage.
     // After retrieving the "state" dictionary from UserDefaults,
     // we easily restore each property value because
     // the keys in the dictionary correspond one-to-one with
     // this class's property names.
+    // 读取已存储的用户属性。
+    // 从 UserDefaults 中读取了 state 字典后
+    // 会简单地以属性名为 key 从字典中读取出属性值。
     func recover() {
         
         restore() // leverage protocol extension
@@ -649,8 +741,10 @@ class User: Memento {
         }
         
     } // end func recover
+    // recover() 函数结束
     
 } // end class User
+// user 类结束
 ```
 
 Here’s the code for implementing the memento design pattern use case I described earlier (archiving and de-archiving an instance of class `User`), as found in my sample app as file `ViewController.swift`:
@@ -680,6 +774,9 @@ class ViewController: UIViewController {
     // "User" class instance properties to UserDefaults
     // based on stateName property value of "userKey" (but
     // use whatever lights your fire).
+    // "保存用户" 按钮按下时调用此方法。
+    // 以 "userKey" 作为 stateName 的值将 User 类实例的属性
+    // 保存到 UserDefaults 中。
     @IBAction func saveUserTapped(_ sender: Any) {
         
         if firstNameTextField.text != "" &&
@@ -695,11 +792,15 @@ class ViewController: UIViewController {
         }
         
     } // end func saveUserTapped
+    // saveUserTapped 函数结束
     
     // Called when "Restore User" button is tapped. Retrieves
     // "User" class instance properties from UserDefaults
     // based on stateName property value of "userKey," if
     // a key/value pair with key "userKey" exists.
+    // 在"恢复用户"按钮按下时调用此方法。
+    // 以 "userKey" 作为 stateName 的值将 User 类实例的属性
+    // 从 UserDefaults 中读取出来。
     @IBAction func restoreUserTapped(_ sender: Any) {
         
         let user = User(stateName: "userKey")
@@ -711,6 +812,7 @@ class ViewController: UIViewController {
     }
     
 } // end class ViewController
+// ViewController 类结束
 ```
 
 ## Conclusion
