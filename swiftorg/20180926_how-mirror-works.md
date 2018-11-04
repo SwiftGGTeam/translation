@@ -55,7 +55,7 @@ intptr_t swift_reflectionMirror_count(OpaqueValue *value,
                                       const Metadata *T) {
 ```
 
-`SWIFT_CC(swift)` 告诉编译器这个函数约定在 Swift 中调用而不是 C/C++ 中。`SWIFT_RUNTIME_STDLIB_INTERFACE` 标记这是个函数是 Swift 侧的接口一部分，并且有 `extern "C"` 的作用从而允许 C++ 的名字修饰，并确定这个函数会有在 Swift 侧有预期的符号。C++ 的参数会特意去匹配在 Swift 中声明的函数调用。当 Swift 调用 `_getChildCount` 时，C++ 会用包含的 Swift 值指针的 `value` ，包含类型参数的 `type` ， 包含类型相应的范型 `<T>` 的 `T` ，去调用此函数。
+`SWIFT_CC(swift)` 会告诉编译器这个函数使用的是 Swift 的调用约定，而不是 C/C++ 的。`SWIFT_RUNTIME_STDLIB_INTERFACE` 标记这是个函数，在 Swift 侧的一部分接口中，而且它还有标记为 `extern "C"` 的作用，允许 C++ 的名字修饰，并确定它会有在 Swift 侧有预期的符号。同时，C++ 的参数会去特意匹配在 Swift 中声明的函数调用。当 Swift 调用 `_getChildCount` 时，C++ 会用包含的 Swift 值指针的 `value`，包含类型参数的 `type`，包含类型相应的范型 `<T>` 的 `T`，来调用此函数。
 
 整个 `Mirror` 的在 Swift 和 C++ 之间的接口由以下函数组成：
 
