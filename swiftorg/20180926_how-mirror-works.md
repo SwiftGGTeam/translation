@@ -25,19 +25,19 @@ keywords: swift, mirror
 
 ## 接口
 
-`Mirror(reflecting:)` 初始化方法可以接受任意值，返回结果是一个提供该值子元素集合 `Children` 的相关信息的实例。一个 `Child` 由可选的标签和值的键值对构成。可以在编译期且不用知道任何类型信息情况下，在 `Child` 的上用 `Mirror` 去遍历整个对象的层级视图。
+`Mirror(reflecting:)` 初始化方法可以接受任意值，返回结果是一个提供该值子元素集合 `Children` 的相关信息的实例。一个 `Child` 由可选的标签和值构成。可以在编译期且不用知道任何类型信息情况下，在 `Child` 的值上用 `Mirror` 去遍历整个对象的层级视图。
 
 `Mirror` 允许类型用遵循 `CustomReflectable` 协议的方式提供一个自定义的表示方式。这给那些想表示得比内建形式更友好的类型提供一种有效的方法。 比如 `Array` 类型遵守 `CustomReflectable` 协议并且暴露其中的元素为无标签的 `Children`。`Dictionary` 使用这种方法暴露其中的键值对为带标签的 `Children`。
 
-每一种类型，`Mirror` 用一些魔法去生成一个基于其中的实际子元素的 `Children` 集合。对于结构体和类，`Children` 为其中储存得属性值。对于元组，`Children` 为元组的子元素。枚举则是枚举的 case 和其关联的值（如果有的话）。
+对于其他类型，`Mirror` 用魔法去返回一个基于其中的实际子元素的 `Children` 集合。对于结构体和类，`Children` 为其中储存的属性值。对于元组，`Children` 为元组的子元素。枚举则是枚举的 case 和其关联的值（如果有的话）。
 
 这些神奇的魔法是怎么工作的呢？让我们一起来了解一下。
 
 ## 代码结构
 
-反射的 API 有一部分是用 Swift 实现的，有一部分是用 C++ 实现的。Swift 更适合用在实现更 Swift 的接口，并让很多任务变得更简单。Swift 的运行时的底层是使用 C++ 实现的，但是在 Swift 中不能直接访问 C++ 的类，所以有一个 C 的连接层。反射的 Swift 实现在 [ReflectionMirror.swift](https://github.com/apple/swift/blob/master/stdlib/public/core/ReflectionMirror.swift)，C++ 实现在 [ReflectionMirror.mm](https://github.com/apple/swift/blob/master/stdlib/public/runtime/ReflectionMirror.mm)。
+反射的 API 有一部分是用 Swift 实现的，另一部分是用 C++ 实现的。Swift 更适合用在实现更 Swift 的接口，并让很多任务变得更简单。Swift 的运行时的底层是使用 C++ 实现的，但是在 Swift 中不能直接访问 C++ 的类，所以有一个 C 的连接层。反射的 Swift 实现在 [ReflectionMirror.swift](https://github.com/apple/swift/blob/master/stdlib/public/core/ReflectionMirror.swift)，C++ 实现在 [ReflectionMirror.mm](https://github.com/apple/swift/blob/master/stdlib/public/runtime/ReflectionMirror.mm)。
 
-这两部分实现通过一小组暴露给 Swift 的 C++ 函数连接起来。这些函数在 Swift 中被直接声明成指定的自定义符号，而这些名字的 C++ 函数会特意实现成可以被 Swift 直接调用，而不是使用 Swift 生成的 C 桥接层。这两部分的代码可以在不关心桥接机制会在幕后如何处理传递值的情况下交互，但仍需要准确的知道 Swift 应该如何传递参数和返回值。除非你使用需要它的运行时代码，否则别私底下尝试这些。
+这两者通过一小组暴露给 Swift 的 C++ 函数进行通信的。与其使用 Swift 生成的 C 桥接层，不如将这些函数在 Swift 中直接声明成指定的自定义符号，而这些名字的 C++ 函数则专门实现为可以被 Swift 直接调用的方式。这两部分的代码可以在不关心桥接机制会在幕后如何处理传递值的情况下交互，但仍需要准确的知道 Swift 应该如何传递参数和返回值。除非你在使用需要它的运行时代码，否则别轻易尝试这些。
 
 举个例子，让我们看下在 `ReflectionMirror.swift` 中的 `_getChildCount` 函数：
 
@@ -46,7 +46,7 @@ keywords: swift, mirror
 internal func _getChildCount<T>(_: T, type: Any.Type) -> Int
 ```
 
-`@_silgen_name` 修饰符会通知 Swift 编译器将这个函数映射成 `swift_reflectionMirror_count` 符号，取代 Swift 通常对应的 `_getChildCount` 名字修饰。需要注意的是，最前面的下划线表示这个修饰符是被保留在标准库中的。在 C++ 这边，这个函数是这样的：
+`@_silgen_name` 修饰符会通知 Swift 编译器将这个函数映射成 `swift_reflectionMirror_count` 符号，而不是 Swift 通常对应到的 `_getChildCount` 方法名修饰。需要注意的是，最前面的下划线表示这个修饰符是被保留在标准库中的。在 C++ 这边，这个函数是这样的：
 
 ```c++
 SWIFT_CC(swift) SWIFT_RUNTIME_STDLIB_INTERFACE
@@ -55,9 +55,9 @@ intptr_t swift_reflectionMirror_count(OpaqueValue *value,
                                       const Metadata *T) {
 ```
 
-`SWIFT_CC(swift)` 会告诉编译器这个函数使用的是 Swift 的调用约定，而不是 C/C++ 的。`SWIFT_RUNTIME_STDLIB_INTERFACE` 标记这是个函数，在 Swift 侧的一部分接口中，而且它还有标记为 `extern "C"` 的作用，允许 C++ 的名字修饰，并确定它会有在 Swift 侧有预期的符号。同时，C++ 的参数会去特意匹配在 Swift 中声明的函数调用。当 Swift 调用 `_getChildCount` 时，C++ 会用包含的 Swift 值指针的 `value`，包含类型参数的 `type`，包含类型相应的范型 `<T>` 的 `T`，来调用此函数。
+`SWIFT_CC(swift)` 会告诉编译器这个函数使用的是 Swift 的调用约定，而不是 C/C++ 的。`SWIFT_RUNTIME_STDLIB_INTERFACE` 标记这是个函数，在 Swift 侧的一部分接口中，而且它还有标记为 `extern "C"` 的作用从而避免 C++ 的方法名修饰，并确保它在 Swift 侧会有预期的符号。同时，C++ 的参数会去特意匹配在 Swift 中声明的函数调用。当 Swift 调用 `_getChildCount` 时，C++ 会用包含的 Swift 值指针的 `value`，包含类型参数的 `type`，包含类型相应的范型 `<T>` 的 `T` 的函数参数来调用此函数。
 
-整个 `Mirror` 的在 Swift 和 C++ 之间的接口由以下函数组成：
+`Mirror` 的在 Swift 和 C++ 之间的全部接口由以下函数组成：
 
 ```swift
 @_silgen_name("swift_reflectionMirror_normalizedType")
