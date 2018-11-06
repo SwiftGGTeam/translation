@@ -34,7 +34,7 @@ Swift 4.2 为哈希的实现带来了一些新的变化。在此之前，哈希�
 
 什么时候会想要这种数据结构呢？Medium 使用它们来 [跟踪博文的阅读状态](https://blog.medium.com/what-are-bloom-filters-1ec2a50c68ff)。必应使用它们做 [搜索索引](https://www.youtube.com/watch?v=80LKF2qph6I)。你可以使用它们来构建一个缓存，在无需访问数据库的情况下就能判断用户名是否有效（例如在 @-mention 中）。像服务器这样可能拥有巨大的规模，却不一定有巨大资源的场景中，它们会非常有用。
 
-（如果你之前做过图形方面的工作，可能好奇它是如何与 [高光过滤器](https://en.wikipedia.org/wiki/Bloom_(shader_effect)) 产生联系的。答案是没有联系。高光过滤器（bloom filters）是小写的 b ，而布隆过滤器（Bloom Filters）是由一个叫布隆的人命名的。完全是个巧合。）
+（如果你之前做过图形方面的工作，可能好奇它是如何与 [高光过滤器](https://en.wikipedia.org/wiki/Bloom_(shader_effect)) 产生联系的。答案是没有联系。高光过滤器（bloom filters）是小写的 b，而布隆过滤器（Bloom Filters）是由一个叫布隆的人命名的。完全是个巧合。）
 
 那它们是如何运作的呢？
 
