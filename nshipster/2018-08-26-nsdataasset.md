@@ -22,7 +22,7 @@ permalink: nshipster-nsdataasset
 
 有很多加速网络请求的技术：压缩和流技术、缓存和预加载、连接池和多路复用、延迟和后台运行。然而，还有一种比它们优先级更高，效果更好的优化策略：_不要在刚开始的地方发送请求_。
 
-在这个方面，App 凭借先下载后使用的特点，拥有传统网页所不具备的独特优势。在这一周的 NSHipster里，我们将展示如何以一种非传统的方式使用 Asset Catalog 来改善你的 App 的首次启动体验。
+在这个方面，App 凭借先下载后使用的特点，拥有传统网页所不具备的独特优势。在这一周的 NSHipster 里，我们将展示如何以一种非传统的方式使用 Asset Catalog 来改善你的 App 的首次启动体验。
 
 ---
 
@@ -130,7 +130,7 @@ Data set 通常无法从 Asset Catalog 的 App 瘦身特性中获益（例如，
 
 使用 Asset Catalog 存储和获取数据是非常简单的。真正困难 —— 并最终更重要 —— 的是保持数据的更新。
 
-使用 `curl`、`rsync`、`sftp`、Dropbox、BitTorrent、或 Filecoin 刷新数据。从一个 shell 脚本开始（如果你喜欢，可以在 Xcode Build Phase 中调用它）。将它添加到你的 `Makefile`、`Rakefile`、`Fastfile`，或者你的编译系统所要求的任何地方。将这个任务分配给 Jenkins、Travis 或者某个烦人的实习生。使用定制的 Slack integration 或者 Siri Shortcuts 触发它，这样你就可以用随意的一句 _"Hey Siri，在数据变得太旧之前更新一下"_，让你的同事大吃一惊。
+使用 `curl`、`rsync`、`sftp`、Dropbox、BitTorrent 或 Filecoin 刷新数据。从一个 shell 脚本开始（如果你喜欢，可以在 Xcode Build Phase 中调用它）。将它添加到你的 `Makefile`、`Rakefile`、`Fastfile`，或者你的编译系统所要求的任何地方。将这个任务分配给 Jenkins、Travis 或者某个烦人的实习生。使用定制的 Slack integration 或者 Siri Shortcuts 触发它，这样你就可以用随意的一句 _"Hey Siri，在数据变得太旧之前更新一下"_，让你的同事大吃一惊。
 
 **注意，当你决定同步你的数据时，一定要确保它是自动化的，而且是你发布过程的一部分。**
 
@@ -207,4 +207,4 @@ extension NSDataAsset {
 
 尽管你倾向于认为你的所有用户都享受着快速的、无处不在的 WiFi 和 LTE 网络，但这并不适用于所有人，也不适用于所有时段。
 
-花点时间看看你的 App 在启动时发出的网络请求，然后考虑哪些可能从预加载中受益。给人留下好的第一印象可能意味着你的App是被长期地积极地使用着，而不是几秒钟之后就被删除。
+花点时间看看你的 App 在启动时发出的网络请求，然后考虑哪些可能从预加载中受益。给人留下好的第一印象可能意味着你的 App 是被长期地积极地使用着，而不是几秒钟之后就被删除。
