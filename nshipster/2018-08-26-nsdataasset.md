@@ -1,5 +1,5 @@
-title: NSData​Asset
-date:
+title: "NSDataAsset"
+date:2018-11-12
 tags: [Swift, NSHipster]
 categories: [Swift, NSHipster]
 permalink: nshipster-nsdataasset
@@ -9,10 +9,10 @@ permalink: nshipster-nsdataasset
 作者=Mattt
 原文日期=2018-08-26
 译者=雨谨
-校对=
-定稿=
+校对=wongzigii,numbbbbb
+定稿=Forelax
 
-# NSData​Asset
+<!--此处开始正文-->
 
 在 Web 的世界里，速度不是一种奢求；它事关生死。
 
@@ -23,6 +23,8 @@ permalink: nshipster-nsdataasset
 有很多加速网络请求的技术：压缩和流技术、缓存和预加载、连接池和多路复用、延迟和后台运行。然而，还有一种比它们优先级更高，效果更好的优化策略：_不要在刚开始的地方发送请求_。
 
 在这个方面，App 凭借先下载后使用的特点，拥有传统网页所不具备的独特优势。在这一周的 NSHipster 里，我们将展示如何以一种非传统的方式使用 Asset Catalog 来改善你的 App 的首次启动体验。
+
+<!--more-->
 
 ---
 
