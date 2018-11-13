@@ -118,7 +118,7 @@ let optional: Int? = nil
 print(optional.or(10)) // 打印 10
 ```
 
-### 默认闭包(Default Closure)
+### 默认闭包（Default Closure）
 
 默认闭包和默认值非常的相似，但它允许从闭包中返回默认值。
 
