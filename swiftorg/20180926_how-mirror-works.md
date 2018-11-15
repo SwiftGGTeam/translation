@@ -1,8 +1,8 @@
 title: "Mirror 的工作原理"
-date: 2018-09-26
+date: 2018-11-15
 tags: [Swift]
 categories: [Mike Ash, Swift]
-permalink: https://swift.org/blog/how-mirror-works/
+permalink: how-mirror-works
 keywords: swift, mirror
 
 ---
@@ -10,8 +10,8 @@ keywords: swift, mirror
 作者=Mike Ash
 原文日期=2018-09-26
 译者=Nemocdz
-校对=校对名
-定稿=定稿名
+校对=numbbbbb,小铁匠Linus
+定稿=Forelax
 
 <!--此处开始正文-->
 
@@ -182,7 +182,7 @@ if (i < 0 || (size_t)i > Tuple->NumElements)
 标签以一个用空格做间隔的列表存储，放在元数据的 `Labels` 字段中。这段代码查找列表中的第 i 个字符串：
 
 ```c++
-    // Determine whether there is a label.
+    // 确定是否有一个标签
     bool hasLabel = false;
     if (const char *labels = Tuple->Labels) {
       const char *space = strchr(labels, ' ');
