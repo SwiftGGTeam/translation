@@ -66,9 +66,9 @@ GoF 把他们提出的 23 种设计模式整理到了 3 种大的类别中：“
 
 我的观察者模式示例项目展示了这种广播类型的通信是如何工作的，你可以在 [Github 上找到它](https://github.com/appcoda/Observer-Pattern-Swift)。
 
-假设我们有一个工具来监视网络连接状况，并对已连接或未连接的状态作出响应。这个工具我们可以称之为广播者。为了实现此工具，你需要一个参与者遵循我提供的 `ObservedProtocol` 协议。虽然我知道这么做并不太符合苹果的 iOS Human Interface Guideline 的建议，但我为了更好地演示观察者模式，我需要一个足够重要的资源（网络状况）。
+假设我们有一个工具来监视网络连接状况，并对已连接或未连接的状态作出响应。这个工具我们可以称之为广播者。为了实现此工具，你需要一个参与者遵循我提供的 `ObservedProtocol` 协议。虽然我知道这么做并不太符合苹果的 iOS Human Interface Guideline 的建议，但我为了更好地演示观察者模式，我需要以网络状况作为仅有的一个关键资源。
 
-假设现在有许多个不同的观察者实例全都向被观察的对象订阅了关于网络连接状况的通知，例如一个图片下载类，一个通过  REST API 验证用户资格的登录业务实例，以及一个应用内浏览器。为了实现这些，你需要创建多个继承于我提供的 `Observer` 虚类（此基类同时遵循 `ObserverProtocol` 协议）的自定义子类。（我稍后会解释为何我会把我关于观察者的示例代码放在一个类中）。
+假设现在有许多个不同的观察者实例全都向被观察的对象订阅了关于网络连接状况的通知，例如一个图片下载类，一个通过 REST API 验证用户资格的登录业务实例，以及一个应用内浏览器。为了实现这些，你需要创建多个继承于我提供的 `Observer` 抽象类（此基类同时遵循 `ObserverProtocol` 协议）的自定义子类。（我稍后会解释为何我会把我关于观察者的示例代码放在一个类中）。
 
 为了实现我示例应用中的观察者们，我创建了一个 `NetworkConnectionHandler` 类。当这个类的具体实例接收到 `NetworkConnectionStatus.connected` 通知时，这些实例会把几个视图变成绿色；当接收到 `NetworkConnectionStatus.disconnected` 通知时，会把视图变成红色。
 
@@ -246,9 +246,9 @@ extension ObservedProtocol {
     
 } // ObservedProtocol 扩展结束
 ```
-我把大部分关于观察者的通知处理逻辑放在了 `ObserverProtocol` 的扩展当中，并且这段逻辑会在一个 `@objc` 修饰的方法中运行（此方法同时会设置为通知的 `#selector` 的方法）。作为虚类中的方法，相较于使用基于 block 的 [`addObserver(forName:object:queue:using:)`](https://developer.apple.com/documentation/foundation/notificationcenter/1411723-addobserver) 并把处理通知的闭包传进去，使用 selector 可以让这段通知处理代码显得更加容易理解以及更加适合教学。
+我把大部分关于观察者的通知处理逻辑放在了 `ObserverProtocol` 的扩展当中，并且这段逻辑会在一个 `@objc` 修饰的方法中运行（此方法同时会设置为通知的 `#selector` 的方法）。作为抽象类中的方法，相较于使用基于 block 的 [`addObserver(forName:object:queue:using:)`](https://developer.apple.com/documentation/foundation/notificationcenter/1411723-addobserver) 并把处理通知的闭包传进去，使用 selector 可以让这段通知处理代码显得更加容易理解以及更加适合教学。
 
-同时，我意识到 Swift 中并没有关于虚类的官方概念。因此，为了完成我解释观察者模式的教学目的，我强制使用者重写 `Observer` 的 `handleNotification()` 方法，以此来达到 “虚类” 的形态。如此以来，你可以注入任意的处理逻辑，让你的子类实例在接收到通知后有特定的行为。
+同时，我意识到 Swift 中并没有关于抽象类的官方概念。因此，为了完成我解释观察者模式的教学目的，我强制使用者重写 `Observer` 的 `handleNotification()` 方法，以此来达到 “抽象类” 的形态。如此以来，你可以注入任意的处理逻辑，让你的子类实例在接收到通知后有特定的行为。
 
 下面我将展示示例项目中的 `ViewController.swift` 文件，在这里你可以看到刚刚讨论过的  `Obesever.swift` 中的核心代码是如何使用的：
 
