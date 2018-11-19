@@ -57,7 +57,7 @@ override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
 
 逐字阅读文档后，感觉 `-pointInside:` 会在每一个子视图里被调用（用一个 for 循环），但这并不是完全正确的。
 
-感谢这个[读者](https://twitter.com/an0/status/1038254836016394240)。通过他在 `-hitTest:` 和 `-pointInside:` 中放置了断点的试验，我们知道 `-pointInside:` 会在 `self` 中调用（在有其余 guard 的情况下），而不是在每一个子视图中。 所以应该添加另外的 guard 语句，像下面这行代码一样：
+感谢这个[读者](https://twitter.com/an0/status/1038254836016394240)。通过他在 `-hitTest:` 和 `-pointInside:` 中放置了断点的试验，我们知道 `-pointInside:` 会在 `self` 中调用（在有上面那些 guard 的情况下），而不是在每一个子视图中。 所以应该添加另外的 guard 语句，像下面这行代码一样：
 
 ```swift
 guard self.point(inside: point, with: event) else { return nil }
