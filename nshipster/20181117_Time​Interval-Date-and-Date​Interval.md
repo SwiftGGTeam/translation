@@ -23,7 +23,7 @@ description: 本文介绍了 Foundation 框架中涉及 Date 时间的相关概�
 
 # 时间间隔，日期和日期间隔
 
-普拉多博物馆坐落在马德里市中心和萨拉曼卡区之间，距离广阔的 Buen Retiro 公园仅有几步之遥，这个博物馆吹逼说他们从很多欧洲有名画家那里搜集了各种珍藏画作。不过，在你参观期间，你是会很快厌倦那些 17 世纪西班牙君主私人定制的肖像画的，考虑下参观 1 楼最北端的房间 - Sala 002。在那里你可以找到[法国艺术家 Simon Vouet 的巴洛克时代画作](https://www.museodelprado.es/en/the-collection/art-work/time-defeated-by-hope-and-beauty/ebaeb191-f3ff-43b1-9207-fb36a3e5ad5a)。
+普拉多博物馆坐落在马德里市中心和萨拉曼卡区之间，距离广阔的 Buen Retiro 公园仅有几步之遥，这个博物馆吹逼说他们从很多欧洲有名画家那里搜集了各种珍藏画作。不过，在你参观期间，你是会很快厌倦那些 17 世纪西班牙君主私人定制的肖像画的，考虑下参观 1 楼最北端的房间 - Sala 002。在那里你可以找到[法国艺术家西蒙・乌伟的巴洛克时代画作](https://www.museodelprado.es/en/the-collection/art-work/time-defeated-by-hope-and-beauty/ebaeb191-f3ff-43b1-9207-fb36a3e5ad5a)。
 
 这不是你的问题，你会好奇为什么这对年轻女子气势汹汹的挥舞着一只铁钩和一柄长矛，站着威胁一个畏缩的老人，与此同时还有一群小天使在撕裂着老人的背。当然，这是个寓意啦。阅读旁边的解释牌，你会发现这画作的标题叫做 *Time defeated by Hope and Beauty*。那个老人代表时间。看到了他手中的沙漏和他脚下的长柄大镰刀了吗？
 
