@@ -35,11 +35,11 @@ description: 本文介绍了 Foundation 框架中涉及 Date 时间的相关概�
 
 ***
 
-秒是时间的基本单位。 也是唯一一个拥有固定时长的单位。
+秒是时间的基本单位。 也是唯一一个拥有固定时长的时间单位。
 
 月份的长短各不相同（9 月份有 30 天......），年份也是一样（以每 400 年为周期每第 71 个年头有 53 个周......）某些年份会多出一天（如果你思考一下就会发现闰年的命名是不合理的）从夏令时减去一小时保留下来的时间转化成了增加的天数（感谢，本杰明·富兰克林）。 这就是说我们没有引入闰秒这样的概念，不然就会多出很多奇怪的事情，比如一分钟有 61 秒，一个小时有 3601 秒，当然，两周就是 1209601 秒啦。
 
-`TimeInterval` （néeNSTimeInterval）是  `Double`  的一个别名，表示为以秒为单位的固定时长值。在处理连续时间段时问题，你会看到它有作为 APIs 的参数和返回值类型。 作为一个双精度浮点数，TimeInterval 可以代表分数一部分（但是对于超过毫秒精度的任何度量，你应该用其他方法来表示）。
+`TimeInterval` （néeNSTimeInterval）是  `Double`  的一个别名，表示为以秒为单位的固定时长数。在处理连续一段时间问题上，你会看到它有作为 APIs 的参数和返回值类型。 作为一个双精度浮点数，TimeInterval 可以代表分数一部分（但是对于超过毫秒精度的任何度量，你应该用其他方法来表示）。
 
 ## 日期和时间
 
@@ -94,9 +94,9 @@ calendar.dateInterval(of: .day,
 
 ## 计算日期间隔的交集
 
-在这个例子中，让我们回到普拉多博物馆来欣赏一下彼得·保羅·魯本斯的各种画作珍品——尤其[这幅栩栩如生的 Swift 编程之神](https://www.museodelprado.es/coleccion/obra-de-arte/eolo/e447dadb-b93f-4ce5-84e9-e6ae1d95c6cd)。
+在这个例子中，让我们回到普拉多博物馆来欣赏一下彼得·保罗·鲁本斯的各种画作珍品——尤其是[这幅栩栩如生的 Swift 编程之神](https://www.museodelprado.es/coleccion/obra-de-arte/eolo/e447dadb-b93f-4ce5-84e9-e6ae1d95c6cd)。
 
-彼得·保羅·魯本斯和西蒙・烏偉一样都有着属巴洛克式的传统画风。他们都是同时代下的画家，在 `DateInterval` 的帮助下，我们基本可以确定他们在艺术史上时间的重叠程度。
+鲁本斯和乌伟一样都有着巴洛克式的传统画风。他们都是同时代下的画家，在 `DateInterval` 的帮助下，我们几乎可以确定他们在艺术史上时间的重叠程度。
 
 ```swift
 import Foundation
@@ -104,7 +104,7 @@ import Foundation
 let calendar = Calendar.current
 
 // Simon Vouet
-// 西蒙・烏偉
+// 西蒙・乌伟
 // 9 January 1590 – 30 June 1649
 // 1590/01/09 - 1649/06/30
 let vouet =
@@ -114,7 +114,7 @@ let vouet =
                     DateComponents(year: 1649, month: 6, day: 30))!)
 
 // Peter Paul Rubens
-// 彼得·保羅·魯本斯
+// 彼得·保罗·鲁本斯
 // 28 June 1577 – 30 May 1640
 // 1577/06/28 - 1640/03/30
 let rubens =
