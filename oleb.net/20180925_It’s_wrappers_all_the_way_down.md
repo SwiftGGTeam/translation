@@ -138,7 +138,7 @@ struct ReversedCollection2<Base: BidirectionalCollection> {
 
 即便输入的字符串有好几兆字节（MB）长，在其上调用 `reversed()` 实际上也是免费的，因为 [`String`](https://developer.apple.com/documentation/swift/string) 使用了 [写时拷贝](https://en.wikipedia.org/wiki/Copy-on-write) 的机制。只有当某个数据被修改时，真实的字符串数据才会被拷贝。
 
-### 遵守 `Collection`
+### 遵守 `Collection` 协议
 
 然后，上面的代码在 `Reversed​Collection` 上调用了 `first​Index​(of:)` (`firstIndex(of:)` 也就是 [Swift 4.2](https://github.com/apple/swift-evolution/blob/master/proposals/0204-add-last-methods.md#detailed-design) 之前的 `index(of:)`)。`firstIndex(of:)` 是 [`Collection`](https://developer.apple.com/documentation/swift/collection) 协议的一部分，因此 `Reversed​Collection` 必须遵守 `Collection`。下面我们来详细过一遍这个约束的新实现。
 
@@ -191,7 +191,7 @@ extension ReversedCollection2: Collection {
 }
 ```
 
-顺便说一句，我们依赖于 `base​.index​(before:)`，因此 `Reversed​Collection` 的泛型参数必须是 `Bidirectional​Collection` 类型。一个纯 `Collection` 是没有 `index(before:)` 方法，因此也不能逆向遍历。
+顺便说一句，我们依赖于 `base​.index​(before:)`，因此 `Reversed​Collection` 的泛型参数必须是 `Bidirectional​Collection` 类型。一个纯 `Collection` 是没有 `index(before:)` 方法的，因此也不能逆向遍历。
 
 还有一点需要注意：一个 collection 的 `endIndex` 代表着 “最后一个元素的后一位” 的位置，而不是最后一个元素的位置。将 `base​.endIndex` 作为翻转的 collection 的 `startIndex`，我们实际上把所有翻转的 index 都向右移动了一位。这就是为什么在实现元素的下标访问时，我们是使用 `base.index(before: position.base)`，而非 `position.base`。
 
