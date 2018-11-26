@@ -1,20 +1,23 @@
-
 title: "Swift 设计模式 #2： 观察者模式与备忘录模式"
-date:
+date:2018-11-26
 tags: [Design Patterns]
 categories:[Swift]
-permalink: https://www.appcoda.com/design-pattern-behavorial/
+permalink: design-pattern-behavorial
 
 ---
 
 原文链接=https://www.appcoda.com/design-pattern-behavorial/
-作者=ANDREW JAFFEE
+作者=Andrew Jaffee
 原文日期=2018-08-06
 译者=jojotov
-校对=
-定稿=
+校对=Forelax,pmst
+定稿=Forelax
+
+<!--此处开始正文-->
 
 本次教程是 AppCoda [上周开启](https://www.appcoda.com/design-pattern-creational/) 的设计模式系列的第二期。在软件设计领域的四位大师级人物（GoF，又称“四人帮”或“Gang of Four”） —— Erich Gamma, Richard Helm, Ralph Johnson 和 John Vlissides 所著的 《设计模式：可复用面向对象软件的基础》一书中，首次对软件设计中总共 23 种设计模式进行了定义和归类，并对它们作了专业阐述。今天，我们将聚焦于其中两个行为型设计模式 —— “观察者模式” 和 “备忘录模式”。
+
+<!--more-->
 
 软件开发领域致力于对真实世界的场景进行建模，并期望能创造出一系列工具来提高人类对这些场景的理解与体验。与 10 年前相比，一些类似银行应用和辅助购物应用（如亚马逊或 eBay 的 iOS 客户端应用）的财务类工具的出现，无疑让顾客们的生活变得更加简单。当我们回顾软件开发的发展历程，定会感叹我们在软件开发领域上走过了漫长而又成功的道路。如今，软件应用的功能普遍变得强大且易用，但对于开发者来说，开发这些软件却变得 [越来越复杂](http://iosbrain.com/blog/2018/04/29/controlling-chaos-why-you-should-care-about-adding-error-checking-to-your-ios-apps/#chaos)。
 
@@ -32,7 +35,7 @@ permalink: https://www.appcoda.com/design-pattern-behavorial/
 
 虽然 GoF 关于设计模式的书已经被众多开发者视为圣经般的存在，但仍存在一些对其批判的声音。我们会在本文结尾的部分讨论这个问题。
 
-### 设计模式类别
+## 设计模式类别
 
 GoF 把他们提出的 23 种设计模式整理到了 3 种大的类别中：“创建型模式”、“结构型模式”以及“行为型模式”。本次的教程会讨论*行为型模式*类别中的两种设计模式。行为型模式的主要作用是对类和结构体（参与者）的行为赋予安全性、合理性，以及定义一些统一的规则、统一的的形式和最佳实践。对于整个应用中的参与者，我们都希望有一个良好的、统一的、并且可预测的行为。同时，我们不仅希望参与者本身拥有良好的行为，也希望不同的参与者之间的交互/通信可以拥有良好的行为。对于参与者的行为评估，其时机应该在编译之前以及编译时 —— 我通常把这段时间称之为“设计时间”，以及在运行时 —— 此时我们会有大量的类和结构体的实例在各司其职或与其他实例交互/通信。由于实例间的通信会导致软件复杂度的增加，因此制定一系列关于一致性、高效率和安全通信的规则是极为重要的，但与此同时，在构建每个单独的参与者时，这个概念不应以任何方式降低设计的质量。由于需要非常着重于行为，我们必须牢记一点 —— 在赋予参与者职责时必须使用一致的模式。
 
@@ -40,7 +43,7 @@ GoF 把他们提出的 23 种设计模式整理到了 3 种大的类别中：“
 
 当你讨论设计模式时，你应该把一致性当成最显而易见的基本概念。在 [上周的推送](https://www.appcoda.com/design-pattern-creational/) 中，我们着重讨论了一个概念：[高复杂度（封装）](http://iosbrain.com/blog/2017/02/26/intro-to-object-oriented-principles-in-swift-3-via-a-message-box-class-hierarchy/#advantages)。你必须把这个概念当作中心思想牢记于心，因为它会随着我们更深入地讨论设计模式而出现地越发频繁。举个例子，面向对象（OOP）中的众多类，可以在不需要开发者知道任何其内部实现的前提下，提供非常复杂、成熟且强大的功能。同样， Swift 的 [面向协议编程](https://www.appcoda.com/pop-vs-oop/) 也是一项对于控制复杂度来说极为重要的新技术。对开发者来说，想要管理好 [复杂度](http://iosbrain.com/blog/2018/01/02/understanding-swift-4-generics-and-applying-them-to-your-code/#complexity) 是一件异常困难的事情，但我们现在即将把这头野兽驯服！
 
-### 关于此教程的提醒
+## 关于此教程的提醒
 
 在这次的教程中，我决定把文字聚焦于对示例代码的解释。我将对今天所要介绍的设计模式概念进行一些简单明了的陈述，但同时为了能够让你更好地理解我所分享的技术，希望你可以认真看看代码和注释。毕竟作为一名程序员，如果你只能谈论代码而不能编写代码，那你可能会在很多面试中失利 —— 因为你还不够硬核。
 
