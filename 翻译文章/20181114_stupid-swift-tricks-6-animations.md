@@ -40,9 +40,9 @@ UIView.animate(withDuration: 1, animations:
 	something.removeFormSuperView()
 })
 ```
-但这只会在所有东西都是内连（inline）的情况下才会工作。在大型项目中，我们需要把复杂的任务拆解成小的方法。但问题就在这些方法中，像在上个例子中的 `doStuff()` ，我们无法在`completion` block 中添加代码。
+但这只会在所有东西都是内联（inline）的情况下才会工作。在大型项目中，我们需要把复杂的任务拆解成小的方法。但问题就在这些方法中，像在上个例子中的 `doStuff()`，我们无法在 `completion` block 中添加代码。
 
-我们也无法得知动画有多长（甚至都不知道有没有动画），所以如果我们没有办法简单地和动画时间之间同步（如在[一个音频编辑软件](http://www.wooji-juice.com/products/ferrite/)中让进度条同步前进）。
+我们也无法得知动画有多长（甚至都不知道有没有动画），所以如果我们没有办法简单地和动画时间之间同步（如在 [一个音频编辑软件](http://www.wooji-juice.com/products/ferrite/)中让进度条同步前进）。
 
 总的来说，我们无法获知关于动画的*信息*，他们仅仅是执行代码，进行或不进行动画，而不受我们控制。
 
@@ -51,7 +51,7 @@ UIView.animate(withDuration: 1, animations:
 ## 视图属性 Animator
 很长时间以来，我一直在改变代码中动画的写法。最开始我写了我自己的 `AnimationContext` 类来协助，后来苹果提供了他们功能相同的 `UIViewPropertyAnimator`，现在我会在所有可能的地方使用它。
 
-一般来说，我发现最有效的方法是写一个 “可动画” 的方法并显式接受一个 animator 参数：
+一般来说，我发现最有效的方法是写一个“可动画”的方法并显式接受一个 animator 参数：
 ```swift
 func doStuff(with animator: UIViewPropertyAnimator? = nil)
 {
@@ -107,13 +107,13 @@ func doStuff(with animator: UIViewPropertyAnimator? = nil)
 
 ## Optional 不是 `Nil` 的另一个叫法
 
-这个技巧隐藏在 `UIViewPropertyAnimator` 是 Optional 和 Optional 在 Swift 中的意义里面。
+`UIViewPropertyAnimator` 是 Optional，而诀窍就在 Optional 在 Swift 中的意义里面。
 
 有的时候人们会抱怨 Swift 的 Optional 非常烦人，因为在 Objective-C 中（Objective-C 中使用 `nil` 指针来替代 Swift 中的 Optional）你可以直接对指针调用方法。
 
 Objective-C 不会抱怨指针是不是 `nil`：如果指针非空，方法会直接被调用；如果是空指针，调用会被无声地忽略掉，不用程序员做其他的事情。
 
-我不同意这个意见。在 Swift 中，在你知道你在做什么的情况下，你只需要加一个 "`?`"，并不是一个很大的负担。但是由于有了 Swift 的 Optional，我们可以做更多事情。
+我不同意这个意见。在 Swift 中，在你知道你在做什么的情况下，你只需要加一个 `?`，并不是一个很大的负担。但是由于有了 Swift 的 Optional，我们可以做更多事情。
 
 因为在 Swift 中，Optional 是一个“真实的东西”，而不是“缺少的东西”。无论一个 Optional 的值是什么，就算是 `nil`，它也是一个枚举值，你可以对它调用方法，调用的方法也会被执行。[Swift 的枚举超级好用！](http://www.wooji-juice.com/blog/stupid-swift-tricks-5-enums)
 
