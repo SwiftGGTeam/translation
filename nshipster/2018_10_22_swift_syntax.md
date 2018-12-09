@@ -1,8 +1,8 @@
 title: "SwiftSyntax"
 date:
-tags:
-categories:
-permalink:
+tags:  [Swift, NSHipster]
+categories: [Swift, NSHipster]
+permalink: nshipster-swiftsyntax
 
 ---
 
