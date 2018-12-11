@@ -22,7 +22,7 @@ permalink: nshipster-swiftsyntax
 
 在写这篇文章时，SwiftSyntax 仍处于在开发中并进行 API 调整的阶段。不过目前你已经可以使用它对 Swift 代码进行一些编程工作。
 
-目前， [Swift Migrator](https://github.com/apple/swift/tree/master/lib/Migrator) 已经在使用 SwiftSyntax 了，并且在对内和对外层面都会对 SwiftSyntax 的接入进行不断的努力。
+目前，[Swift Migrator](https://github.com/apple/swift/tree/master/lib/Migrator) 已经在使用 SwiftSyntax 了，并且在对内和对外层面都会对 SwiftSyntax 的接入进行不断的努力。
 
 ## SwiftSyntax 如何工作？
 
@@ -30,7 +30,7 @@ permalink: nshipster-swiftsyntax
 
 ![](https://nshipster.com/assets/swift-compilation-diagram-8af7d0078f72cdaa8f50430e608f15a9d4214f5772439d2fd6904bb5a8a53c60.png)
 
-Swift 编译器的主要职责是把 Swift 代码转换为可执行的机器代码。整个过程可以划分为几个离散的步骤，一开始，[解析器](https://github.com/apple/swift/tree/master/lib/Parse)会生成一个抽象语法树（AST）。之后，语义分析器会进行工作并生成一个通过类型检查的 AST。至此步骤，代码会降低到 [Swift 中间层语言](https://github.com/apple/swift/blob/master/docs/SIL.rst)；随后 SIL 会继续转换并优化自身，降低为 [LLVM IR](http://llvm.org/docs/LangRef.html)，并最终编译为机器代码。
+Swift 编译器的主要职责是把 Swift 代码转换为可执行的机器代码。整个过程可以划分为几个离散的步骤，一开始，[解析器](https://github.com/apple/swift/tree/master/lib/Parse) 会生成一个抽象语法树（AST）。之后，语义分析器会进行工作并生成一个通过类型检查的 AST。至此步骤，代码会降低到 [Swift 中间层语言](https://github.com/apple/swift/blob/master/docs/SIL.rst)；随后 SIL 会继续转换并优化自身，降低为 [LLVM IR](http://llvm.org/docs/LangRef.html)，并最终编译为机器代码。
 
 对于我们的讨论来说，最重要的关键点是 SwiftSyntax 的操作目标是编译过程第一步所生成的 AST。但也由于这样，SwiftSyntax 无法告知你任何关于代码的语义或类型信息。
 
@@ -54,8 +54,7 @@ $ xcrun swiftc -frontend -emit-syntax ./One.swift
 
 运行的结果为一串 JSON 格式的 AST。当你用 JSON 格式来展示时，AST 的结构会表现的更加清晰：
 
-```JSON
-
+```
 {
     "kind": "SourceFile",
     "layout": [{
@@ -175,9 +174,9 @@ struct Example {
 
 *令人窒息的操作。*
 
-这绝不是为了取代  [GYB](https://nshipster.com/swift-gyb/) 来用于每天的代码生成。（事实上，[libSyntax](https://github.com/apple/swift/blob/master/lib/Syntax/SyntaxKind.cpp.gyb) 和  [SwiftSyntax](https://github.com/apple/swift-syntax/blob/master/Sources/SwiftSyntax/SyntaxKind.swift.gyb) 都使用了 `gyb` 来生成接口。
+这绝不是为了取代 [GYB](https://nshipster.com/swift-gyb/) 来用于每天的代码生成。（事实上，[libSyntax](https://github.com/apple/swift/blob/master/lib/Syntax/SyntaxKind.cpp.gyb) 和 [SwiftSyntax](https://github.com/apple/swift-syntax/blob/master/Sources/SwiftSyntax/SyntaxKind.swift.gyb) 都使用了 `gyb` 来生成接口。
 
-但这个接口在某些特殊的问题上却格外有用。例如，你或许会使用 SwiftSyntax 来实现一个 Swift 编译器的[模糊测试](https://en.wikipedia.org/wiki/Fuzzing)，使用它可以随机生成一个表面有效却实际上非常复杂的程序，以此来进行压力测试。
+但这个接口在某些特殊的问题上却格外有用。例如，你或许会使用 SwiftSyntax 来实现一个 Swift 编译器的 [模糊测试](https://en.wikipedia.org/wiki/Fuzzing)，使用它可以随机生成一个表面有效却实际上非常复杂的程序，以此来进行压力测试。
 
 ## 重写 Swift 代码
 
@@ -201,7 +200,7 @@ public class ZalgoRewriter: SyntaxRewriter {
 }
 ```
 
-[`zalgo`](https://gist.github.com/mattt/b46ab5027f1ee6ab1a45583a41240033) 函数是用来做什么的？可能不知道会更好...
+[`zalgo`](https://gist.github.com/mattt/b46ab5027f1ee6ab1a45583a41240033) 函数是用来做什么的？可能不知道会更好……
 
 不管怎样，在你的源代码中运行这个重写器，可以把所有的文本字符串转换为像下面一样的效果：
 
@@ -223,7 +222,7 @@ print("H͞͏̟̂ͩel̵ͬ͆͜ĺ͎̪̣͠ơ̡̼͓̋͝, w͎̽̇ͪ͢ǒ̩͔̲̕͝r�
 
 [NSHipster 是在 Jekyll 上搭建的](https://github.com/NSHipster/nshipster.com)，并使用了 Ruby 的库 [Rouge](https://github.com/jneen/rouge) 来渲染你在每篇文章中看到的示例代码。尽管如此，由于 Swift 拥有复杂的语法和过快的迭代，渲染出来的 HTML 并不是 100% 正确。
 
-不同于[处理一堆麻烦的正则表达式](https://github.com/jneen/rouge/blob/master/lib/rouge/lexers/swift.rb)，我们可以构造一个[语法高亮器](https://github.com/NSHipster/SwiftSyntaxHighlighter)来放大 SwiftSyntax 对语言的理解的优势。
+不同于 [处理一堆麻烦的正则表达式](https://github.com/jneen/rouge/blob/master/lib/rouge/lexers/swift.rb)，我们可以构造一个 [语法高亮器](https://github.com/NSHipster/SwiftSyntaxHighlighter) 来放大 SwiftSyntax 对语言的理解的优势。
 
 根据这个核心目的，实现的方法可以很直接：实现一个 `SyntaxRewriter` 的子类并重写 `visit(_:)` 方法，这个方法会在遍历源文件的每个标识符时被调用。通过判断每种不同的标识符类型，你可以把相应的可高亮标识符映射为 HTML 标记。
 
@@ -266,4 +265,4 @@ class SwiftSyntaxHighlighter: SyntaxRewriter {
 
 ![](https://nshipster.com/assets/swiftsyntaxhightlighter-example-output-829aa64ab4bdf73a2e3070aab017e21e3db37ca0ee35079f0e89e22594806df0.png)
 
-这个项目需要一个库和命令行工具的支持。快去[尝试一下](https://github.com/NSHipster/SwiftSyntaxHighlighter)然后让我知道你的想法吧！
+这个项目需要一个库和命令行工具的支持。快去 [尝试一下 ](https://github.com/NSHipster/SwiftSyntaxHighlighter)然后让我知道你的想法吧！
