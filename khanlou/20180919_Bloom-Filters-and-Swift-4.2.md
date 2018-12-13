@@ -1,33 +1,41 @@
 title: "布隆过滤器与 Swift 4.2"
-date:
+date: 2018-12-23
 tags: [Swift]
-categories: [Swift]
+categories: [Khanlou]
 permalink: bloom-filters
 keywords: 布隆过滤器， Hashable 
 custom_title: 布隆过滤器与 Swift 4.2
 description: 本文描述了如何使用 Swift 4.2 新特性 Hashable 实现布隆过滤器。
 
-- - - -
+---
+
 原文链接=http://khanlou.com/2018/09/bloom-filters/
 作者=Soroush Khanlou
 原文日期=2018-09-19
 译者=WAMaker
-校对=
-定稿=
+校对=numbbbbb,小铁匠Linus
+定稿=Forelax
+
+<!--此处开始正文-->
 
 Swift 4.2 为哈希的实现带来了一些新的变化。在此之前，哈希交由对象本身全权代理。当你向对象索取 `哈希值（hashValue）`时，它会把处理好的整型值作为哈希值返回。而现在，实现了 `Hashable` 协议的对象则描述了它的参数是如何组合，并传递给作为入参的 `Hasher` 对象。这样做有以下几点好处：
+
 * 写出好的哈希算法很难。Swift 的使用者不需要知道如何组合参数来获得更好的哈希值。
 * 出于不提倡用户以任何形式存储哈希值，以及 [一些安全方面因素](https://twitter.com/jckarter/status/1042453831496327168) 的考虑，哈希值在程序每次运行的时候都应该有所不同。描述性的哈希允许哈希函数的种子在每次程序运行的时候发生改变。
 * 能实现更多有意思的数据结构，这也是我们这篇文章接下来会聚焦的。
 
+<!--more-->
+
 我之前写过一篇关于 [如何使用 Swift 的 `Hashable` 协议从零实现 `Dictionary`](http://khanlou.com/2016/07/implementing-dictionary-in-swift/) 的文章（先阅读它会帮助你阅读本文，但这不是必须的）。今天，我想谈论一种不同类型的，基于概率性而非明确性的数据结构：布隆过滤器（Bloom Filters）。我们会使用 Swift 4.2 的新特性，包括新的哈希模型来构建它。
 
 布隆过滤器很怪异。想象这样一种数据结构：
+
 * 你能够往里插入数据
 * 你能够查询一个值是否存在
 * 只需要少量存储资源就能存储大量对象
 
 但是：
+
 * 你不能枚举其中的对象
 * 它有时会出现误报（但不会出现漏报）
 * 你不能从中移除数据
@@ -41,6 +49,7 @@ Swift 4.2 为哈希的实现带来了一些新的变化。在此之前，哈希�
 将对象放入布隆过滤器如同将它放入集合或字典：计算对象的哈希值，并根据存储数组的大小对哈希值求余。就这点而言，使用布隆过滤器只需要修改该索引处的值：将 false 改为 true，而不用像使用集合或字典那样，把对象存放到索引位置。
 
 我们先通过一个简单的例子来理解过滤器是如果运作的，之后再对它进行扩展。想象一个拥有 8 个 false 值的布尔数组（或称之为 [比特数组](https://gist.github.com/natecook1000/552dc3d23d2fc4a54d2e9fcd309e59e9)）：
+
 ```
 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
 ---------------------------------
@@ -48,6 +57,7 @@ Swift 4.2 为哈希的实现带来了一些新的变化。在此之前，哈希�
 ```
 
 它代表了我们的布隆过滤器。我想要插入字符串“soroush”。它的哈希值是 9192644045266971309，当这个值余 8 时得到 5。我们修改那一位的值。
+
 ```
 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
 ---------------------------------
@@ -55,6 +65,7 @@ Swift 4.2 为哈希的实现带来了一些新的变化。在此之前，哈希�
 ```
 
 接下来我想要插入字符串“swift”，它的哈希值是 7052914221234348788，余 8 得 4，修改索引 4 的值。
+
 ```
 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
 ---------------------------------
@@ -86,16 +97,19 @@ struct BloomFilter<Element: Hashable> {
 ```
 
 我们需要存储两种主要的数据。第一个是 `data`，用于表示比特数组。它存储了所有和哈希值有关的标记：
+
 ```swift
 private var data: [Bool]
 ```
 
 接下来，我们需要不同的哈希函数。一些布隆过滤器确实会使用不同的方法计算哈希值，但我觉得使用相同的算法，同时混入一个随机生成的值会更简单。
+
 ```swift
 private let seeds: [Int]
 ```
 
 当初始化布隆过滤器时，我们需要初始化这两个实例变量。比特数组会简单的重复 `false` 值来初始化，而种子值则使用 Swift 4.2 的新 API `Int.random` 来生成我们需要的种子值。
+
 ```swift
 init(size: Int, hashCount: Int) {
 	data = Array(repeating: false, count: size)
@@ -104,6 +118,7 @@ init(size: Int, hashCount: Int) {
 ```
 
 同时，创建一个带有默认值的便利构造器。
+
 ```swift
 init() {
 	self.init(size: 512, hashCount: 3)
@@ -121,6 +136,7 @@ private func hashes(for element: Element) -> [Int] {
 ```
 
 要实现函数主体，我们需要创建一个 `Hasher` 对象（Swift 4.2 新特性），将想要进行哈希计算的对象传给它。带上种子确保了生成的哈希值不会冲突。
+
 ```swift
 private func hashes(for element: Element) -> [Int] {
 	return seeds.map({ seed -> Int in
@@ -137,6 +153,7 @@ private func hashes(for element: Element) -> [Int] {
 理想的情况是你能够使用种子来初始化 `Hasher` 而不是把它混合进去。Swift 的 `Hasher` 会在每次程序启动的时候被分配一个不同的种子（除非你 [设置固定的环境变量](https://github.com/apple/swift-evolution/blob/master/proposals/0206-hashable-enhancements.md#effect-on-abi-stability) 让种子在不同启动间保持一致，而这样做通常是一些测试目的），意味着你不能把这些值写到磁盘上。如果我们控制了 `Hasher` 的种子，我们就能将这些值写到磁盘上了。而就像这个布隆过滤器展示的那样，它应该只被用于内存缓存。
 
 `hashes(for:)` 方法完成了很多繁重的工作，让 `insert` 方法非常简洁：
+
 ```swift
 mutating func insert(_ element: Element) {
 	hashes(for: element)
@@ -148,6 +165,7 @@ mutating func insert(_ element: Element) {
 生成所有的哈希值，分别余上 `data` 数组的长度，并设置对应索引位的值为 `true`。
 
 `contains` 方法也同样简单，同时也给了我们使用 Swift 4.2 另一个新特性 `allSatisfy` 的机会。这个新方法可以判断序列中的所有对象是否都通过了某项用 block 表示的测试：
+
 ```swift
 func contains(_ element: Element) -> Bool {
 	return hashes(for: element)
