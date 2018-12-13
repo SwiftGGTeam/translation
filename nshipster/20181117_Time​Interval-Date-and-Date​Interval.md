@@ -67,7 +67,7 @@ public struct Date : ReferenceConvertible, Comparable, Equatable {
 
 ### 从日历单元中获取日期间隔
 
-为了知道某段时间的时间点——或者日子的起始点——你需要查看日历。在这里，你可以指定日历单元中的特定时间范围，比如说一天，一个月，或者一年。通过 `Calendar` 类中的 `dateInterval(of:for:)` 方法可以很轻松的做到。
+为了知道一天中的时间点——或者日子的起始点——你需要查看日历。在这里，你可以指定日历单元中的特定时间范围，比如说一天，一个月，或者一年。通过 `Calendar` 类中的 `dateInterval(of:for:)` 方法可以很轻松的做到。
 
 ```swift
 let calendar = Calendar.current
@@ -75,7 +75,7 @@ let date = Date()
 let dateInterval = calendar.dateInterval(of: .month, for: date)
 ```
 
-因为我们正在调用 `Calendar`，我们对我们获取的返回值有信心。来看看它是如何轻松的处理夏令时时间保留转化问题。
+因为调用了 `Calendar`，我们对获取的返回值有信心。来看看它是如何轻松的处理夏令时时间保留转化问题的。
 
 ```swift
 let dstComponents = DateComponents(year: 2018,
