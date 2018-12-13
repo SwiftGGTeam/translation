@@ -128,7 +128,7 @@ calendar.dateComponents([.year],
 
 根据我们的计算，两位画家有 50 年时间活在同时期。
 
-我们甚至可以更近一步，使用 `DateIntervalFormatter` 来提供一个更好的时间格式来描述那段时间。
+我们甚至可以更近一步，使用 `DateIntervalFormatter` 提供一种更好的时间格式用于描述那段时间。
 
 ```swift
 let formatter = DateIntervalFormatter()
