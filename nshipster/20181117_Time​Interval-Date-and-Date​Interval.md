@@ -17,17 +17,12 @@ description: 本文介绍了 Foundation 框架中涉及 Date 时间的相关概�
 
 <!--此处开始正文-->
 
-本文首先讨论时间间隔、日期，日期间隔这几个概念以及它们之间的联系，然后介绍了这几个概念对应的 API 以及 API 的使用方式。
-
-<!--more-->
-
----
-
-# 时间间隔，日期和日期间隔
-
 普拉多博物馆坐落在马德里市中心和萨拉曼卡区之间，距离广阔的 Buen Retiro 公园仅有几步之遥，这个博物馆夸耀说他们从很多欧洲有名画家那里搜集了各种珍藏画作。不过，在参观期间，你会很快厌倦那些 17 世纪西班牙君主私人定制的肖像画，考虑下参观 1 楼最北端的房间 - Sala 002。在那里你可以找到 [法国艺术家西蒙・乌伟的巴洛克时代画作](https://www.museodelprado.es/en/the-collection/art-work/time-defeated-by-hope-and-beauty/ebaeb191-f3ff-43b1-9207-fb36a3e5ad5a)。
 
-这不是你的问题，你会好奇为什么这对年轻女子气势汹汹的挥舞着一只铁钩和一柄长矛，站着威胁一个畏缩的老人，与此同时还有一群小天使在撕裂着老人的背。当然，这是个寓意啦。阅读旁边的解释牌，你会发现这画作的标题叫做 *Time defeated by Hope and Beauty（被爱）*。那个老人代表时间。看到了他手中的沙漏和他脚下的长柄大镰刀了吗？
+<!--more-->
+---
+
+这不是你的问题，你会好奇为什么这对年轻女子气势汹汹的挥舞着一只铁钩和一柄长矛，站着威胁一个畏缩的老人，与此同时还有一群小天使在撕裂着老人的背。当然，这是个寓意啦。阅读旁边的解释牌，你会发现这画作的标题叫做 *Time defeated by Hope and Beauty（被爱，美和希望击败的时间）*。那个老人代表时间。看到了他手中的沙漏和他脚下的长柄大镰刀了吗？
 
 让我们花一点时间，站在这幅画的前面，来深入思考一下时间的神秘本质。
 
@@ -39,7 +34,7 @@ description: 本文介绍了 Foundation 框架中涉及 Date 时间的相关概�
 
 秒是时间的基本单位。也是唯一一个拥有固定时长的时间单位。
 
-月份的长短各不相同（9 月份有 30 天……），年份也是一样（以每 400 年为周期每第 71 个年头有 53 个周……）某些年份会多出一天（如果你思考一下就会发现闰年的命名是不合理的）从夏令时减去一小时保留下来的时间转化成了增加的天数（感谢，本杰明·富兰克林）。别忘了我们还有个概念叫“闰秒”，就是因为有了它，一分钟可以有 61 秒，一小时可以有 3601 秒，当然了，两周就可以有 1209601 秒。
+月份的长短各不相同（*9 月份有 30 天……*），年份也是一样（*以每 400 年为周期每第 71 个年头有 53 个周……*）某些年份会多出一天（*如果你思考一下就会发现闰年的命名是不合理的*）从夏令时减去一小时保留下来的时间转化成了增加的天数（*这都要感谢本杰明·富兰克林*）。别忘了我们还有个概念叫“闰秒”，就是因为有了它，一分钟可以有 61 秒，一小时可以有 3601 秒，当然了，两周就可以有 1209601 秒。
 
 `TimeInterval`（源自 NSTimeInterval）是 `Double` 的一个别名，表示为以秒为单位的间隔时长数。在处理间隔时间问题上，你会看到它有作为 API 的参数和返回值类型。作为一个双精度浮点数，TimeInterval 可用于表示时间数的一部分（但是对于超过毫秒精度的任何度量，你应该用其他方法来表示）。
 
@@ -89,7 +84,6 @@ let dstComponents = DateComponents(year: 2018,
                                    day: 4)
 calendar.dateInterval(of: .day,
                       for: calendar.date(from: dstComponents)!)?.duration
-// 90000 second
 // 90000 秒
 ```
 
@@ -106,9 +100,7 @@ import Foundation
 
 let calendar = Calendar.current
 
-// Simon Vouet
 // 西蒙・乌伟
-// 9 January 1590 – 30 June 1649
 // 1590/01/09 - 1649/06/30
 let vouet =
     DateInterval(start: calendar.date(from:
@@ -116,9 +108,7 @@ let vouet =
                  end: calendar.date(from:
                     DateComponents(year: 1649, month: 6, day: 30))!)
 
-// Peter Paul Rubens
 // 彼得·保罗·鲁本斯
-// 28 June 1577 – 30 May 1640
 // 1577/06/28 - 1640/03/30
 let rubens =
     DateInterval(start: calendar.date(from:
@@ -130,7 +120,7 @@ let overlap = rubens.intersection(with: vouet)!
 
 calendar.dateComponents([.year],
                         from: overlap.start,
-                        to: overlap.end) // 50 years 
+                        to: overlap.end) // 50 年 
 ```
 
 根据我们的计算，两位画家有 50 年时间活在同时期。
