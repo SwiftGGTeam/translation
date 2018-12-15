@@ -26,7 +26,7 @@ UIView.animate(withDuration: 1) { doStuff() }
 ```
 只需要将你的代码放进 block（闭包）中，就可以让它们拥有流畅的缓入缓出的动画效果。
 
-然而，如果你过多地使用这套系统，你可能会遇到一些问题。这个系统可以完美地处理简单的情况，比如让一个东西淡入、淡出，或改变它的颜色，但在更复杂的情况下，这种方法就会开始出现问题。
+然而，如果你使用过这套系统，你可能会遇到一些问题。这个系统可以完美地处理简单的情况，比如让一个东西淡入、淡出，或改变它的颜色，但在更复杂的情况下，这种方法就会开始出现问题。
 
 <!--more-->
 
@@ -40,9 +40,9 @@ UIView.animate(withDuration: 1, animations:
 	something.removeFormSuperView()
 })
 ```
-但这只会在所有东西都是内联（inline）的情况下才会工作。在大型项目中，我们需要把复杂的任务拆解成小的方法。但问题就在这些方法中，像在上个例子中的 `doStuff()`，我们无法在 `completion` block 中添加代码。
+但你只能把所有东西都写在 `completion` block 里时才会工作。在大型项目中，我们需要把复杂的任务拆解成小的方法。但问题就在这些方法中，像在上个例子中的 `doStuff()`，我们无法在 `completion` block 中添加代码。
 
-我们也无法得知动画有多长（甚至都不知道有没有动画），所以如果我们没有办法简单地和动画时间之间同步（如在 [一个音频编辑软件](http://www.wooji-juice.com/products/ferrite/)中让进度条同步前进）。
+我们也无法得知动画有多长（甚至都不知道有没有动画），所以如果我们没有办法简单地和动画时间之间同步（如在[一个音频编辑软件](http://www.wooji-juice.com/products/ferrite/)中让进度条同步前进）。
 
 总的来说，我们无法获知关于动画的*信息*，他们仅仅是执行代码，进行或不进行动画，而不受我们控制。
 
@@ -51,7 +51,7 @@ UIView.animate(withDuration: 1, animations:
 ## 视图属性 Animator
 很长时间以来，我一直在改变代码中动画的写法。最开始我写了我自己的 `AnimationContext` 类来协助，后来苹果提供了他们功能相同的 `UIViewPropertyAnimator`，现在我会在所有可能的地方使用它。
 
-一般来说，我发现最有效的方法是写一个“可动画”的方法并显式接受一个 animator 参数：
+一般来说，我发现最有效的方法是写一个「可动画」的方法并显式接受一个 animator 参数：
 ```swift
 func doStuff(with animator: UIViewPropertyAnimator? = nil)
 {
@@ -68,7 +68,7 @@ func doStuff(with animator: UIViewPropertyAnimator? = nil)
 1. `doStuff(with: ...)` 需要写入一个很长的 `UIViewPropertyAnimator` 构造函数。不是很理想，不过跟下面比起来不算什么：
 2. 在 `doStuff()` 内部，需要检查 `UIViewPropertyAnimator` 是否存在并调整代码。
 
-我们不能简单的依赖 optional chaining（可选链)（如 `animator?.addcompletion { something.removeFromSuperview() }`），因为如果 animator 是 `nil` 会导致 block 中的代码被直接跳过，然而无论有没有动画，我们都希望该视图在父视图中被移除。
+我们不能简单的依赖 optional chaining（可选链式调用)（如 `animator?.addcompletion { something.removeFromSuperview() }`），因为如果 animator 是 `nil` 会导致 block 中的代码被直接跳过，然而无论有没有动画，我们都希望该视图在父视图中被移除。
 
 为了保证正确的行为，你的代码会类似这个样子：
 ```swift
@@ -84,7 +84,7 @@ func doStuff(with animator: UIViewPropertyAnimator? = nil)
 	}
 }
 ```
-`Objective-C` 爱好者即使瞧不起 Optional（可选）也笑不出来 -- 使用 Objective-C 也不会改善这种情况：
+Objective-C 爱好者即使瞧不起 Optional（可选）也笑不出来 -- 使用 Objective-C 也不会改善这种情况：
 ```objc
 - (void) doStuffWithAnimator: (nullable UIViewPropertyAnimator *) animator
 {
@@ -101,7 +101,7 @@ func doStuff(with animator: UIViewPropertyAnimator? = nil)
 	}
 }
 ```
-一旦你在生产环境中想使用这样的代码，你最终会写出远超于此的更杂乱，难于阅读和维护的代码。
+一旦你在生产环境中想使用这样的代码，你最终会写出远超于此更杂乱、难于阅读和维护的代码。
 
 幸运的是，我们可以进一步的改进这段代码。
 
@@ -155,4 +155,4 @@ func doStuff(with animator: UIViewPropertyAnimator? = nil)
 
 与 Optional 无关，我还在 `UIViewPropertyAnimator` 中添加了一些静态方法来生成一些常见的动画，如：`static func spring(...)`、`static func linear(...)`。Swift 的名称解析方法决定了你可以写出更简洁的代码，如：`doStuff(with: .spring(duration: 1))`。
 
-当然，以上只是一些小的代码技巧，而不是重新构想代码或应用结构。但是随着项目的复杂度增加，像这种小的改进也会叠加起来，帮助我们对抗不断增加的复杂度，维持大型项目的可控性。感谢 Swift。
+当然，以上只是一些小的代码技巧，而不是重新构想代码或应用结构。但是随着项目的复杂度增加，像这种小的改进也会叠加起来，帮助我们对抗不断增加的复杂度，维持大型项目的可控性。感谢 Swift。[Thwift](https://www.youtube.com/watch?v=9jtU9BbReQk).
