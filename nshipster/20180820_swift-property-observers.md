@@ -1,5 +1,5 @@
 title: Swift 属性观察器
-date: 2018-10-18
+date: 2018-12-17
 tags: [Swift, NSHipster]
 categories: [Swift, NSHipster]
 permalink: swift-property-observers
@@ -8,12 +8,13 @@ custom_title: Swift 属性观察器
 description: 本文介绍了 Swift 中的属性观察器，并介绍了一些比较常见的适用场景。
 
 ---
+
 原文链接=https://nshipster.com/swift-property-observers/
 作者=Mattt
 原文日期=2018-08-20
 译者=Hale
-校对=
-定稿=
+校对=numbbbbb,pmst,Yousanflics
+定稿=Forelax
 
 <!--此处开始正文-->
 
