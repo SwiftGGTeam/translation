@@ -1,5 +1,5 @@
 title: "固定大小的数组"
-date: 2018-11-25
+date: 2018-12-24
 tags: [Swift]
 categories: [Swift]
 permalink: fixed-sized-arrays
@@ -11,8 +11,8 @@ description: 如何在 Swift 中处理从 C 语言引入的固定大小数组
 作者=Russ Bishop
 原文日期=2018-10-30
 译者=zhongWJ
-校对=
-定稿=
+校对=numbbbbb,Cee
+定稿=Forelax
 
 <!--此处开始正文-->
 
@@ -24,6 +24,8 @@ if (statfs(path, &fsinfo) != 0) {
     //错误
 }
 ```
+
+<!--more-->
 
 同等的 Swift 代码如下，只不过多了个 `POSIX` 错误帮助方法：
 
@@ -47,7 +49,7 @@ statfs(path, &fsinfo)
 
 ```
 
-# C 的引入物
+## C 的引入物
 
 `statfs()` 函数在 C 语言的定义是 `int statfs(const char *path, struct statfs *info)`。`statfs` 结构体有多个字段，但我们只关注 `mount-from-name`：
 
@@ -59,9 +61,9 @@ struct statfs {
 }
 ```
 
->在苹果平台上 MAXPATHLEN == PATH_MAX == 1024。
+> 在苹果平台上 MAXPATHLEN == PATH_MAX == 1024。
 >
->如果你在代码里硬编码 1024 而不是用更合适的宏，小心我的鬼魂会缠着你和你的家族十二代哦。
+> 如果你在代码里硬编码 1024 而不是用更合适的宏，小心我的鬼魂会缠着你和你的家族十二代哦。
 
 噢哦。一个固定大小的数组。当被引入 Swift 中时，它会被当做一个有 1024 个元素的元组：
 
@@ -71,7 +73,7 @@ public var f_mntfromname: (Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8,
 
 这个类型不是很实用。那我们能不能做点什么呢？由于这篇博客的存在，你可能已经猜到答案是「*是*」。
 
-# C 字符串
+## C 字符串
 
 这个固定大小的数组包含了 `char`。由于文档未曾提及，所以我们并不知道是否通过空字符来表示数组的终止。令人恼火的是，文档暗示在 64 位系统上，`f_fstypename` 字段是由空字符终止，但对于 mount to/from 两个字段却只字未提。这两个字段是根据被定义为 `PATH_MAX` 的 `MAXPATHLEN` 宏来定义的而不是直接根据 `PATH_MAX` 宏，而 `PATH_MAX` 宏通常暗示数组由空字符来表示终止。我们是不是应该从中得到一点启发呢？
 
@@ -81,7 +83,7 @@ public var f_mntfromname: (Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8,
 
 偏题了，让我们回到正题……
 
-# 部分解决方案
+## 部分解决方案
 
 首先我们需要计算字段的偏移量。用新的 `MemoryLayout.offset` 方法可以得到结果：`MemoryLayout<statfs>.offset(of: \Darwin.statfs.f_mntfromname)!`。由于结构体和函数名字相同，当我们构造关键路径时，需要提供完整的路径名（fully-qualified name），否则会得到「*无法确定有歧义的引用路径*」的错误。我们可以强制解包返回值因为我们知道关键路径有效并且字段有偏移量。
 
@@ -163,6 +165,6 @@ extension statfs {
 }
 ```
 
-# 结语
+## 结语
 
 现在你知道怎么把有 N 个元素的元组变成更实用的东西了吧。
