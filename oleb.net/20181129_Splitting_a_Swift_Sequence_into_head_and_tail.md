@@ -50,7 +50,7 @@ extension Sequence {
 }
 ```
 
-以上代码能够实现功能，但不是一个好的通用解决方案，尤其是对满足 `Collection` 的类型而言。将尾部包进 `AnySequence` 是一个 [性能的大杀手](https://github.com/apple/swift-evolution/blob/master/proposals/0234-remove-sequence-subsequence.md#type-erasure-performance)，也不可以使用合适的集合类型 [SubSequence](https://developer.apple.com/documentation/swift/sequence/1641117-subsequence#)。
+以上代码能够实现功能，但不是一个好的通用解决方案，尤其是对满足 `Collection` 的类型而言。将尾部包进 `AnySequence` 会是一个 [性能杀手](https://github.com/apple/swift-evolution/blob/master/proposals/0234-remove-sequence-subsequence.md#type-erasure-performance)，也不可以使用合适的集合类型 [SubSequence](https://developer.apple.com/documentation/swift/sequence/1641117-subsequence#)。
 
 为了保护集合的 `SubSequence` 类型，最好给 `Collection` 和 `Sequence` 分别写扩展。（我们也将会看到，这是 Swift 5 所推崇的方案，这点会在后面谈到。）
 
