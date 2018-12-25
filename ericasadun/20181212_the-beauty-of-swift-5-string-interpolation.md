@@ -28,16 +28,16 @@ description: 本文对 Swift 5 中 SE-0228 对 String Interpolation 相关功能
 "There's \(value1) and \(value2)"
 ```
 
-就会立即得到一个警告：
+会立即得到一个警告：
 ![](https://i2.wp.com/ericasadun.com/wp-content/uploads/2018/12/Screen-Shot-2018-12-12-at-2.38.51-PM.png?w=1065&ssl=1)
 
-我们可以通过点击修复按钮来消除这些警告，但仍然会得到一个类似于这样的输出：“There’s Optional(23) and nil”。
+我们可以点击修复按钮来消除这些警告，但仍然会看到一个类似于这样的输出：“There’s Optional(23) and nil”。
 
 ```swift
 "There's \(String(describing: value1)) and \(String(describing: value2))"
 ```
 
-现在，我们能够把“Optional”一词去掉，得到“There’s 23 and nil”，从而直接把值打印出来：
+上面这种写法可以去掉“Optional”，直接打印值。我们还可以进一步优化：
 
 ```swift
 extension String.StringInterpolation {
