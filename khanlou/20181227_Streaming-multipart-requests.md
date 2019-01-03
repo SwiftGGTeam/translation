@@ -17,13 +17,13 @@ description:
 
 <!--此处开始正文-->
 
-基础库中的 URL 类使用起来非常健壮，此后还在 iOS 7 中新增了 URLSession 类。尽管如此，基础库中仍然缺少 multipart 文件上传的功能。
+Foundation 框架中的 URL 类提供了非常全面的功能，此后还在 iOS 7 中新增了 URLSession 类。尽管如此，基础库中仍然缺少 multipart 文件上传的功能。
 
 <!--more-->
 
 ## 什么是 multipart 请求？
 
-Multipart 编码实际上就是在网络中上传大型文件的方法。在浏览器中，有时候你会选择一个文件作为提交表单的一部分。这个文件便是以 multipart 请求的方式实现上传的。
+Multipart 编码实际上就是在网络中上传大型文件的方法。在浏览器中，有时候你会选择一个文件作为表单提交内容的一部分。这个文件便是以 multipart 请求的方式实现上传的。
 
 乍一看，multipart 请求和一般请求差不多。不同之处是 multipart 请求额外为 `HTTP` 请求体指定了唯一编码。同 JSON 编码（`{"key": "value"}`）或者 URL 字符编码 (`key=value`) 相比，multipart 编码干的事略微有所不同。因为 multipart 请求体实际上只是一串字节流，接收端实体在解析数据时，需要知道字节流中各个部分之间的界限。所以 multipart 请求需要使用 "boundaries" 来解决这个问题。在请求首部的 `Content-Type` 中，可以定义 boundary：
 
