@@ -1,4 +1,4 @@
-title: "Streaming Multipart Requests"
+title: "以流的形式执行 Multipart 请求"
 date: 2018-12-27
 tags: [Swift][Objective-C][iOS开发]
 categories: [Khanlou]
