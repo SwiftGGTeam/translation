@@ -23,7 +23,7 @@ description: 关于 Swift 中的集合（Set）
 
 <!--more-->
 
-提示：这篇文章使用的是 Swift4 和 Xcode 10
+*提示：这篇文章使用的是 Swift4 和 Xcode 10*
 
 ## 创建集合
 
@@ -90,7 +90,7 @@ print(setA.contains("a"))
 setD.insert("c")
 setD.remove("a")
 ```
-由于集合元素的唯一性，因此只能将同一个元素添加到集合中一次。可以多次使用相同的值调用 `insert` 方法，但集合不会更改。
+由于集合元素的唯一性，因此只能将同一个元素添加到集合中一次。可以多次使用相同的值调用 `insert` 方法，但集合不会改变。
 
 ```swift
 var setE: Set = [1,2,3,4]
