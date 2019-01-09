@@ -1,5 +1,5 @@
 title: "SceneKit 教程中的基本单元"
-date: 2018-10-12（翻译日期，待定）
+date: 2018-08-27
 tags: [Swift, iOS 开发]
 categories: [SceneKit]
 permalink: primitive-scene-kit-ios-tutorial-ios12
