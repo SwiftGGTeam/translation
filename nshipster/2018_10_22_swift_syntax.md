@@ -22,7 +22,7 @@ permalink: nshipster-swiftsyntax
 
 在写这篇文章时，SwiftSyntax 仍处于在开发中并进行 API 调整的阶段。不过目前你已经可以使用它对 Swift 代码进行一些编程工作。
 
-目前，[Swift Migrator](https://github.com/apple/swift/tree/master/lib/Migrator) 已经在使用 SwiftSyntax 了，并且在对内和对外层面都会对 SwiftSyntax 的接入进行不断的努力。
+目前，[Swift Migrator](https://github.com/apple/swift/tree/master/lib/Migrator) 已经在使用 SwiftSyntax 了，并且在对内和对外层面上，对 SwiftSyntax 的接入也在不断地努力着。
 
 ## SwiftSyntax 如何工作？
 
