@@ -1,5 +1,5 @@
 title: "以流的形式执行 Multipart 请求"
-date: 2018-12-27
+date: 2019-01-21
 tags: [Swift][Objective-C][iOS开发]
 categories: [Khanlou]
 permalink: streaming-multipart-requests
@@ -12,8 +12,8 @@ description:
 作者=Soroush Khanlou
 原文日期=2018-11-14
 译者=郑一一
-校对=
-定稿=
+校对=numbbbbb,pmst
+定稿=Forelax
 
 <!--此处开始正文-->
 
@@ -60,17 +60,17 @@ Content-Type: text/plain
 
 我在开源的 [Backchannel SDK](https://github.com/backchannel/BackchannelSDK-iOS) 实现了上述功能。[`BAKUploadAttachmentRequest`](https://github.com/backchannel/BackchannelSDK-iOS/blob/master/Source/Image%20Chooser/BAKUploadAttachmentRequest.m) 和 [`BAKMultipartRequestBuilder`](https://github.com/backchannel/BackchannelSDK-iOS/blob/master/Source/Image%20Chooser/BAKMultipartRequestBuilder.m) 类包含了处理 mulitipart 的方法。在这个项目中，仅仅包含了处理单个文件的情况，并且没有包括元数据。但是作为范例，依旧很好地展示了 mulitipart 请求是如何构建的。可以通过添加额外的实现代码，来支持元数据和多文件的功能。
 
-无论是使用一个请求上传多个文件，还是多个请求分别对应上传一个文件，来实现多文件上传功能，都会碰到一个问题。这个问题就是，如果你尝试一次性上传很多文件的话，app 将会闪退。这是因为使用[该版本的代码](https://github.com/backchannel/BackchannelSDK-iOS/blob/master/Source/Image%20Chooser/BAKMultipartRequestBuilder.m#L66-L70)，加载的数据会直接进入内存，在内存暴涨的情况下，即使使用当下性能最强的旗舰手机也会有闪退发生。
+无论是使用一个请求上传多个文件，还是多个请求分别对应上传一个文件，来实现多文件上传功能，都会碰到一个问题。这个问题就是，如果你尝试一次性上传很多文件的话，app 将会闪退。这是因为使用 [该版本的代码](https://github.com/backchannel/BackchannelSDK-iOS/blob/master/Source/Image%20Chooser/BAKMultipartRequestBuilder.m#L66-L70)，加载的数据会直接进入内存，在内存暴涨的情况下，即使使用当下性能最强的旗舰手机也会有闪退发生。
 
 ## 将硬盘中数据以流的形式读取
 
-最常见的解决方法是将硬盘中的数据以流的形式读取出来。其核心思想是文件的字节数据会一直保存在硬盘里，直到被读取并发往网络。内存中只保留了很小一部分的镜像数据。
+最常见的解决方法是将硬盘中的数据以流的形式读取出来。其核心思想是文件的字节数据会一直保存在硬盘里，直到被读取并发往网络。内存中只保留了很小一部分的镜像数据。
 
-目前，我想出两种方法可以解决这个问题。第一个方法，把 multipart 请求体中的所有数据写到硬盘的一个新文件中，并使用 URLSession 的 `uploadTask(with request: URLRequest, fromFile fileURL: URL)` 方法将文件转化为流。这个方法可以奏效，但我并不想为每一个请求新建一个新文件保存到硬盘中。因为这意味着在请求发出后，还需要删除这个文件。
+目前，我想出两种方法可以解决这个问题。第一个方法，把 multipart 请求体中的所有数据写到硬盘的一个新文件中，并使用 URLSession 的 `uploadTask(with request: URLRequest, fromFile fileURL: URL)` 方法将文件转化为流。这个方法可以奏效，但我并不想为每一个请求新建一个新文件保存到硬盘中。因为这意味着在请求发出后，还需要删除这个文件。
 
 第二种方法是将内存和硬盘的数据合并在一起，并通过统一的接口向网络输出数据。
 
-如果你觉得第二种方法听起来像是[类簇](http://khanlou.com/2015/10/clustering/)，恭喜你，完全正确。很多常用 Cocoa 类都允许创建子类，并实现一些父类方法，使其和父类表现一致。回想一下 `NSArray` 的 `-count` 属性和 `-objectAtIndex:` 方法。因为 `NSArray` 的所有其它方法都是基于 `-count` 属性和 `-objectAtIndex:` 方法实现的，你可以非常轻易地创建优化版本的 `NSArray` 子类。
+如果你觉得第二种方法听起来像是 [类簇](http://khanlou.com/2015/10/clustering/)，恭喜你，完全正确。很多常用 Cocoa 类都允许创建子类，并实现一些父类方法，使其和父类表现一致。回想一下 `NSArray` 的 `-count` 属性和 `-objectAtIndex:` 方法。因为 `NSArray` 的所有其它方法都是基于 `-count` 属性和 `-objectAtIndex:` 方法实现的，你可以非常轻易地创建优化版本的 `NSArray` 子类。
 
 你可以创建一个 `NSData` 子类，它无需真正从硬盘读取数据，而只是创建一个指针直接指向硬盘中的数据。这样做的好处是是不需要把数据载入内存中进行读取。这种方法称为内存映射，基于 Unix 方法 `mmap`。你可以通过 `.mappedIfSafe` 或者 `alwaysMapped` 选项，来使用 `NSData` 的这项特性。因为 `NSData` 是一个类簇，我们将创建一个 `ConcatenatedData` 子类（就像 `FlattenCollection` 在 Swift 中的工作方式），该子类会将多个 `NSData` 对象视作一个连续的 `NSData`。完成创建以后，我们就做好所有准备来解决这个问题啦。
 
@@ -82,7 +82,7 @@ Content-Type: text/plain
 
 ## 将所有部分拼接起来
 
-你可以在[这里](https://gist.github.com/khanlou/8cc2e3cb23ec8d03b1fc187f5922e244)看看我的串行输入流的实现（是用 Objective-C 实现的，以后我可能还会写一个 Swift 版本的）。
+你可以在 [这里](https://gist.github.com/khanlou/8cc2e3cb23ec8d03b1fc187f5922e244) 看看我的串行输入流的实现（是用 Objective-C 实现的，以后我可能还会写一个 Swift 版本的）。
 
 通过 `SKSerialInputStream` 类，可以将流组合在一起。下面展示了前缀和后缀属性：
 
@@ -147,7 +147,7 @@ urlRequest.httpBodyStream = requestBuilder.bodyInputStream;
 
 ## 子类化过程中需要注意的问题
 
-子类化 `NSInputStream` 的过程不会太轻松，甚至可以说很困难。你必须实现 9 个方法。其中的 7 个方法，父类只有一些微不足道的默认实现。而在文档中只提到了 9 个方法中的 3 个，所以你还得实现 6 个 `NSStream` （`NSInputStream` 的父类）的方法，其中有 2 个是 run loop 方法，并允许空实现。在这之前，你还需要额外[实现 3 个私有方法](http://blog.bjhomer.com/2011/04/subclassing-nsinputstream.html)，不过现在不必实现了。此外，还需要定义 3 个`只读`属性：`streamStatus`，`streamError`，`delegate`。
+子类化 `NSInputStream` 的过程不会太轻松，甚至可以说很困难。你必须实现 9 个方法。其中的 7 个方法，父类只有一些微不足道的默认实现。而在文档中只提到了 9 个方法中的 3 个，所以你还得实现 6 个 `NSStream` （`NSInputStream` 的父类）的方法，其中有 2 个是 run loop 方法，并允许空实现。在这之前，你还需要额外 [实现 3 个私有方法](http://blog.bjhomer.com/2011/04/subclassing-nsinputstream.html)，不过现在不必实现了。此外，还需要定义 3 个`只读`属性：`streamStatus`，`streamError`，`delegate`。
 
 在处理完上述子类化相关的细节后，接下来的挑战是创建一个 `NSInputStream` 子类，其行为应该和 API 使用者所期望的保持一致。然而，这个类状态的重度耦合是不容易被人发现的。
 
