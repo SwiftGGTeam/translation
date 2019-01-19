@@ -4,10 +4,10 @@ tags: [Swift][Objective-C][iOS开发]
 categories: [Khanlou]
 permalink: streaming-multipart-requests
 keywords: multipart request，stream
-custom_title:
-description:
+custom_title:"以流的形式执行 Multipart 请求"
 
-- - - -
+---
+
 原文链接=http://khanlou.com/2018/11/streaming-multipart-requests/
 作者=Soroush Khanlou
 原文日期=2018-11-14
