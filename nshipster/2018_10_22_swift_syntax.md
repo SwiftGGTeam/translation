@@ -35,7 +35,7 @@ Swift 编译器的主要职责是把 Swift 代码转换为可执行的机器代�
 
 对于我们的讨论来说，最重要的关键点是 SwiftSyntax 的操作目标是编译过程第一步所生成的 AST。但也由于这样，SwiftSyntax 无法告知你任何关于代码的语义或类型信息。
 
-与 SwiftSyntax 相反，一些如 [SourceKit](https://github.com/apple/swift/tree/master/tools/SourceKit) 之类的工具，操作的目标为更容易理解的 Swift 代码。这可以帮助此类工具实现一些编辑器相关的特性，例如代码补全或者文件之间的跳转。不过在一个纯粹的语法层面上，仍然有大量重要的用例可以满足，例如代码格式化和语法高亮。
+与 SwiftSyntax 相反，一些如 [SourceKit](https://github.com/apple/swift/tree/master/tools/SourceKit) 之类的工具，操作的目标为更容易理解的 Swift 代码。这可以帮助此类工具实现一些编辑器相关的特性，例如代码补全或者文件之间的跳转。虽然 SwiftSyntax 不能像 SourceKit 一样实现跳转或者补全的功能，但在语法层面上也有很多应用场景，例如代码格式化和语法高亮。
 
 ### 揭秘 AST
 
