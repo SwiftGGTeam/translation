@@ -18,6 +18,7 @@ permalink: nshipster-swiftsyntax
 总的来说，这些库都是为了给结构化编辑（structured editing）提供安全、正确且直观的工具。关于结构化编辑，在 [thusly](https://github.com/apple/swift/blob/master/lib/Syntax/README.md#swift-syntax-and-structured-editing-library) 中有具体的描述:
 
 
+
 > 什么是结构化编辑？结构化编辑是一种编辑的策略，它对源代码的*结构*更加敏感，而源代码的表示（例如字符或者字节）则没那么重要。这可以细化为以下几个部分：替换标识符，将对全局方法的调用转为对方法的调用，或者根据已定的规则识别并格式化整个源文件。
 
 在写这篇文章时，SwiftSyntax 仍处于在开发中并进行 API 调整的阶段。不过目前你已经可以使用它对 Swift 代码进行一些编程工作。
@@ -30,7 +31,7 @@ permalink: nshipster-swiftsyntax
 
 ![](https://nshipster.com/assets/swift-compilation-diagram-8af7d0078f72cdaa8f50430e608f15a9d4214f5772439d2fd6904bb5a8a53c60.png)
 
-Swift 编译器的主要职责是把 Swift 代码转换为可执行的机器代码。整个过程可以划分为几个离散的步骤，一开始，[解析器](https://github.com/apple/swift/tree/master/lib/Parse) 会生成一个抽象语法树（AST）。之后，语义分析器会进行工作并生成一个通过类型检查的 AST。至此步骤，代码会降低到 [Swift 中间层语言](https://github.com/apple/swift/blob/master/docs/SIL.rst)；随后 SIL 会继续转换并优化自身，降低为 [LLVM IR](http://llvm.org/docs/LangRef.html)，并最终编译为机器代码。
+Swift 编译器的主要职责是把 Swift 代码转换为可执行的机器代码。整个过程可以划分为几个离散的步骤，一开始，[语法分析器](https://github.com/apple/swift/tree/master/lib/Parse) 会生成一个抽象语法树（AST）。之后，语义分析器会进行工作并生成一个通过类型检查的 AST。至此步骤，代码会降级到 [Swift 中间层语言](https://github.com/apple/swift/blob/master/docs/SIL.rst)；随后 SIL 会继续转换并优化自身，降级为 [LLVM IR](http://llvm.org/docs/LangRef.html)，并最终编译为机器代码。
 
 对于我们的讨论来说，最重要的关键点是 SwiftSyntax 的操作目标是编译过程第一步所生成的 AST。但也由于这样，SwiftSyntax 无法告知你任何关于代码的语义或类型信息。
 
@@ -84,7 +85,7 @@ $ xcrun swiftc -frontend -emit-syntax ./One.swift
                 }, ...
 ```
 
-Python 中的 `json.tool` 模块提供了便捷地格式化 JSON 的能力。且几乎所有的 macOS 系统都已经集成了此模块，因此每个人都可以使用它。举个例子，你可以使用如下的命令对编译的输出结果使用 `json.tool`：
+Python 中的 `json.tool` 模块提供了便捷地格式化 JSON 的能力。且几乎所有的 macOS 系统都已经集成了此模块，因此每个人都可以使用它。举个例子，你可以使用如下的命令对编译的输出结果使用 `json.tool` 格式化：
 
 ```Terminal
 $ xcrun swiftc -frontend -emit-syntax ./One.swift | python -m json.tool
@@ -220,7 +221,7 @@ print("H͞͏̟̂ͩel̵ͬ͆͜ĺ͎̪̣͠ơ̡̼͓̋͝, w͎̽̇ͪ͢ǒ̩͔̲̕͝r�
 
 从语法高亮工具的意义上来说，它可以把源代码按某种方式格式化为显示更为友好的 HTML。
 
-[NSHipster 是在 Jekyll 上搭建的](https://github.com/NSHipster/nshipster.com)，并使用了 Ruby 的库 [Rouge](https://github.com/jneen/rouge) 来渲染你在每篇文章中看到的示例代码。尽管如此，由于 Swift 拥有复杂的语法和过快的迭代，渲染出来的 HTML 并不是 100% 正确。
+[NSHipster 通过 Jekyll 搭建](https://github.com/NSHipster/nshipster.com)，并使用了 Ruby 的库 [Rouge](https://github.com/jneen/rouge) 来渲染你在每篇文章中看到的示例代码。尽管如此，由于 Swift 的复杂语法和过快迭代，渲染出来的 HTML 并不是 100% 正确。
 
 不同于 [处理一堆麻烦的正则表达式](https://github.com/jneen/rouge/blob/master/lib/rouge/lexers/swift.rb)，我们可以构造一个 [语法高亮器](https://github.com/NSHipster/SwiftSyntaxHighlighter) 来放大 SwiftSyntax 对语言的理解的优势。
 
@@ -259,7 +260,7 @@ class SwiftSyntaxHighlighter: SyntaxRewriter {
 }
 ```
 
-尽管 `SyntaxRewritere` 已经针对每一种不同类型的语法元素实现了 `visit(:)` 方法，但我发现使用一个 `switch` 语句可以更简单地处理所有工作。（在 `default` 分支中打印出无法处理的标记符可以更好地帮助我们找到那些没有处理的情况）。这不是最优雅的实现，但鉴于我对 SwiftSyntax 不足的理解，这是个较好的开端。
+尽管 `SyntaxRewritere` 针对每一种不同类型的语法元素，都已经实现了 `visit(:)` 方法，但我发现使用一个 `switch` 语句可以更简单地处理所有工作。（在 `default` 分支中打印出无法处理的标记符，可以更好地帮助我们找到那些没有处理的情况）。这不是最优雅的实现，但鉴于我对 SwiftSyntax 不足的理解，这是个较好的开端。
 
 不管怎样，在几个小时的开发工作后，我已经可以在 Swift 大量的语法特性中，生成出比较理想的渲染过的输出。
 
