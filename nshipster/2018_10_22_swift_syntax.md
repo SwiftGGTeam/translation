@@ -1,23 +1,25 @@
 title: "SwiftSyntax"
-date:
+date: 2019-01-25
 tags:  [Swift, NSHipster]
 categories: [Swift, NSHipster]
 permalink: nshipster-swiftsyntax
 
 ---
 
-原文链接=<https://nshipster.com/swiftsyntax/>
+原文链接=https://nshipster.com/swiftsyntax/
 作者=Mattt
 原文日期=2018-10-22
 译者=jojotov
-校对=
-定稿=
+校对=numbbbbb,Yousanflics,pmst
+定稿=Forelax
 
-[SwiftSyntax](https://github.com/apple/swift-syntax) 是一个可以分析、生成以及转换 Swift 源代码的 Swift 库。它基于 [libSyntax](https://github.com/apple/swift/tree/master/lib/Syntax) 库，且是曾经从 Swift 语言的主仓库抽离出来并单独成库的。
+<!--此处开始正文-->
+
+[SwiftSyntax](https://github.com/apple/swift-syntax) 是一个可以分析、生成以及转换 Swift 源代码的 Swift 库。它是基于 [libSyntax](https://github.com/apple/swift/tree/master/lib/Syntax) 库开发的，并于 [2017 年 8 月](https://github.com/apple/swift-syntax/commit/909d336aefacdcbdd45ec6130471644c1ae929f5) 从 Swift 语言的主仓库中分离出来，单独建立了一个仓库。
+
+<!--more-->
 
 总的来说，这些库都是为了给结构化编辑（structured editing）提供安全、正确且直观的工具。关于结构化编辑，在 [thusly](https://github.com/apple/swift/blob/master/lib/Syntax/README.md#swift-syntax-and-structured-editing-library) 中有具体的描述:
-
-
 
 > 什么是结构化编辑？结构化编辑是一种编辑的策略，它对源代码的*结构*更加敏感，而源代码的表示（例如字符或者字节）则没那么重要。这可以细化为以下几个部分：替换标识符，将对全局方法的调用转为对方法的调用，或者根据已定的规则识别并格式化整个源文件。
 
@@ -49,13 +51,13 @@ func one() -> Int { return 1 }
 
 在命令行中对此文件运行 `swiftc` 命令并传入 `-frontend -emit-syntax` 参数：
 
-```Terminal
+```shell
 $ xcrun swiftc -frontend -emit-syntax ./One.swift
 ```
 
 运行的结果为一串 JSON 格式的 AST。当你用 JSON 格式来展示时，AST 的结构会表现的更加清晰：
 
-```
+```json
 {
     "kind": "SourceFile",
     "layout": [{
@@ -87,7 +89,7 @@ $ xcrun swiftc -frontend -emit-syntax ./One.swift
 
 Python 中的 `json.tool` 模块提供了便捷地格式化 JSON 的能力。且几乎所有的 macOS 系统都已经集成了此模块，因此每个人都可以使用它。举个例子，你可以使用如下的命令对编译的输出结果使用 `json.tool` 格式化：
 
-```Terminal
+```shell
 $ xcrun swiftc -frontend -emit-syntax ./One.swift | python -m json.tool
 ```
 
@@ -105,19 +107,19 @@ $ xcrun swiftc -frontend -emit-syntax ./One.swift | python -m json.tool
 
 ### 处理文件系统限制
 
-SwiftSyntax 通过代理系统的 `swiftc` 调用来生成抽象语法树。但是，这也限制了代码必须关联某个文件才能进行处理，而我们却经常需要对以字符串表示的代码进行处理。
+SwiftSyntax 通过代理系统的 `swiftc` 调用来生成抽象语法树。但是，这也限制了代码必须放在某个文件才能进行处理，而我们却经常需要对以字符串表示的代码进行处理。
 
 为了解决这个限制，其中一种办法是把代码写入一个临时文件并传入到编译器中。
 
 [我们曾经尝试过写入临时文件](https://nshipster.com/nstemporarydirectory/)，但目前，有更好的 API 可以帮助我们完成这项工作，它由  [Swift Package Manager](https://github.com/apple/swift-package-manager) 本身提供。在你的 `Package.swift` 文件中，添加如下的包依赖关系，并把 `Utility` 依赖添加到正确的 target 中：
 
-```Swift
+```swift
 .package(url: "https://github.com/apple/swift-package-manager.git", from: "0.3.0"),
 ```
 
 现在，你可以像下面这样引入 `Basic` 模块并使用 `TemporaryFile` API：
 
-```Swift
+```swift
 import Basic
 import Foundation
 
@@ -143,7 +145,7 @@ let sourceFile = try SyntaxTreeParser.parse(url)
 
 留意一下如下的示例代码：
 
-```Swift
+```swift
 import SwiftSyntax
 
 let structKeyword = SyntaxFactory.makeStructKeyword(trailingTrivia: .spaces(1))
@@ -185,9 +187,9 @@ struct Example {
 
 通过这个，你应该已经推断得出如何使用它来创建一个典型的 `swift-format` 工具。
 
-但现在，我们先考虑一个相当*缺少*效率的用例——并且更加季节性地合适（🎃）——源代码重写
+但现在，我们先考虑一个相当*没有*效率——并且可能在万圣节（🎃）这种需要捣蛋的场景才合适的用例，源代码重写：
 
-```Swift
+```swift
 import SwiftSyntax
 
 public class ZalgoRewriter: SyntaxRewriter {
