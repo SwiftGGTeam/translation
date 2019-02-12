@@ -18,7 +18,7 @@ description: 本文对 Swift 5 中 SE-0228 对 String Interpolation 相关功能
 
 <!--此处开始正文-->
 
-感谢提案 [SE-0228](https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md)，让我们能够用希望的方式去精确控制字符串插值的打印方式。感谢 Brent 把这个非常棒的功能带给我们。让我来分享一些例子。
+感谢提案 [SE-0228](https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md)，让我们能够用希望的方式去精确控制字符串插值的打印方式。感谢 Brent 带给我们这个非常棒的功能。让我来分享一些例子。
 
 <!--more-->
 
