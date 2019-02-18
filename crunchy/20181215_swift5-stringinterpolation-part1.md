@@ -18,11 +18,11 @@ description:
 
 <!--此处开始正文-->
 
-在 Swift 4 的时候， `StringInterpolation` 协议因为其最初设计效率低下又不易扩展，所以被废弃了，以便之后能整个重新设计。之后，即将在 Swift 5 中亮相的 [SE-0228](https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md) 提案介绍了一种新的 `StringInterpolation` 设计，带来一大波强大的可能性。
+ `StringInterpolation` 协议最初的设计效率低下又不易扩展，所以在 Swift 4 被废弃了，以便之后能整个重新设计。之后，即将在 Swift 5 中亮相的 [SE-0228](https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md) 提案介绍了一种新的 `StringInterpolation` 设计，带来一大波强大的可能性。
 
 <!--more-->
 
-在 Swift 的 `master` 分支里实现之后，就可以下载一个[快照](https://swift.org/download/#snapshots)来安装最新的 Swift 5 工具链到 Xcode 中，来尝试全新的 `StringInterpolation`。让我们来把玩一下。
+在 Swift 的 `master` 分支里实现之后，就可以下载一个 [快照](https://swift.org/download/#snapshots) 来安装最新的 Swift 5 工具链到 Xcode 中，来尝试全新的 `StringInterpolation`。让我们来把玩一下。
 
 ### 全新的 StringInterpolation 设计
 
@@ -32,18 +32,18 @@ description:
 
 * 让这个类型拥有 `StringInterpolation` 的嵌套类型，这个嵌套类型遵循 `StringInterpolationProtocol` 并将负责解释插值
 * 这个嵌套类型仅需要实现 `appendLiteral(_ literal: String)` 方法，再选择一个或多个你自己想要支持的 `appendInterpolation(...)` 签名的方法
-* 这个 `StringInterpolation` 嵌套类型会作为“构造器”服务于你的主类型，然后编译器会调用那些 `append…`  方法一步一步地构造对象
+* 这个 `StringInterpolation` 嵌套类型会作为“构造器”服务于你的主类型，然后编译器会调用那些 `append…` 方法一步一步地构造对象
 * 然后你的主类型需要实现 `init(stringInterpolation: StringInterpolation)` ，它会用上一步的结果来实例化它自己。
 
-你可以实现任何你喜欢的 `appenInterpolation(...)` 方法，意味着你可以任意选择支持什么插值。这是一个带来巨大的可能性的超级强大功能。
+你可以实现任何你喜欢的 `appenInterpolation(...)` 方法，意味着你可以任意选择支持什么插值。这是一个带来巨大的可能性的超强功能。
 
-举个例子，如果你实现 `func appendInterpolation(_ string: String, pad: Int)` 那么意味着你将可以用类似这样的插值：`"Hello \(name, pad: 10), how are you?"` 来构造你的类型。插值只需要匹配你的 `StringInterpolation` 嵌套类型其中一个支持的 `appendInterpolation` 方法签名。
+举个例子，如果你实现了 `func appendInterpolation(_ string: String, pad: Int)`，那么意味着你将可以用类似这样的插值：`"Hello \(name, pad: 10), how are you?"` 来构造你的类型。插值只需要匹配你的 `StringInterpolation` 嵌套类型其中一个支持的 `appendInterpolation` 方法签名。
 
 ### 简单例子
 
-让我用一个简单的类型开始来演示它是如何运作的。让我们构造一个允许你去引用 issue 编号和用户的 `GitHubComment` 类型。
+让我用一个简单的类型来演示一下它是如何运作的。一起来构造一个允许引用 issue 编号和用户的 `GitHubComment` 类型吧。
 
-这个例子的目标是可以像类似下面这样来写：
+这个例子的目标是做到类似下面的写法：
 
 ```swift
 let comment: GitHubComment = """
@@ -53,7 +53,7 @@ let comment: GitHubComment = """
 
 所以我们该怎么实现它呢？
 
-首先，让我们声明基本的结构体 `struct GitHubComment` 并让它遵循 `ExpressibleByStringLiteral` (因为 `ExpressibleByStringInterpolation` 继承自这个协议所以我们将它的实现抽离)和 `CustomStringConvertible` （为了 debug 时友好地在控制台中打印 ）
+首先，让我们声明基本的结构体 `struct GitHubComment` 并让它遵循 `ExpressibleByStringLiteral`（因为 `ExpressibleByStringInterpolation` 继承自这个协议所以我们将它的实现抽离）和 `CustomStringConvertible`（为了 debug 时友好地在控制台中打印）。
 
 ```swift
 struct GitHubComment {
@@ -73,7 +73,7 @@ extension GitHubComment: CustomStringConvertible {
 }
 ```
 
-然后，我们让 `GitHubComment` 遵循 `ExpressibleByStringInterpolation`，意味着有一个 `StringInterpolation` 嵌套类型会处理应该做什么在下面这些时候：
+然后，我们让 `GitHubComment` 遵循 `ExpressibleByStringInterpolation`。这意味着在下面这些步骤应该做什么，将由一个 `StringInterpolation` 嵌套类型来处理：
 
 * 初始化它自己：`init(literalCapacity: Int, interpolationCount: Int)` 
 
@@ -145,6 +145,6 @@ let comment: GitHubComment = """
 * 创建一个 `RegEX` 类型并遵循，你就可以用花里胡哨的语法写正则表达式
 * 创建一个 `AttributedString` 类型并遵循，就可以用字符串插值构建 `NSAttributedString` 
 
-带来新的字符串插值设计的 [Brent Royal-Gordon](https://github.com/brentdax) 和 [Michael Ilseman](https://github.com/milseman)，提供了更多例子在这个[要点列表](https://gist.github.com/brentdax/0b46ce25b7da1049e61b4669352094b6)中。
+带来新的字符串插值设计的 [Brent Royal-Gordon](https://github.com/brentdax) 和 [Michael Ilseman](https://github.com/milseman)，提供了更多例子在这个 [要点列表](https://gist.github.com/brentdax/0b46ce25b7da1049e61b4669352094b6)  中。
 
-我个人尝试了一下支持 `NSAttributedString` 的实现，并想[在专门的一篇文章里分享它的初步实现](http://alisoftware.github.io/swift/2018/12/16/swift5-stringinterpolation-part2/)，因为我发现它非常优雅。让我们在这篇文章的第二部分再见!
+我个人尝试了一下支持 `NSAttributedString` 的实现，并想 [在专门的一篇文章里分享它的初步实现](http://alisoftware.github.io/swift/2018/12/16/swift5-stringinterpolation-part2/)，因为我发现它非常优雅。我们下一篇文章再见！
