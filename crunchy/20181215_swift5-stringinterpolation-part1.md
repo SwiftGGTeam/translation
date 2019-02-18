@@ -18,7 +18,7 @@ description:
 
 <!--此处开始正文-->
 
- `StringInterpolation` 协议最初的设计效率低下又不易扩展，所以在 Swift 4 被废弃了，以便之后能整个重新设计。之后，即将在 Swift 5 中亮相的 [SE-0228](https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md) 提案介绍了一种新的 `StringInterpolation` 设计，带来一大波强大的可能性。
+`StringInterpolation` 协议最初的设计效率低下又不易扩展，所以在 Swift 4 被废弃了，以便之后能整个重新设计。之后，即将在 Swift 5 中亮相的 [SE-0228](https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md) 提案介绍了一种新的 `StringInterpolation` 设计，带来一大波强大的可能性。
 
 <!--more-->
 
@@ -145,6 +145,6 @@ let comment: GitHubComment = """
 * 创建一个 `RegEX` 类型并遵循，你就可以用花里胡哨的语法写正则表达式
 * 创建一个 `AttributedString` 类型并遵循，就可以用字符串插值构建 `NSAttributedString` 
 
-带来新的字符串插值设计的 [Brent Royal-Gordon](https://github.com/brentdax) 和 [Michael Ilseman](https://github.com/milseman)，提供了更多例子在这个 [要点列表](https://gist.github.com/brentdax/0b46ce25b7da1049e61b4669352094b6)  中。
+带来新的字符串插值设计的 [Brent Royal-Gordon](https://github.com/brentdax) 和 [Michael Ilseman](https://github.com/milseman)，提供了更多例子在这个 [要点列表](https://gist.github.com/brentdax/0b46ce25b7da1049e61b4669352094b6) 中。
 
 我个人尝试了一下支持 `NSAttributedString` 的实现，并想 [在专门的一篇文章里分享它的初步实现](http://alisoftware.github.io/swift/2018/12/16/swift5-stringinterpolation-part2/)，因为我发现它非常优雅。我们下一篇文章再见！
