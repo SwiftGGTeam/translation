@@ -1,24 +1,24 @@
 title: "Swift 5 字符串插值之美"
-date: 2018-12-12
+date: 2019-02-21
 tags: [Swift]
-categories: [ericasadun.com]
+categories: [Erica Sadun]
 permalink: the-beauty-of-swift-5-string-interpolation
-keywords: Swift 5, String Interpolation
-custom_title: Swift 5 字符串插值之美
-description: 本文对 Swift 5 中 SE-0228 对 String Interpolation 相关功能的改进进行了举例说明，展示了一些控制字符串插值的方式。
+keywords: [Swift 5, String Interpolation]
+custom_title: "Swift 5 字符串插值之美"
+description: "本文对 Swift 5 中 SE-0228 对 String Interpolation 相关功能的改进进行了举例说明，展示了一些控制字符串插值的方式。"
 
 ---
 
 原文链接=https://ericasadun.com/2018/12/12/the-beauty-of-swift-5-string-interpolation/ 
 作者=Erica Sadun 
 原文日期=2018-12-12 
-译者=Roc Zhang 
-校对= 
-定稿= 
+译者=RocZhang
+校对=numbbbbb,pmst
+定稿=Forelax
 
 <!--此处开始正文-->
 
-感谢提案 [SE-0228](https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md)，让我们能够用希望的方式去精确控制字符串插值的打印方式。感谢 Brent 带给我们这个非常棒的功能。让我来分享一些例子。
+感谢提案 [SE-0228](https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md)，让我们能够精确控制字符串插值的打印方式。感谢 Brent 带给我们这个非常棒的功能。让我来分享一些例子。
 
 <!--more-->
 
@@ -28,16 +28,16 @@ description: 本文对 Swift 5 中 SE-0228 对 String Interpolation 相关功能
 "There's \(value1) and \(value2)"
 ```
 
-会立即得到一个警告：
+但这样写会立即得到一个警告：
 ![](https://i2.wp.com/ericasadun.com/wp-content/uploads/2018/12/Screen-Shot-2018-12-12-at-2.38.51-PM.png?w=1065&ssl=1)
 
-我们可以点击修复按钮来消除这些警告，但仍然会看到一个类似于这样的输出：“There’s Optional(23) and nil”。
+我们可以点击修复按钮来消除这些警告，得到如下的代码。但我们仍然会看到一个类似于这样的输出：“There’s Optional(23) and nil”。
 
 ```swift
 "There's \(String(describing: value1)) and \(String(describing: value2))"
 ```
 
-上面这种写法可以去掉“Optional”，直接打印值。我们还可以进一步优化：
+现在我们可以通过下面这种方式去掉输出中的“Optional”，直接打印出“There’s 23 and nil”：
 
 ```swift
 extension String.StringInterpolation {
@@ -54,7 +54,6 @@ extension String.StringInterpolation {
 
 // There's 23 and nil
 "There's \(value1, default: "nil") and \(value2, default: "nil")"
-
 ```
 
 我们也可以创建一组样式，从而使可选值能够保持一致的输出展示方式：
@@ -99,7 +98,6 @@ extension String.StringInterpolation {
   public mutating func appendInterpolation(describing value: T?) {
     appendInterpolation(value, optStyle: .stripped)
   }
-
 }
 
 // "There's Optional(23) and nil"
@@ -110,10 +108,9 @@ extension String.StringInterpolation {
 
 // "There's 23 and nil"
 "There's \(describing: value1) and \(describing: value2)"
-
 ```
 
-插值不仅仅可用于调整可选值的输出方式。假设你想控制是否要添加一个字符串，而不必去使用带有空字符串的三元表达式：
+插值不仅仅用于调整可选值的输出方式，在其他方面也很有用。比如你想控制输出是否带有特定的字符，就不需要写一个带有空字符串的三元表达式：
 
 ```swift
 // 成功时包含（感谢 Nate Cook）
