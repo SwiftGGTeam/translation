@@ -56,6 +56,7 @@ BigNerdCoding
 | Nemo | [Nemocdz](https://weibo.com/u/2488167352) |[Nemocdz](https://nemocdz.github.io/)|[Nemocdz](https://github.com/Nemocdz) |
 | WAMaker ||| [WAMaker](https://github.com/WAMaker) |
 | 脱脂棉布团 ||[陈栋楠的Blog](http://blog.chendongnan.com)|[Dongnan Chen](https://github.com/ChenDongnan) |
+| RocZhang | [张鹏RocZhang](http://weibo.com/u/3210801545) | [Roc Zhang's Blog](https://www.roczhang.com) | [RocZhang9673](https://github.com/RocZhang9673) |
 
 ## 校对
 
@@ -93,7 +94,6 @@ BigNerdCoding
 |numbbbbb | [梁杰_numbbbbb](https://weibo.com/numbbbbb) | [numbbbbb](http://numbbbbb.com/) | [numbbbbb](https://github.com/numbbbbb/) |
 |MaxXD |[MaxXD不能使用](https://weibo.com/u/5029986118)|[认知即事实](http://robin4han.github.io/)|[dearbojack](https://github.com/dearbojack)|
 |muhlenXi |[muhlenXi](https://weibo.com/523545319) |[muhlenXi的博客](http:www.muhlenxi.com) |[muhlenXi](https://github.com/muhlenXi)  |
-| RocZhang | [张鹏RocZhang](http://weibo.com/u/3210801545) | [Roc Zhang's Blog](https://www.roczhang.com) | [RocZhang9673](https://github.com/RocZhang9673) |
 
 ## 文章更新
 
