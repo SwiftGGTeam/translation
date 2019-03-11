@@ -19,7 +19,7 @@ custom_title:"Swift 关键字"
 
 有句话之前我提过，今天还想再说一次。那就是打铁还需自身硬。对于自身能力的严格要求，可以帮助实现我们所有梦寐以求的东西。
 
-说起来可能有些消极，知识毕竟是永远学不完的。不论如何，今天[我们先来学习一下 Swift 中的每一个关键字](https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/LexicalStructure.html)（V3.0.1），在介绍每个关键字的时候，同时会附带一段代码加以说明。
+说起来可能有些消极，知识毕竟是永远学不完的。不论如何，今天 [我们先来学习一下 Swift 中的每一个关键字](https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/LexicalStructure.html)（V3.0.1），在介绍每个关键字的时候，同时会附带一段代码加以说明。
 
 在这些关键字之中，会有你熟悉或者不熟悉的部分。但为了最好的阅读和学习体验，我把它们全部列出来了。文章篇幅有些长，你准备好了么？
 
