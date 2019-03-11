@@ -433,7 +433,7 @@ switch box
 }
 ```
 
-**for**：在序列上迭代，比如一组特定范围内的数字，数组中的元素，字符串中的字符。*与关键字 in 成对使用。
+**for**：在序列上迭代，比如一组特定范围内的数字，数组中的元素，字符串中的字符。\*与关键字 in 成对使用。
 
 ```swift
 for _ in 0..<3 { print ("This prints 3 times") }
@@ -464,7 +464,7 @@ if 1 > 2
 }
 ```
 
-**in**：在序列上迭代，比如一组特定范围内的数字，数组中的元素，字符串中的字符。*与关键字 key 搭配使用。
+**in**：在序列上迭代，比如一组特定范围内的数字，数组中的元素，字符串中的字符。\*与关键字 key 搭配使用。
 
 ```swift
 for _ in 0..<3 { print ("This prints 3 times") }
@@ -600,7 +600,7 @@ for thing in anything
 }
 ```
 
-**catch**：如果在 do 中抛出一个错误，catch 会尝试进行匹配，并决定如何处理错误。[*我写的一篇 Swift 错误处理的博客节选](https://swiftjectivec.com/swift-error-handling)。
+**catch**：如果在 do 中抛出一个错误，catch 会尝试进行匹配，并决定如何处理错误。[\*我写的一篇 Swift 错误处理的博客节选](https://swiftjectivec.com/swift-error-handling)。
 
 ```swift
 do  
