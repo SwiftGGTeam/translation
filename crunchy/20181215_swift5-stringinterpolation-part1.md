@@ -18,7 +18,7 @@ description:
 
 <!--此处开始正文-->
 
-`StringInterpolation` 协议最初的设计效率低下又不易扩展，所以在 Swift 4 被废弃了，以便之后能整个重新设计。之后，即将在 Swift 5 中亮相的 [SE-0228](https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md) 提案介绍了一种新的 `StringInterpolation` 设计，带来一大波强大的可能性。
+`StringInterpolation` 协议最初的设计效率低下又不易扩展，所以在 Swift 4 被废弃了，以便之后能整个重新设计。即将在 Swift 5 中亮相的 [SE-0228](https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md) 提案介绍了一种新的 `StringInterpolation` 设计，使得 String 有了更大的潜能。
 
 <!--more-->
 
@@ -26,9 +26,9 @@ description:
 
 ### 全新的 StringInterpolation 设计
 
-我强烈建议阅读一下 [SE-0228](https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md) 提案，感受一下新 API 的背后的设计思路和动机。
+我强烈建议开发者阅读一下 [SE-0228](https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md) 提案，感受一下新 API 的背后的设计思路和动机。
 
-最基本的，让一个类型遵循 `ExpressibleByStringInterpolation`，你需要：
+要让一个类型遵循 `ExpressibleByStringInterpolation`，最基本的你需要：
 
 * 让这个类型拥有 `StringInterpolation` 的嵌套类型，这个嵌套类型遵循 `StringInterpolationProtocol` 并将负责解释插值
 * 这个嵌套类型仅需要实现 `appendLiteral(_ literal: String)` 方法，再选择一个或多个你自己想要支持的 `appendInterpolation(...)` 签名的方法
@@ -120,11 +120,11 @@ extension GitHubComment: ExpressibleByStringInterpolation {
 }
 ```
 
-这就完事了！我们成了！
+这就完事了！我们成功了！
 
 注意，因为那些我们实现了的 `appendInterpolation` 方法签名，我们允许使用 `Hello \(user: "alisoftware")` 但不能使用 `Hello \(user: 123)`，因为 `appendInterpolation(user:)` 期望一个 `String` 作为形参。类似的是，在你的字符串中 `\(issue: 123)` 只能允许一个 `Int` 因为 `appendInterpolation(issue:)` 采用一个 `Int` 作为形参。
 
-实际上，如果你尝试在你的 `StringInterpolation` 子类中用不支持的插值，编译器会给你友好的报错：
+实际上，如果你尝试在你的 `StringInterpolation` 子类中用不支持的插值，编译器会给你提示报错：
 
 ```swift
 let comment: GitHubComment = """
