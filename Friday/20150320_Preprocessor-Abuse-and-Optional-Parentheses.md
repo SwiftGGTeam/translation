@@ -208,7 +208,7 @@ NOTHING_EXTRACT (int)
 (int)
 ```
 
-但更接近我们的目标了。序列 `EXTRACT（int）` 显然没有出发触发标示符粘贴操作符。我们必须让预处理器在它看到 `##` 之前解析它。另一层间接将迫使它表现出来。让我们定义一个只包装 PASTE 的 EVALUATING_PASTE 宏：
+但更接近我们的目标了。序列 `EXTRACT（int）` 显然没有触发标示符粘贴操作符。我们必须让预处理器在它看到 `##` 之前解析它。可以通过另一种方式间接强制解析它。让我们定义一个只包装 PASTE 的 EVALUATING_PASTE 宏：
 
 ```objc
 #define EVALUATING_PASTE(x,...) PASTE(x,__VA_ARGS__)
