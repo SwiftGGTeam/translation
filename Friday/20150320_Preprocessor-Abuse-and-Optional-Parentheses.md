@@ -1,25 +1,23 @@
-# 宏定义与可选括号
-
 title: "宏定义与可选括号"
 date: 2019.3.10
 tags: [iOS,macro]
 categories: [Mike Ash]
-permalink: https://www.github.com/xxx
+permalink: preprocessor-abuse-and-optional-parentheses
 keywords: macro
 description: Objective-C 中 C 语言宏定义扩展
 
 ---
 
-原文链接= [https://www.mikeash.com/pyblog/friday-qa-2015-03-20-preprocessor-abuse-and-optional-parentheses.html](https://www.mikeash.com/pyblog/friday-qa-2015-03-20-preprocessor-abuse-and-optional-parentheses.html) 
-作者= Mike Ash 
-原文日期= 2015-03-20 
+原文链接=https://www.mikeash.com/pyblog/friday-qa-2015-03-20-preprocessor-abuse-and-optional-parentheses.html
+作者=Mike Ash 
+原文日期=2015-03-20 
 译者=俊东 
 校对=xxx 
 定稿=xxx
 
-前几天我遇到了一个有趣的问题： 如何编写一个 C 语言预处理器的宏，删除围绕在参数上的括号？
+前几天我遇到了一个有趣的问题：如何编写一个 C 语言预处理器的宏，删除围绕在参数上的括号？
 
-今天的文章，将为大家分享我的解决方案。 
+今天的文章，将为大家分享我的解决方案。
 <!--more-->
 ## 起源
 
@@ -28,15 +26,15 @@ C 语言预处理器是一个相当盲目的文本替换引擎，它并不理解
 这里举个典型的例子：
 
 ```objc
-XCTAssertEqualObjects(someArray,@[ @"one",@"two" ],@"Array is not as expected”);
+XCTAssertEqualObjects(someArray, @[ @"one", @"two" ], @"Array is not as expected");
 ```
 
-这会无法编译，并且会出现非常古怪的错误提示。预处理器查找分隔宏参数的逗号时，没能将数组结构 `@ [...]` 中的东西应该理解为一个单一的元素。结果代码尝试比较 `someArray` 和 `@[@“one”` 。断言失败消息为 ` @"two” ] and @"Array is not as expected"` 。这些不完整的代码组合到了 `XCTAssertEqualObjects` 的宏扩展中，生成的代码当然错的离谱。
+这会无法编译，并且会出现非常古怪的错误提示。预处理器查找分隔宏参数的逗号时，没能将数组结构 `@ [...]` 中的东西应该理解为一个单一的元素。结果代码尝试比较 `someArray` 和 `@[@“one”` 。断言失败消息为 `@"two”] and @"Array is not as expected"`。这些不完整的代码组合到了 `XCTAssertEqualObjects` 的宏扩展中，生成的代码当然错的离谱。
 
-要解决这个问题也很容易：添加一个括号就行。预编译器不能识别 `[ ]`，但它知道 `（）` 并且能够理解需要忽略里面的括号。下面的代码就能正常运行：
+要解决这个问题也很容易：添加一个括号就行。预编译器不能识别 `[ ]`，但它知道 `()` 并且能够理解需要忽略里面的括号。下面的代码就能正常运行：
 
 ```objc
-XCTAssertEqualObjects(someArray,(@[ @"one",@"two" ]),@"Array is not as expected");
+XCTAssertEqualObjects(someArray, (@[ @"one", @"two" ]), @"Array is not as expected");
 ```
 
 在 C 语言的许多场景下，你添加多余的括号也不会有任何区别。就像宏扩展之后，生成的代码虽然在数组文字周围有括号，但没有异常。你可以编写充满多余括号的表达式，而编译器会愉快地为你挖掘到最底部：
@@ -47,11 +45,11 @@ NSLog(@"%d",((((((((((42)))))))))));
 
 甚至将 `NSLog` 这样处理也行：
 
-```
+```objc
 ((((((((((NSLog))))))))))(@"%d",42);
 ```
 
-在 C 中有一个地方你不能只添加随机括号：类型 （type） 。例如：
+在 C 中有一个地方你不能只添加随机括号：类型。例如：
 
 ```objc
 int f(void); // 合法
@@ -79,7 +77,7 @@ GETTER(NSString *,name)
 GETTER(id<NSCopying>,someCopyableThing)
 ```
 
-到目前为止没问题。现在假设我们想要制作一个遵循两个协议的类型：
+到目前为止没问题。现在假设我们想要制作一个遵循*两个*协议的类型：
 
 ```objc
 GETTER(id<NSCopying,NSCoding>,someCopyableAndCodeableThing)
@@ -114,9 +112,9 @@ GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 	}
 ```
 
-虽然看上去很扯，但这的确能运行。 预编译器将 `type` 扩展为 `（id <NSCopying，NSCoding>）`，生成 `UNPAREN（id <NSCopying，NSCoding>）` 。然后它会将 `UNPAREN` 宏扩展为 `id <NSCopying，NSCoding>` 。
+虽然看上去很扯，但这的确能运行。 预编译器将 `type` 扩展为 `(id <NSCopying，NSCoding>)`，生成 `UNPAREN(id <NSCopying，NSCoding>)` 。然后它会将 `UNPAREN` 宏扩展为 `id <NSCopying，NSCoding>` 。
 
-但是，之前使用的 `GETTER` 失败了。例如，`GETTER（NSView *，view）` 在宏扩展中生成 `UNPAREN NSView *`。不会进一步扩展就直接提供给编译器。结果自然会报编译器错误，因为 `UNPAREN NSView *` 是无法编译的。这虽然可以通过编写 `GETTER（（NSView *），view）` 来解决，但是被迫添加这些括号很烦人。这样的结果可不是我们想要的。
+但是，之前使用的 `GETTER` 失败了。例如，`GETTER(NSView *，view)` 在宏扩展中生成 `UNPAREN NSView *`。不会进一步扩展就直接提供给编译器。结果自然会报编译器错误，因为 `UNPAREN NSView *` 是无法编译的。这虽然可以通过编写 `GETTER((NSView *)，view)` 来解决，但是被迫添加这些括号很烦人。这样的结果可不是我们想要的。
 
 ## 宏不能被重载
 
@@ -141,13 +139,13 @@ GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 
 ## 关键
 
-最终目标是让 `UNPAREN（x）` 和 `UNPAREN（（x））` 结果都是 x 。朝着这个目标迈出的第一步是制作一些宏，其中传递 x 和（ x ）产生相同的输出，即使它并不确定 x 是什么。 这可以通过将宏名称放在宏扩展中来实现，如下所示：
+最终目标是让 `UNPAREN(x)` 和 `UNPAREN((x))` 结果都是 x 。朝着这个目标迈出的第一步是制作一些宏，其中传递 x 和 (x) 产生相同的输出，即使它并不确定 x 是什么。 这可以通过将宏名称放在宏扩展中来实现，如下所示：
 
 ```objc
 #define EXTRACT(...) EXTRACT __VA_ARGS__
 ```
 
-现在如果你写` EXTRACT（ x ） `，结果是 `EXTRACT x` 。当然，如果你写 `EXTRACT x`，结果也是 `EXTRACT x`，因为没有宏扩展的情况。这仍然留给我们一个剩余的提取物。这种 `#define` 方式并不简单，但这种做法也算是一种进步。
+现在如果你写` EXTRACT( x ) `，结果是 `EXTRACT x` 。当然，如果你写 `EXTRACT x`，结果也是 `EXTRACT x`，因为没有宏扩展的情况。这仍然留给我们一个剩余的提取物。这种 `#define` 方式并不简单，但这种做法也算是一种进步。
 
 ## 标识符粘贴
 
@@ -159,9 +157,9 @@ GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 #define A(x) A ## x
 ```
 
-从这里可以看到， `A（A）` 产生 1， `A（B）` 产生 2 。
+从这里可以看到， `A(A)` 产生 1， `A(B)` 产生 2 。
 
-让我们将这个运算符与上面的 EXTRACT 宏结合起来，尝试生成一个 UNPAREN 宏。由于 `EXTRACT（...）` 使用前导 EXTRACT 生成参数，因此我们可以使用标识符粘贴来生成以 EXTRACT 结尾的其他标记。如果我们 `#define` 那个新标记为空，我们将全部设置。
+让我们将这个运算符与上面的 EXTRACT 宏结合起来，尝试生成一个 UNPAREN 宏。由于 `EXTRACT(...)` 使用前导 EXTRACT 生成参数，因此我们可以使用标识符粘贴来生成以 EXTRACT 结尾的其他标记。如果我们 `#define` 那个新标记为空，我们将全部设置。
 
 这是一个以 EXTRACT 结尾的宏，它不会产生任何结果：
 
@@ -175,7 +173,7 @@ GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 #define UNPAREN(x) NOTHING_ ## EXTRACT x
 ```
 
-不幸的是，这并不能实现我们的目标。操作顺序是问题所在。如果我们写 `UNPAREN（（int））`，我们将会得到：
+不幸的是，这并不能实现我们的目标。操作顺序是问题所在。如果我们写 `UNPAREN((int))`，我们将会得到：
 
 ```objc
 UNPAREN((int))
@@ -208,7 +206,7 @@ NOTHING_EXTRACT (int)
 (int)
 ```
 
-但更接近我们的目标了。序列 `EXTRACT（int）` 显然没有触发标示符粘贴操作符。我们必须让预处理器在它看到 `##` 之前解析它。可以通过另一种方式间接强制解析它。让我们定义一个只包装 PASTE 的 EVALUATING_PASTE 宏：
+但更接近我们的目标了。序列 `EXTRACT(int)` 显然没有触发标示符粘贴操作符。我们必须让预处理器在它看到 `##` 之前解析它。可以通过另一种方式间接强制解析它。让我们定义一个只包装 PASTE 的 EVALUATING_PASTE 宏：
 
 ```objc
 #define EVALUATING_PASTE(x,...) PASTE(x,__VA_ARGS__)
