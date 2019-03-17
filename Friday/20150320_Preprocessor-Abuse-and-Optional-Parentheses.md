@@ -23,7 +23,7 @@ description: Objective-C 中 C 语言宏定义扩展
 <!--more-->
 ## 起源
 
-C 语言预处理器是一个相当盲目的文本替换引擎，它并不理解 C 代码，更不用说 Objective-C 了。它的工作原理是挺好的，可以应付大部分情况，但偶尔也会判断失误。
+C 语言预处理器是一个相当盲目的文本替换引擎，它并不理解 C 代码，更不用说 Objective-C 了。它的工作原理还算不错，可以应付大部分情况，但偶尔也会出现判断失误。
 
 这里举个典型的例子：
 
@@ -31,7 +31,7 @@ C 语言预处理器是一个相当盲目的文本替换引擎，它并不理解
 XCTAssertEqualObjects(someArray,@[ @"one",@"two" ],@"Array is not as expected”);
 ```
 
-这会无法编译，并且错误提示会非常古怪。预处理器查找分隔宏参数的逗号时没能将数组结构 `@ [...]` 中的东西应该理解为一个单一的元素。结果代码尝试比较 `someArray` 和 `@[@“one”` 。断言失败消息为 ` @"two” ] and @"Array is not as expected"` 。这些不完整的代码组合到了 `XCTAssertEqualObjects` 的宏扩展中，生成的代码错的离谱。
+这会无法编译，并且会出现非常古怪的错误提示。预处理器查找分隔宏参数的逗号时，没能将数组结构 `@ [...]` 中的东西应该理解为一个单一的元素。结果代码尝试比较 `someArray` 和 `@[@“one”` 。断言失败消息为 ` @"two” ] and @"Array is not as expected"` 。这些不完整的代码组合到了 `XCTAssertEqualObjects` 的宏扩展中，生成的代码当然错的离谱。
 
 要解决这个问题也很容易：添加一个括号就行。预编译器不能识别 `[ ]` ，但它知道 `（）` 并且能够理解需要忽略里面的括号。下面的代码就能正常运行：
 
@@ -45,7 +45,7 @@ XCTAssertEqualObjects(someArray,(@[ @"one",@"two" ]),@"Array is not as expected"
 NSLog(@"%d",((((((((((42)))))))))));
 ```
 
-甚至可以将 `NSLog` 这样处理也行：
+甚至将 `NSLog` 这样处理也行：
 
 ```
 ((((((((((NSLog))))))))))(@"%d",42);
@@ -116,7 +116,7 @@ GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 
 虽然看上去很扯，但这的确能运行。 预编译器将 `type` 扩展为 `（id <NSCopying，NSCoding>）` ，生成 `UNPAREN（id <NSCopying，NSCoding>）` 。然后它会将 `UNPAREN` 宏扩展为 `id <NSCopying，NSCoding>` 。
 
-但是，之前使用的 `GETTER` 失败了。例如，`GETTER（NSView *，view）` 在宏扩展中生成 `UNPAREN NSView *`。不会进一步扩展就直接提供给编译器。结果自然会报编译器错误，因为 `UNPAREN NSView *` 是无法编译的。这虽然可以通过编写 `GETTER（（NSView *），view）` 来解决，但是被迫添加这些括号很烦人。这样的结果不是我们想要的。
+但是，之前使用的 `GETTER` 失败了。例如，`GETTER（NSView *，view）` 在宏扩展中生成 `UNPAREN NSView *`。不会进一步扩展就直接提供给编译器。结果自然会报编译器错误，因为 `UNPAREN NSView *` 是无法编译的。这虽然可以通过编写 `GETTER（（NSView *），view）` 来解决，但是被迫添加这些括号很烦人。这样的结果可不是我们想要的。
 
 ## 宏不能被重载
 
@@ -126,7 +126,7 @@ GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 #define UNPAREN
 ```
 
-有了这个，`UNPAREN b` 的序列变为 `b` 。完美解决问题！但是，如果已经存在带参数的另一个定义，则预处理器会拒绝此操作。即使预处理器可能选择其中一个，它也不会同时存在两种形式。虽然可行的话，这能有效解决我们的问题，但可惜的是并不允许：
+有了这个，`UNPAREN b` 的序列变为 `b` 。完美解决问题！但是，如果已经存在带参数的另一个定义，则预处理器会拒绝此操作。即使预处理器可能选择其中一个，它也不会同时存在两种形式。可行的话，这能有效解决我们的问题，但可惜的是并不允许：
 
 ```objc
 #define UNPAREN(...) __VA_ARGS__
@@ -137,9 +137,9 @@ GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 	}
 ```
 
-这无法通过预处理器，因为它会由于 `UNPAREN` 的重复 `#define` 而报错。不过，它确实引导我们走上了胜利的道路。现在的问题是怎么找出一种方法来实现相同的效果，而不会使两个宏具有相同的名称。
+这无法通过预处理器，因为它会由于 `UNPAREN` 的重复 `#define` 而报错。不过，它引导我们走上了胜利的道路。现在的问题是怎么找出一种方法来实现相同的效果，而不会使两个宏具有相同的名称。
 
-## 瓶颈
+## 关键
 
 最终目标是让 `UNPAREN（x）` 和 `UNPAREN（（x））` 结果都是 x 。朝着这个目标迈出的第一步是制作一些宏，其中传递 x 和（ x ）产生相同的输出，即使它并不确定 x 是什么。 这可以通过将宏名称放在宏扩展中来实现，如下所示：
 
@@ -147,7 +147,7 @@ GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 #define EXTRACT(...) EXTRACT __VA_ARGS__
 ```
 
-现在如果你写` EXTRACT（ x ） `，结果是 `EXTRACT x` 。当然，如果你写 `EXTRACT x` ，结果也是 `EXTRACT x` ，因为没有宏扩展的情况。这仍然留给我们一个剩余的提取物。这种 `#define` 方式并不简单，但这种做法也算是进步。
+现在如果你写` EXTRACT（ x ） `，结果是 `EXTRACT x` 。当然，如果你写 `EXTRACT x` ，结果也是 `EXTRACT x` ，因为没有宏扩展的情况。这仍然留给我们一个剩余的提取物。这种 `#define` 方式并不简单，但这种做法也算是一种进步。
 
 ## 标识符粘贴
 
@@ -276,6 +276,6 @@ ONCE(NSSet *,AllowedFileTypes,[NSSet setWithArray:@[ @"mp3",@"m4a",@"aiff" ]])
 
 ## 结论
 
-仅仅写这个宏，我就是发现了很多艰涩的知识。我希望接触这些知识也不会影响你的代码思维。请谨慎使用这些知识。
+仅仅写这个宏，我就发现了很多艰涩的知识。我希望接触这些知识也不会影响你的思维。请谨慎使用这些知识。
 
 今天就是这样。更多令人兴奋的冒险以后也会有，可能是比这更不可思议的事情。在此之前，如果你对此处的主题有任何建议，请发送给 [我们](mike@mikeash.com)！
