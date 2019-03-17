@@ -33,7 +33,7 @@ XCTAssertEqualObjects(someArray,@[ @"one",@"two" ],@"Array is not as expected”
 
 这会无法编译，并且会出现非常古怪的错误提示。预处理器查找分隔宏参数的逗号时，没能将数组结构 `@ [...]` 中的东西应该理解为一个单一的元素。结果代码尝试比较 `someArray` 和 `@[@“one”` 。断言失败消息为 ` @"two” ] and @"Array is not as expected"` 。这些不完整的代码组合到了 `XCTAssertEqualObjects` 的宏扩展中，生成的代码当然错的离谱。
 
-要解决这个问题也很容易：添加一个括号就行。预编译器不能识别 `[ ]` ，但它知道 `（）` 并且能够理解需要忽略里面的括号。下面的代码就能正常运行：
+要解决这个问题也很容易：添加一个括号就行。预编译器不能识别 `[ ]`，但它知道 `（）` 并且能够理解需要忽略里面的括号。下面的代码就能正常运行：
 
 ```objc
 XCTAssertEqualObjects(someArray,(@[ @"one",@"two" ]),@"Array is not as expected");
@@ -114,13 +114,13 @@ GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 	}
 ```
 
-虽然看上去很扯，但这的确能运行。 预编译器将 `type` 扩展为 `（id <NSCopying，NSCoding>）` ，生成 `UNPAREN（id <NSCopying，NSCoding>）` 。然后它会将 `UNPAREN` 宏扩展为 `id <NSCopying，NSCoding>` 。
+虽然看上去很扯，但这的确能运行。 预编译器将 `type` 扩展为 `（id <NSCopying，NSCoding>）`，生成 `UNPAREN（id <NSCopying，NSCoding>）` 。然后它会将 `UNPAREN` 宏扩展为 `id <NSCopying，NSCoding>` 。
 
 但是，之前使用的 `GETTER` 失败了。例如，`GETTER（NSView *，view）` 在宏扩展中生成 `UNPAREN NSView *`。不会进一步扩展就直接提供给编译器。结果自然会报编译器错误，因为 `UNPAREN NSView *` 是无法编译的。这虽然可以通过编写 `GETTER（（NSView *），view）` 来解决，但是被迫添加这些括号很烦人。这样的结果可不是我们想要的。
 
 ## 宏不能被重载
 
-我立刻想到了如何摆脱剩余的 `UNPAREN` 。当你想要一个标识符消失时，你可以使用一个空的 `#define` ，如下所示：
+我立刻想到了如何摆脱剩余的 `UNPAREN` 。当你想要一个标识符消失时，你可以使用一个空的 `#define`，如下所示：
 
 ```objc
 #define UNPAREN
@@ -147,11 +147,11 @@ GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 #define EXTRACT(...) EXTRACT __VA_ARGS__
 ```
 
-现在如果你写` EXTRACT（ x ） `，结果是 `EXTRACT x` 。当然，如果你写 `EXTRACT x` ，结果也是 `EXTRACT x` ，因为没有宏扩展的情况。这仍然留给我们一个剩余的提取物。这种 `#define` 方式并不简单，但这种做法也算是一种进步。
+现在如果你写` EXTRACT（ x ） `，结果是 `EXTRACT x` 。当然，如果你写 `EXTRACT x`，结果也是 `EXTRACT x`，因为没有宏扩展的情况。这仍然留给我们一个剩余的提取物。这种 `#define` 方式并不简单，但这种做法也算是一种进步。
 
 ## 标识符粘贴
 
-预处理器有一个操作符 `##` ，它将两个标识符粘贴在一起。例如，`a ## b` 变为 `ab` 。这可以用于从片段构造标识符，但也可以用于调用宏。例如：
+预处理器有一个操作符 `##`，它将两个标识符粘贴在一起。例如，`a ## b` 变为 `ab` 。这可以用于从片段构造标识符，但也可以用于调用宏。例如：
 
 ```objc
 #define AA 1
@@ -159,7 +159,7 @@ GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 #define A(x) A ## x
 ```
 
-从这里可以看到， `A（A）` 产生 1 ， `A（B）` 产生 2 。
+从这里可以看到， `A（A）` 产生 1， `A（B）` 产生 2 。
 
 让我们将这个运算符与上面的 EXTRACT 宏结合起来，尝试生成一个 UNPAREN 宏。由于 `EXTRACT（...）` 使用前导 EXTRACT 生成参数，因此我们可以使用标识符粘贴来生成以 EXTRACT 结尾的其他标记。如果我们 `#define` 那个新标记为空，我们将全部设置。
 
@@ -175,7 +175,7 @@ GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 #define UNPAREN(x) NOTHING_ ## EXTRACT x
 ```
 
-不幸的是，这并不能实现我们的目标。操作顺序是问题所在。如果我们写 `UNPAREN（（int））` ，我们将会得到：
+不幸的是，这并不能实现我们的目标。操作顺序是问题所在。如果我们写 `UNPAREN（（int））`，我们将会得到：
 
 ```objc
 UNPAREN((int))
@@ -186,7 +186,7 @@ NOTHING_EXTRACT (int)
 
 标示符粘贴发生的顺序太前，EXTRACT 宏永远不会扩展。
 
-你可以通过使用间接强制预处理器以不同的顺序判断事件。我们不是直接使用 `##` ，而是制作一个 PASTE 宏：
+你可以通过使用间接强制预处理器以不同的顺序判断事件。我们不是直接使用 `##`，而是制作一个 PASTE 宏：
 
 ```objc
 #define PASTE(x,...) x ## __VA_ARGS__
