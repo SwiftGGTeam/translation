@@ -29,9 +29,9 @@ C 语言预处理器是一个相当盲目的文本替换引擎，它并不理解
 XCTAssertEqualObjects(someArray, @[ @"one", @"two" ], @"Array is not as expected");
 ```
 
-这会无法编译，并且会出现非常古怪的错误提示。预处理器查找分隔宏参数的逗号时，没能将数组结构 `@ [...]` 中的东西应该理解为一个单一的元素。结果代码尝试比较 `someArray` 和 `@[@“one”` 。断言失败消息为 `@"two”] and @"Array is not as expected"`。这些不完整的代码组合到了 `XCTAssertEqualObjects` 的宏扩展中，生成的代码当然错的离谱。
+这会无法编译，并且会出现非常古怪的错误提示。预处理器查找分隔宏参数的逗号时，没能将数组结构 `@ [...]` 中的东西应该理解为一个单一的元素。结果代码尝试比较 `someArray` 和 `@[@"one"`。断言失败消息为 `@"two"] and @"Array is not as expected"`。这些不完整的代码组合到了 `XCTAssertEqualObjects` 的宏扩展中，生成的代码当然错的离谱。
 
-要解决这个问题也很容易：添加一个括号就行。预编译器不能识别 `[ ]`，但它知道 `()` 并且能够理解需要忽略里面的括号。下面的代码就能正常运行：
+要解决这个问题也很容易：添加一个括号就行。预编译器不能识别 `[]`，但它知道 `()` 并且能够理解需要忽略里面的括号。下面的代码就能正常运行：
 
 ```objc
 XCTAssertEqualObjects(someArray, (@[ @"one", @"two" ]), @"Array is not as expected");
@@ -56,7 +56,7 @@ int f(void); // 合法
 (int) f(void); // 不合法
 ```
 
-所以怎么区分这种情况呢？这种情况并不常见，但如果你有一个使用类型的宏，并且您的类型包含不在括号内的逗号，则会出现这种情况。宏可以做很多事情，当一个类型遵循多个协议时，在 Objective-C 中可能出现一些类型带有未加括号的逗号;当使用带有多个模板参数的模板化类型时，在 C++ 中就可能出现。举个例子，这有一个简单的宏，创建从字典中提供静态类型值的 `getter` ：
+所以怎么区分这种情况呢？这种情况并不常见，但如果你有一个使用类型的宏，并且您的类型包含不在括号内的逗号，则会出现这种情况。宏可以做很多事情，当一个类型遵循多个协议时，在 Objective-C 中可能出现一些类型带有未加括号的逗号;当使用带有多个模板参数的模板化类型时，在 C++ 中就可能出现。举个例子，这有一个简单的宏，创建从字典中提供静态类型值的 `getter`：
 
 ```objc
 #define GETTER(type,name) \
@@ -112,19 +112,19 @@ GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 	}
 ```
 
-虽然看上去很扯，但这的确能运行。 预编译器将 `type` 扩展为 `(id <NSCopying，NSCoding>)`，生成 `UNPAREN(id <NSCopying，NSCoding>)` 。然后它会将 `UNPAREN` 宏扩展为 `id <NSCopying，NSCoding>` 。
+虽然看上去很扯，但这的确能运行。预编译器将 `type` 扩展为 `(id <NSCopying，NSCoding>)`，生成 `UNPAREN(id <NSCopying，NSCoding>)`。然后它会将 `UNPAREN` 宏扩展为 `id <NSCopying，NSCoding>`。
 
 但是，之前使用的 `GETTER` 失败了。例如，`GETTER(NSView *，view)` 在宏扩展中生成 `UNPAREN NSView *`。不会进一步扩展就直接提供给编译器。结果自然会报编译器错误，因为 `UNPAREN NSView *` 是无法编译的。这虽然可以通过编写 `GETTER((NSView *)，view)` 来解决，但是被迫添加这些括号很烦人。这样的结果可不是我们想要的。
 
 ## 宏不能被重载
 
-我立刻想到了如何摆脱剩余的 `UNPAREN` 。当你想要一个标识符消失时，你可以使用一个空的 `#define`，如下所示：
+我立刻想到了如何摆脱剩余的 `UNPAREN`。当你想要一个标识符消失时，你可以使用一个空的 `#define`，如下所示：
 
 ```objc
 #define UNPAREN
 ```
 
-有了这个，`UNPAREN b` 的序列变为 `b` 。完美解决问题！但是，如果已经存在带参数的另一个定义，则预处理器会拒绝此操作。即使预处理器可能选择其中一个，它也不会同时存在两种形式。可行的话，这能有效解决我们的问题，但可惜的是并不允许：
+有了这个，`UNPAREN b` 的序列变为 `b`。完美解决问题！但是，如果已经存在带参数的另一个定义，则预处理器会拒绝此操作。即使预处理器可能选择其中一个，它也不会同时存在两种形式。可行的话，这能有效解决我们的问题，但可惜的是并不允许：
 
 ```objc
 #define UNPAREN(...) __VA_ARGS__
@@ -139,17 +139,17 @@ GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 
 ## 关键
 
-最终目标是让 `UNPAREN(x)` 和 `UNPAREN((x))` 结果都是 x 。朝着这个目标迈出的第一步是制作一些宏，其中传递 x 和 (x) 产生相同的输出，即使它并不确定 x 是什么。 这可以通过将宏名称放在宏扩展中来实现，如下所示：
+最终目标是让 `UNPAREN(x)` 和 `UNPAREN((x))` 结果都是 x。朝着这个目标迈出的第一步是制作一些宏，其中传递 x 和 (x) 产生相同的输出，即使它并不确定 x 是什么。这可以通过将宏名称放在宏扩展中来实现，如下所示：
 
 ```objc
 #define EXTRACT(...) EXTRACT __VA_ARGS__
 ```
 
-现在如果你写` EXTRACT( x ) `，结果是 `EXTRACT x` 。当然，如果你写 `EXTRACT x`，结果也是 `EXTRACT x`，因为没有宏扩展的情况。这仍然留给我们一个剩余的提取物。这种 `#define` 方式并不简单，但这种做法也算是一种进步。
+现在如果你写 `EXTRACT(x)`，结果是 `EXTRACT x`。当然，如果你写 `EXTRACT x`，结果也是 `EXTRACT x`，毕竟没有宏扩展的情况。这仍然给我们留下一个 `EXTRACT`。虽然不能用 `#define` 直接解决，但这种做法也算是一种进步。
 
 ## 标识符粘贴
 
-预处理器有一个操作符 `##`，它将两个标识符粘贴在一起。例如，`a ## b` 变为 `ab` 。这可以用于从片段构造标识符，但也可以用于调用宏。例如：
+预处理器有一个操作符 `##`，它将两个标识符粘贴在一起。例如，`a ## b` 变为 `ab`。这可以用于从片段构造标识符，但也可以用于调用宏。例如：
 
 ```objc
 #define AA 1
@@ -157,7 +157,7 @@ GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 #define A(x) A ## x
 ```
 
-从这里可以看到， `A(A)` 产生 1， `A(B)` 产生 2 。
+从这里可以看到，`A(A)` 产生 1，`A(B)` 产生 2。
 
 让我们将这个运算符与上面的 EXTRACT 宏结合起来，尝试生成一个 UNPAREN 宏。由于 `EXTRACT(...)` 使用前导 EXTRACT 生成参数，因此我们可以使用标识符粘贴来生成以 EXTRACT 结尾的其他标记。如果我们 `#define` 那个新标记为空，我们将全部设置。
 
@@ -239,8 +239,8 @@ NOTHING_ ## EXTRACT int
 NOTHING_EXTRACT int
 int
 ```
-    
-成功了！我们现在可以不需要用括号围绕 type 来编写 GETTER ：
+
+成功了！我们现在可以不需要用括号围绕 type 来编写 GETTER：
 
 ```objc
 #define GETTER(type,name) \
@@ -269,7 +269,7 @@ int
 ```objc
 ONCE(NSSet *,AllowedFileTypes,[NSSet setWithArray:@[ @"mp3",@"m4a",@"aiff" ]])
 ```
-    
+
 然后，你可以调用 `AllowedFileTypes()` 来获取集合，并根据需要高效创建集合。如果类型包含逗号，添加括号就能运行。
 
 ## 结论
