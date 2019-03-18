@@ -49,7 +49,7 @@ NSLog(@"%d",((((((((((42)))))))))));
 ((((((((((NSLog))))))))))(@"%d",42);
 ```
 
-在 C 中有一个地方你不能只添加随机括号：类型。例如：
+在 C 中有一个地方你不能只添加随机括号：类型 （types）。例如：
 
 ```objc
 int f(void); // 合法
@@ -139,7 +139,7 @@ GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 
 ## 关键
 
-最终目标是让 `UNPAREN(x)` 和 `UNPAREN((x))` 结果都是 x。朝着这个目标迈出的第一步是制作一些宏，其中传递 x 和 (x) 产生相同的输出，即使它并不确定 x 是什么。这可以通过将宏名称放在宏扩展中来实现，如下所示：
+最终目标是让 `UNPAREN(x)` 和 `UNPAREN((x))` 结果都是 `x`。朝着这个目标迈出的第一步是制作一些宏，其中传递 `x` 和 `(x)` 产生相同的输出，即使它并不确定 `x` 是什么。这可以通过将宏名称放在宏扩展中来实现，如下所示：
 
 ```objc
 #define EXTRACT(...) EXTRACT __VA_ARGS__
@@ -157,17 +157,17 @@ GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 #define A(x) A ## x
 ```
 
-从这里可以看到，`A(A)` 产生 1，`A(B)` 产生 2。
+从这里可以看到，`A(A)` 产生 `1`，`A(B)` 产生 `2`。
 
-让我们将这个运算符与上面的 EXTRACT 宏结合起来，尝试生成一个 UNPAREN 宏。由于 `EXTRACT(...)` 使用前导 EXTRACT 生成参数，因此我们可以使用标识符粘贴来生成以 EXTRACT 结尾的其他标记。如果我们 `#define` 那个新标记为空，我们将全部设置。
+让我们将这个运算符与上面的 `EXTRACT` 宏结合起来，尝试生成一个 `UNPAREN` 宏。由于 `EXTRACT(...)` 使用前导 `EXTRACT` 生成参数，因此我们可以使用标识符粘贴来生成以 `EXTRACT `结尾的其他标记。如果我们 `#define` 那个新标记为空，我们将全部设置。
 
-这是一个以 EXTRACT 结尾的宏，它不会产生任何结果：
+这是一个以 `EXTRACT` 结尾的宏，它不会产生任何结果：
 
 ```objc
 #define NOTHING_EXTRACT
 ```
 
-这是对 UNPAREN 宏的尝试，它将所有内容放在一起：
+这是对 `UNPAREN` 宏的尝试，它将所有内容放在一起：
 
 ```objc
 #define UNPAREN(x) NOTHING_ ## EXTRACT x
@@ -182,15 +182,15 @@ NOTHING_EXTRACT (int)
 (int)
 ```
 
-标示符粘贴发生的顺序太前，EXTRACT 宏永远不会扩展。
+标示符粘贴发生的顺序太前，`EXTRACT` 宏永远不会扩展。
 
-你可以通过使用间接强制预处理器以不同的顺序判断事件。我们不是直接使用 `##`，而是制作一个 PASTE 宏：
+你可以通过使用间接强制预处理器以不同的顺序判断事件。我们不是直接使用 `##`，而是制作一个 `PASTE` 宏：
 
 ```objc
 #define PASTE(x,...) x ## __VA_ARGS__
 ```
 
-然后我们将根据它写下 UNPAREN ：
+然后我们将根据它写下 `UNPAREN`：
 
 ```objc
 #define UNPAREN(x)  PASTE(NOTHING_,EXTRACT x)
@@ -206,13 +206,13 @@ NOTHING_EXTRACT (int)
 (int)
 ```
 
-但更接近我们的目标了。序列 `EXTRACT(int)` 显然没有触发标示符粘贴操作符。我们必须让预处理器在它看到 `##` 之前解析它。可以通过另一种方式间接强制解析它。让我们定义一个只包装 PASTE 的 EVALUATING_PASTE 宏：
+但更接近我们的目标了。序列 `EXTRACT(int)` 显然没有触发标示符粘贴操作符。我们必须让预处理器在它看到 `##` 之前解析它。可以通过另一种方式间接强制解析它。让我们定义一个只包装 `PASTE` 的 `EVALUATING_PASTE` 宏：
 
 ```objc
 #define EVALUATING_PASTE(x,...) PASTE(x,__VA_ARGS__)
 ```
 
-现在让我们用这个写 UNPAREN ：
+现在让我们用这个写 `UNPAREN`：
 
 ```objc
 #define UNPAREN(x) EVALUATING_PASTE(NOTHING_,EXTRACT x)
@@ -240,7 +240,7 @@ NOTHING_EXTRACT int
 int
 ```
 
-成功了！我们现在可以不需要用括号围绕 type 来编写 GETTER：
+成功了！我们现在可以不需要用括号围绕着类型来编写 `GETTER`：
 
 ```objc
 #define GETTER(type,name) \
@@ -250,7 +250,7 @@ int
 ```
 
 ## 宏的奖励
-在提出可以证明这个结构的宏的同时，我构建了一个很好的 dispatch_once 宏来制作延迟初始化的常量。实现如下：
+在提出可以证明这个结构的宏的同时，我构建了一个很好的 `dispatch_once` 宏来制作延迟初始化的常量。实现如下：
 
 ```objc
 #define ONCE(type,name,...) \
