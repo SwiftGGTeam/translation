@@ -29,9 +29,9 @@ C 语言预处理器是一个相当盲目的文本替换引擎，它并不理解
 XCTAssertEqualObjects(someArray, @[ @"one", @"two" ], @"Array is not as expected");
 ```
 
-这会无法编译，并且会出现非常古怪的错误提示。预处理器查找分隔宏参数的逗号时，没能将数组结构 `@ [...]` 中的东西应该理解为一个单一的元素。结果代码尝试比较 `someArray` 和 `@[@"one"`。断言失败消息为 `@"two"] and @"Array is not as expected"`。这些不完整的代码组合到了 `XCTAssertEqualObjects` 的宏扩展中，生成的代码当然错的离谱。
+这会无法编译，并且会出现非常古怪的错误提示。预处理器查找分隔宏参数的逗号时，没能将数组结构 `@ [...]` 中的东西应该理解为一个单一的元素。结果代码尝试比较 `someArray` 和 `@[@"one"`。断言失败消息 `@"two"]` 和 `@"Array is not as expected"` 也提供了更详细的说明。这些不完整的代码组合到了 `XCTAssertEqualObjects` 的宏扩展中，生成的代码当然错的离谱。
 
-要解决这个问题也很容易：添加一个括号就行。预编译器不能识别 `[]`，但它知道 `()` 并且能够理解需要忽略里面的括号。下面的代码就能正常运行：
+要解决这个问题也很容易：添加一个括号就行。预编译器不能识别 `[]`，但它*确实*知道 `()` 并且能够理解需要忽略里面的括号。下面的代码就能正常运行：
 
 ```objc
 XCTAssertEqualObjects(someArray, (@[ @"one", @"two" ]), @"Array is not as expected");
@@ -49,7 +49,7 @@ NSLog(@"%d",((((((((((42)))))))))));
 ((((((((((NSLog))))))))))(@"%d",42);
 ```
 
-在 C 中有一个地方你不能只添加随机括号：类型 （types）。例如：
+在 C 中有一个地方你不能只添加随机括号：类型（types）。例如：
 
 ```objc
 int f(void); // 合法
@@ -89,7 +89,7 @@ GETTER(id<NSCopying,NSCoding>,someCopyableAndCodeableThing)
 GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 ```
 
-这会产生无效代码。这时我们需要一个删除可选括号的 `UNPAREN` 宏。将 `GETTER` 宏重写：
+这会产生无效代码。这时我们需要一个删除可选括号的 UNPAREN 宏。将 `GETTER` 宏重写：
 
 ```
 #define GETTER(type,name) \
@@ -112,7 +112,7 @@ GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 	}
 ```
 
-虽然看上去很扯，但这的确能运行。预编译器将 `type` 扩展为 `(id <NSCopying，NSCoding>)`，生成 `UNPAREN(id <NSCopying，NSCoding>)`。然后它会将 `UNPAREN` 宏扩展为 `id <NSCopying，NSCoding>`。
+虽然看上去很扯，但这的确能运行。预编译器将 `type` 扩展为 `(id <NSCopying，NSCoding>)`，生成 `UNPAREN (id<NSCopying, NSCoding>)`。然后它会将 `UNPAREN` 宏扩展为 `id <NSCopying，NSCoding>`。
 
 但是，之前使用的 `GETTER` 失败了。例如，`GETTER(NSView *，view)` 在宏扩展中生成 `UNPAREN NSView *`。不会进一步扩展就直接提供给编译器。结果自然会报编译器错误，因为 `UNPAREN NSView *` 是无法编译的。这虽然可以通过编写 `GETTER((NSView *)，view)` 来解决，但是被迫添加这些括号很烦人。这样的结果可不是我们想要的。
 
@@ -124,7 +124,7 @@ GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 #define UNPAREN
 ```
 
-有了这个，`UNPAREN b` 的序列变为 `b`。完美解决问题！但是，如果已经存在带参数的另一个定义，则预处理器会拒绝此操作。即使预处理器可能选择其中一个，它也不会同时存在两种形式。可行的话，这能有效解决我们的问题，但可惜的是并不允许：
+有了这个，`a UNPAREN b` 的序列变为 `a b`。完美解决问题！但是，如果已经存在带参数的另一个定义，则预处理器会拒绝此操作。即使预处理器可能选择其中一个，它也不会同时存在两种形式。可行的话，这能有效解决我们的问题，但可惜的是并不允许：
 
 ```objc
 #define UNPAREN(...) __VA_ARGS__
@@ -159,7 +159,7 @@ GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 
 从这里可以看到，`A(A)` 产生 `1`，`A(B)` 产生 `2`。
 
-让我们将这个运算符与上面的 `EXTRACT` 宏结合起来，尝试生成一个 `UNPAREN` 宏。由于 `EXTRACT(...)` 使用前导 `EXTRACT` 生成参数，因此我们可以使用标识符粘贴来生成以 `EXTRACT `结尾的其他标记。如果我们 `#define` 那个新标记为空，我们将全部设置。
+让我们将这个运算符与上面的 `EXTRACT` 宏结合起来，尝试生成一个 `UNPAREN` 宏。由于 `EXTRACT(...)` 使用前缀 `EXTRACT` 生成参数，因此我们可以使用标识符粘贴来生成以 `EXTRACT` 结尾的其他标记。如果我们 `#define` 那个新标记为空，那就搞定了。
 
 这是一个以 `EXTRACT` 结尾的宏，它不会产生任何结果：
 
@@ -182,7 +182,7 @@ NOTHING_EXTRACT (int)
 (int)
 ```
 
-标示符粘贴发生的顺序太前，`EXTRACT` 宏永远不会扩展。
+标示符粘贴发生的顺序太前，`EXTRACT` 宏永远不会有机会扩展开。
 
 你可以通过使用间接强制预处理器以不同的顺序判断事件。我们不是直接使用 `##`，而是制作一个 `PASTE` 宏：
 
@@ -196,7 +196,7 @@ NOTHING_EXTRACT (int)
 #define UNPAREN(x)  PASTE(NOTHING_,EXTRACT x)
 ```
 
-这仍然不起作用。情况如下：
+这*又*不起作用。情况如下：
 
 ```objc
 UNPAREN((int))
@@ -212,7 +212,7 @@ NOTHING_EXTRACT (int)
 #define EVALUATING_PASTE(x,...) PASTE(x,__VA_ARGS__)
 ```
 
-现在让我们用这个写 `UNPAREN`：
+现在让我们用*这个*写 `UNPAREN`：
 
 ```objc
 #define UNPAREN(x) EVALUATING_PASTE(NOTHING_,EXTRACT x)
