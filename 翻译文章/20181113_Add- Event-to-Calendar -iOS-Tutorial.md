@@ -113,7 +113,7 @@ func insertEvent(store: EKEventStore) {
 }
 ```
 
-1.  **calendars(for:) ** 方法返回所有支持事件的日历
+1.  **calendars(for:)** 方法返回所有支持事件的日历
 2.  检查之前创建的日历 "ioscreator" 是否存在
 3.  事件的起始时间是当前时间，结束时间是两小时后。（2 小时 \* 60 分 \* 60秒）
 4.  创建一个标题为“新会议”的事件
