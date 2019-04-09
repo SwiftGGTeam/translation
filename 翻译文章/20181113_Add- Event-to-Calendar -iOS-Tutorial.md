@@ -18,7 +18,7 @@ description: 这是一篇EventKit的Swift教程
 
  <!--此处开始正文-->
 
-使用EventKit框架可以访问iOS设备上的日历。在本教程中，我们会创建一个iCloud日历，并且为它添加一项事件。本教程使用 Xcode 10 编写并运行于 iOS 12 系统。
+使用 EventKit 框架可以访问 iOS 设备上的日历。在本教程中，我们会创建一个 iCloud 日历，并且为它添加一项事件。本教程使用 Xcode 10 编写并运行于 iOS 12 系统。
 
 打开 Xcode 并创建一个新的 Singe View App。
 
@@ -34,7 +34,7 @@ description: 这是一篇EventKit的Swift教程
 
 ![](https://static1.squarespace.com/static/52428a0ae4b0c4a5c2a2cede/t/5be886a740ec9a97ddc1ccc9/1541965683918/add-calendar-icloud.png?format=1000w)
 
-因为事件会被保存到日历中，所以需要用户授权日历的访问权限。打开Info.plist并添加下列条目
+因为事件会被保存到日历中，所以需要用户授权日历的访问权限。打开 Info.plist 并添加下列条目
 
 ![](https://static1.squarespace.com/static/52428a0ae4b0c4a5c2a2cede/t/5be971e403ce64619f8e7382/1542025714657/info-plist-authorize-access-calendar.png?format=1000w)
 
@@ -76,7 +76,7 @@ override func viewDidLoad() {
 ```
 
 1. 创建了一个 EKEventStore 对象。它代表了日历的数据库
-2. **authorizationStatus(for:) ** 方法返回授权状态
+2. **authorizationStatus(for:)** 方法返回授权状态
 3. 如果授权状态还没有确定，可以通过 **requestAccess(to:completion:)** 方法来提示用户拒绝或者允许该访问。
 
 当用户授权了访问权限时， **insertEvent(store:)** 方法会被调用。
@@ -115,7 +115,7 @@ func insertEvent(store: EKEventStore) {
 
 1.  **calendars(for:) ** 方法返回所有支持事件的日历
 2.  检查之前创建的日历 "ioscreator" 是否存在
-3.  事件的起始时间是当前时间，结束时间是两小时后。（2 小时 * 60 分 * 60秒）
+3.  事件的起始时间是当前时间，结束时间是两小时后。（2 小时 \* 60 分 \* 60秒）
 4.  创建一个标题为“新会议”的事件
 5.  事件被保存到当前日历中。
 
@@ -128,7 +128,7 @@ func insertEvent(store: EKEventStore) {
 
 ![](https://static1.squarespace.com/static/52428a0ae4b0c4a5c2a2cede/t/5be96a001ae6cfbdd7af1dc0/1542026432386/add-entry-calendar.png?format=750w)
 
-你可以从GitHub的 ioscreator 仓库中下载到 **IOS8SwiftAddEventTutorial** 的源码。
+你可以从 GitHub 的 ioscreator 仓库中下载到 **IOS8SwiftAddEventTutorial** 的源码。
 
 
 
