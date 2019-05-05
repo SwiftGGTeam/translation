@@ -22,15 +22,15 @@ keywords: swift, image
 
 出现爆炸新闻？查看 Twitter，就可以知道是哪些媒体正在报道，通过他们揭露事件的实时照片。
 
-等等...
+等等…
 
-不过正因为它们（图像）在平台上无处不在，如何以高性能和节省内存的方式来展示便是一门艺术，还容易白费工夫。稍微了解下 UIKit 中发生了什么和关于它如何处理图像，是可以节省大量时间和避免纠结在一些无用功上的。
+不过正因为它们（图像）在平台上无处不在，如何以高性能和节省内存的方式来展示便是一门艺术，还容易白费工夫。稍微了解下 UIKit 中发生了什么和关于它如何处理图像，可以节省大量时间，避免做无用功。
 
 <!--more-->
 
 ### 理论知识
 
-流行小测试 - 这张我漂亮女儿（而且还有点时髦），大小 266KB 的照片将需要多少内存在一个 iOS App 中？
+流行小测试 - 我漂亮女儿这张大小 266KB （还很时髦）的照片将需要多少内存在一个 iOS App 中？
 
 ![](https://www.swiftjectivec.com/assets/images/baylor.jpg)
 
@@ -237,7 +237,7 @@ func downsampleImage(at URL:NSURL, maxSize:Float) -> UIImage
 
 ### 加分点
 
-我的个人用法是，在 iOS 11 里引入的[预加载 API](https://developer.apple.com/documentation/uikit/uitableviewdatasourceprefetching?language=swift) 之后使用它。请记住，由于我们是在解码图像，哪怕放在 table view 或者 collection view 需要 cell 之前做，也会影响 CPU 的使用峰值。
+我的个人用法是，在 iOS 11 里引入的 [预加载 API](https://developer.apple.com/documentation/uikit/uitableviewdatasourceprefetching?language=swift) 之后使用它。请记住，由于我们是在解码图像，哪怕放在 table view 或者 collection view 需要 cell 之前做，也会影响 CPU 的使用峰值。
 
 在执行连续任务时，iOS 会有高效的续航管理，但这里是间断的，所以最好亲自去解决自己任务队列中这样的类似问题。这里还将解码放到了后台线程，这是另一个至关重要的点。
 
