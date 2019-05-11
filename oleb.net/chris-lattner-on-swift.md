@@ -1,10 +1,30 @@
-# Chris Lattner 讲述 Swift 的起源
+title: "Chris Lattner 讲述 Swift 起源故事"
+date: 2019.02.18
+tags: [Ole Begemann, Swift]
+categories: [Ole Begemann, Swift]
+permalink: chris-lattner-swift-origins
+keywords: Chris Lattner, Swift, Swift 历史
+custom_title: 
+description: 
+
+---
+原文链接=https://oleb.net/2019/chris-lattner-swift-origins/
+作者=Ole Begemann
+原文日期=2019.02.18
+译者=jojotov
+校对=
+定稿=
+
+<!--此处开始正文-->
+
 
 在[新推出的 Swift 社区播客第一集](https://www.swiftcommunitypodcast.org/episodes/1)中，[Chris Lattner](http://nondot.org/sabre/), [Garric Nahapetian](https://garricn.com/), 和 [John Sundell](https://www.swiftbysundell.com/) 讲述了关于 Swift 起源的故事和 Swift 社区的现状。
 
 本文是我整理出的一些比较有趣的东西（为了能更好地阅读而做了部分修改）。你可以看到我主要引用了 Chris Lattner 的讲话，因为我认为他对于 Swift 是如何被创造出来的描述是最值得保留下去的。但这并不代表 John 和 Garric 所说的东西没那么有趣。你真的应该去完整地收听整集播客——反正所花的时间和阅读本文相差无几。
 
-[Swift 社区播客](https://www.swiftcommunitypodcast.org/) 本身也非常值得关注。作为一个让你可以通过各种方式进行贡献的项目，它非常符合我们的预期（上面提到的三位嘉宾在第一集中谈到了更多细节）。在本文的完成过程中，我的工作主要在 [creating the transcript](https://github.com/SwiftCommunityPodcast/podcast/issues/15) 这个 Issue 上进行，甚至在代码格式部分和编辑机器生成的文本部分收到了许多来自于社区的帮助。在此对所有提供过帮助的人表示感谢！
+[<!--more-->
+
+Swift 社区播客](https://www.swiftcommunitypodcast.org/) 本身也非常值得关注。作为一个让你可以通过各种方式进行贡献的项目，它非常符合我们的预期（上面提到的三位嘉宾在第一集中谈到了更多细节）。在本文的完成过程中，我的工作主要在 [creating the transcript](https://github.com/SwiftCommunityPodcast/podcast/issues/15) 这个 Issue 上进行，甚至在代码格式部分和编辑机器生成的文本部分收到了许多来自于社区的帮助。在此对所有提供过帮助的人表示感谢！
 
 你可以在 Github 上找到[完整的记录副本](https://github.com/SwiftCommunityPodcast/podcast/blob/master/Shownotes/Episode1-Transcript.vtt)（[WebVTT 格式](https://en.wikipedia.org/wiki/WebVTT)）。完整的播客通过 [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/) 授权。
 
