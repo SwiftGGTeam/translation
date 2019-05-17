@@ -18,7 +18,7 @@ description:
 <!--此处开始正文-->
 
 
-在[新推出的 Swift 社区播客第一集](https://www.swiftcommunitypodcast.org/episodes/1)中，[Chris Lattner](http://nondot.org/sabre/), [Garric Nahapetian](https://garricn.com/), 和 [John Sundell](https://www.swiftbysundell.com/) 讲述了关于 Swift 起源的故事和 Swift 社区的现状。
+在 [新推出的 Swift 社区播客第一集](https://www.swiftcommunitypodcast.org/episodes/1) 中，[Chris Lattner](http://nondot.org/sabre/), [Garric Nahapetian](https://garricn.com/), 和 [John Sundell](https://www.swiftbysundell.com/) 讲述了关于 Swift 起源的故事和 Swift 社区的现状。
 
 本文是我整理出的一些比较有趣的东西（为了能更好地阅读而做了部分修改）。你可以看到我主要引用了 Chris Lattner 的讲话，因为我认为他对于 Swift 是如何被创造出来的描述是最值得保留下去的。但这并不代表 John 和 Garric 所说的东西没那么有趣。你真的应该去完整地收听整集播客——反正所花的时间和阅读本文相差无几。
 
@@ -243,7 +243,5 @@ description:
 > 
 
 [^1]:  [Jordan Rose 分享了一则与 Shiny 这个名字相关的佚事](https://twitter.com/uint_min/status/1098628355539124224) ：.swiftmodule 文件中的“魔法数字”是 E2 9C A8 0E。它的前三个字节是 ✨ 的 UTF-8 字符（U+2728 SPARKLES）。
-
-[^2]:  [Greg Parker clarified](https://twitter.com/gparker/status/1099251522422992896) that ARC came only indirectly out of the development of Swift: The implementation pre-dates Swift. But behind the scenes the idea that later became Swift was an important driver to get management to commit the resources necessary to build and deploy ObjC ARC.
 
 [^2]:  [Greg Parker 声称](https://twitter.com/gparker/status/1099251522422992896) ARC 只是间接地从 Swift 的开发过程中产生：ARC 的实现早于 Swift 的实现。但在幕后的工作中，Swift 早期的设想的确推进了管理层提供必要的资源去构建和部署 ObjC 的 ARC。
