@@ -10,31 +10,31 @@
 
 授权作者和网站列表：
 
-| 作者 | 网站 |
-| :----: | :----: |
-| Natasha | [Natasha the Robot](http://natashatherobot.com/) |
-| Erica Sadun | [Erica Sadun](http://ericasadun.com/) |
-| Mike Ash | [mikeash.com](https://www.mikeash.com/) |
-| Dominik Hauser | [Swift and Painless](http://swiftandpainless.com/) |
-| AppCoda | [AppCoda](http://www.appcoda.com/) |
-| Radek Pietruszewski | [radex.io](radex.io) |
-| Wooji Juice | [Wooji Juice](http://www.wooji-juice.com/blog/) |
-| Arthur Knopper | [IOSCREATOR](http://www.ioscreator.com/) |
-| Nick Hanan | [Coding Explorer Blog](http://www.codingexplorer.com/) |
-| Benedikt Terhechte | [APPVENTURE](http://appventure.me/) |
-| Thomas Hanning | [Thomas Hanning](http://www.thomashanning.com) |
-| Weston Hanners | […alloc] init];](http://www.alloc-init.com/) |
-| Tomasz Szulc | [Tomasz Szulc](http://szulctomasz.com/) |
-| Ole Begemann | [Ole Begemann](http://oleb.net/blog/) |
-| Raj Kandathi | [Raj Kandathi](http://rajkandathi.com/) |
-| Olivier Halligon | [Crunchy Development](http://alisoftware.github.io/) |
-| Jameson Quave | [JamesonQuave.com](http://jamesonquave.com/) |
-| Jacob Bandes-Storch  | [Jacob Bandes-Storch](http://bandes-stor.ch/archive/) |
-| iAchieved.it | [iAchieved.it](http://dev.iachieved.it/iachievedit/) |
-| uraimo | [uraimo](https://www.uraimo.com/) |
-| KHANLOU | [KHANLOU](http://khanlou.com/) |
-| Russ Bishop | [Russ Bishop](http://www.russbishop.net/) |
-| Jordan Morgan | [swiftjectivec](https://www.swiftjectivec.com/index.html) |
+| 作者 | 网站 | 最近一年是否有更新 | 
+| :----: | :----: | :----: |
+| Natasha | [Natasha the Robot](http://natashatherobot.com/) | 无|
+| Erica Sadun | [Erica Sadun](http://ericasadun.com/) | 有|
+| Mike Ash | [mikeash.com](https://www.mikeash.com/) | 有|
+| Dominik Hauser | [Swift and Painless](http://swiftandpainless.com/) | 无|
+| AppCoda | [AppCoda](http://www.appcoda.com/) | 有|
+| Radek Pietruszewski | [radex.io](radex.io) | 无|
+| Wooji Juice | [Wooji Juice](http://www.wooji-juice.com/blog/) | 有|
+| Arthur Knopper | [IOSCREATOR](http://www.ioscreator.com/) | 有|
+| Nick Hanan | [Coding Explorer Blog](http://www.codingexplorer.com/) | 有|
+| Benedikt Terhechte | [APPVENTURE](http://appventure.me/) | 有 |
+| Thomas Hanning | [Thomas Hanning](http://www.thomashanning.com) | 有|
+| Weston Hanners | […alloc] init];](http://www.alloc-init.com/) | 无|
+| Tomasz Szulc | [Tomasz Szulc](http://szulctomasz.com/) | 有|
+| Ole Begemann | [Ole Begemann](http://oleb.net/blog/) | 有|
+| Raj Kandathi | [Raj Kandathi](http://rajkandathi.com/) | 无 |
+| Olivier Halligon | [Crunchy Development](http://alisoftware.github.io/) | 有|
+| Jameson Quave | [JamesonQuave.com](http://jamesonquave.com/) | 无 |
+| Jacob Bandes-Storch  | [Jacob Bandes-Storch](http://bandes-stor.ch/archive/) | 无 |
+| iAchieved.it | [iAchieved.it](http://dev.iachieved.it/iachievedit/) | 无|
+| uraimo | [uraimo](https://www.uraimo.com/) | 有 |
+| KHANLOU | [KHANLOU](http://khanlou.com/) | 有 |
+| Russ Bishop | [Russ Bishop](http://www.russbishop.net/) | 有 |
+| Jordan Morgan | [swiftjectivec](https://www.swiftjectivec.com/index.html) | 有 |
 
 
 ## 建议&反馈
