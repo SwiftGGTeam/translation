@@ -23,9 +23,9 @@ custom_title: "Swift 5 字符串插值-简介"
 
  ## 目标
 
-我看到这个 [Swift 5 全新的 StringInterpolation 设计](https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md) 时其中一个马上想到的应用就是简化 `NSAttributedString` 的生成。
+我看到这个 [Swift 5 全新的 StringInterpolation 设计](https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md) 时其中一个立即想到的应用就是简化 `NSAttributedString` 的生成。
 
-我的目标是可以用类似下面的语法创建一个 attributed 字符串：
+我的目标是做到用类似下面的语法创建一个 attributed 字符串：
 
 ```swift
 let username = "AliGator"
@@ -41,9 +41,9 @@ let str: AttrString = """
   """
 ```
 
-这一大串字符串使用了多行字符串的字面量语法([Swift 4 中新增，以免错过](https://github.com/apple/swift-evolution/blob/master/proposals/0168-multi-line-string-literals.md)) - 更甚的是，在其中一个多行字符串字面量中包含了另一个(见 `\(wrap: ...)` 段落）！- 并且包含了插值给一部分字符添加一些样式…所以用上了大量的 Swift 新功能！
+这一大串字符串使用了多行字符串的字面量语法([Swift 4 中新增，避免错过](https://github.com/apple/swift-evolution/blob/master/proposals/0168-multi-line-string-literals.md)) - 而且，在其中一个多行字符串字面量中包含了另一个(见 `\(wrap: ...)` 段落）！- 还包含了给一部分字符添加一些样式的插值…所以用上了大量 Swift 新特性！
 
-这个 `NSAttributedString` 一旦在一个 `UILabel` 或者 `NSTextView` 中渲染，结果应该看起来像这样子的：
+这个 `NSAttributedString` 一旦在一个 `UILabel` 或者 `NSTextView` 中渲染，结果像这个样子：
 
 ![image](http://alisoftware.github.io/assets/StringInterpolation-AttrString.png)
 
@@ -51,7 +51,7 @@ let str: AttrString = """
 
 ## 初步实现
 
-所以我们从哪来开始实现？当然和我们在第一部分中如何实现 `GitHubComment` 是类似的！
+所以，我们从哪里开始实现？当然是和我们在第一部分中如何实现 `GitHubComment` 差不多！
 
 好的，在实际解决字符串插值之前，让我们先从声明特有类型开始。
 
@@ -155,7 +155,7 @@ extension AttrString {
 
 这允许我们使用 `Style.color(.blue)` 来简单地创建一个封装了 `[.foregroundColor: NSColor.blue]` 的 `Style`。
 
-但可别止步于此，现在让我们的 `StringInterpolation` 可以处理这样的 `Style` 属性！
+但可别就此打住了，现在让我们的 `StringInterpolation` 可以处理下面这样的 `Style` 属性！
 
 这个想法是可以做到像这样写：
 
@@ -165,7 +165,7 @@ let str: AttrString = """
   """
 ```
 
-那不就更优雅？而我们仅仅需要为它正确实现 `appendInterpolation` 而已！
+是不是更优雅？而我们仅仅需要为它正确实现 `appendInterpolation` 而已！
 
 ```swift
 extension AttrString.StringInterpolation {
@@ -175,7 +175,7 @@ extension AttrString.StringInterpolation {
   }
 ```
 
-然后我们就完成了！但…这样一次只支持一个 `Style`。为什么不让它允许传入多个 `Style` 作为形参呢？虽然可以用一个 `[Style]` 形参来实现，但这要求我们在调用侧将样式列表用括号括起来…为什么不让它使用可变形参呢？
+然后我们就完成了！但…这样一次只支持一个 `Style`。为什么不允许它传入多个 `Style` 作为形参呢？这可以用一个 `[Style]` 形参来实现，但这要求我们在调用侧将样式列表用括号括起来…不如令它使用可变形参？
 
 让我们用这种方式来代替之前的实现：
 
@@ -202,7 +202,7 @@ let str: AttrString = """
 
 `NSAttributedString` 的另一种能力是使用 `NSAttributedString(attachment: NSTextAttachment)` 添加图像，让它成为字符串的一部分。要实现它，仅需要实现 `appendInterpolation(image: NSImage)` 并调用它。
 
-我希望为这个特性一并加上缩放图像的能力。由于我都是在 macOS 的 playground 上尝试的，它的图形上下文是翻转的，所以我也得将图像翻转回来（注意这个细节可能会和 iOS 上实现对 UIImage 的支持时不一样）。这里是我的做法：
+我希望为这个特性顺便加上缩放图像的能力。由于我是在 macOS 的 playground 上尝试的，它的图形上下文是翻转的，所以我也得将图像翻转回来（注意这个细节可能会和 iOS 上实现对 UIImage 的支持时不一样）。这里是我的做法：
 
 ```swift
 extension AttrString.StringInterpolation {
@@ -225,9 +225,9 @@ extension AttrString.StringInterpolation {
 
 ## 样式嵌套
 
-最后，有时候你会希望应用一个样式在一大段文字上，但里面可能包含了子段落的样式。就像 HTML 里的 `"<b>Hello <i>world</i></b>"`，整段是粗体但包含了一部分斜体的。
+最后，有时候你会希望应用一个样式在一大段文字上，但里面可能也包含了子段落的样式。就像 HTML 里的 `"<b>Hello <i>world</i></b>"`，整段是粗体但包含了一部分斜体的。
 
-我们的 API 还不支持这样，所以让我们来加上它。思路是允许将一串 `Style…` 不止应用在 `String` 上，还能应用在已经存在属性的 `AttrString` 上。
+现在我们的 API 还不支持这样，所以让我们来加上它。思路是允许将一串 `Style…` 不止应用在 `String` 上，还能应用在已经存在属性的 `AttrString` 上。
 
 这个实现和 `appendInterpolation(_ string: String, _ style: Style…)` 相似，但会修改 `AttrString.attributedString` 来*添加*属性到上面，而不是用纯 `String` 创建一个全新的 `NSAttributedString`。
 
@@ -268,9 +268,9 @@ let str: AttrString = """
 
 你可以 [在这下载我的 Playground 文件](http://alisoftware.github.io/assets/StringInterpolation.playground.zip) 看到 `GitHubComment`(见 [第一部分](http://alisoftware.github.io/swift/2018/12/15/swift5-stringinterpolation-part1/))，`AttrString` 的全部实现，说不定还能在我尝试的 `RegEX` 简单实现中得到一些灵感。
 
-这里有着很多更好的思路去使用 Swift 5 中新的 `ExpressibleByStringInterpolation` API - 包括 [Erica Sadun 博客里这个](https://ericasadun.com/2018/12/12/the-beauty-of-swift-5-string-interpolation/)、[这个](https://ericasadun.com/2018/12/14/more-fun-with-swift-5-string-interpolation-radix-formatting/) 和 [这个](https://ericasadun.com/2018/12/16/swift-5-interpolation-part-3-dates-and-number-formatters/) - 不要犹豫，阅读它们…从中享受乐趣吧！
+这里还有很多更好的思路去使用 Swift 5 中新的 `ExpressibleByStringInterpolation` API - 包括 [Erica Sadun 博客里这篇](https://ericasadun.com/2018/12/12/the-beauty-of-swift-5-string-interpolation/)、[这篇](https://ericasadun.com/2018/12/14/more-fun-with-swift-5-string-interpolation-radix-formatting/) 和 [这篇](https://ericasadun.com/2018/12/16/swift-5-interpolation-part-3-dates-and-number-formatters/) - 不要犹豫，阅读它们…从中享受乐趣吧！
 
 ---
 
-1. 这篇文章和 Playground 里的代码，需要使用 Swift 5。在写作时，最新的 Xcode 版本是 10.1，Swift 4.2，所以你如果想尝试这些代码你需要遵循官方指南去下载开发中的 Swift 5 快照。安装 Swift 5 工具链并在 Xcode 偏好设置启用里是很简单的(见官方指南)。
-2. 当然，在这我只是实现一部分样式，仅仅做为 Demo。未来顺着思路延伸可以让 `Style` 类型支持更多的样式，理想情况下可以覆盖所有可能存在 `NSAttributedString.Key`。
+1. 这篇文章和 Playground 里的代码，需要使用 Swift 5。在写作时，最新的 Xcode 版本是 10.1，Swift 4.2，所以如果你想尝试这些代码，需要遵循官方指南去下载开发中的 Swift 5 快照。安装 Swift 5 工具链并在 Xcode 偏好设置里启用不是很难(见官方指南)。
+2. 当然，这里我作为 Demo，只实现了一部分样式。未来可以延伸思路让 `Style` 类型支持更多的样式，在理想情况下，可以覆盖所有存在 `NSAttributedString.Key`。
