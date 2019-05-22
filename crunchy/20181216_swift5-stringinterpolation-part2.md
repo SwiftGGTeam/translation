@@ -23,7 +23,7 @@ custom_title: "Swift 5 字符串插值-简介"
 
  ## 目标
 
-我看到这个 [Swift 5 全新的 StringInterpolation 设计](https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md) 时其中一个立即想到的应用就是简化 `NSAttributedString` 的生成。
+我看到这个 [Swift 5 全新的 StringInterpolation 设计](https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md) 时，其中一个立即想到的应用就是简化 `NSAttributedString` 的生成。
 
 我的目标是做到用类似下面的语法创建一个 attributed 字符串：
 
@@ -41,9 +41,9 @@ let str: AttrString = """
   """
 ```
 
-这一大串字符串使用了多行字符串的字面量语法([Swift 4 中新增，避免错过](https://github.com/apple/swift-evolution/blob/master/proposals/0168-multi-line-string-literals.md)) - 而且，在其中一个多行字符串字面量中包含了另一个(见 `\(wrap: ...)` 段落）！- 还包含了给一部分字符添加一些样式的插值…所以用上了大量 Swift 新特性！
+这一大串字符串不仅使用了多行字符串的字面量语法([Swift 4 中新增，避免错过](https://github.com/apple/swift-evolution/blob/master/proposals/0168-multi-line-string-literals.md)) - 而且在其中一个多行字符串字面量中包含了另一个(见 `\(wrap: ...)` 段落）！- 还包含了给一部分字符添加一些样式的插值…所以用上了大量 Swift 新特性！
 
-这个 `NSAttributedString` 一旦在一个 `UILabel` 或者 `NSTextView` 中渲染，结果像这个样子：
+这个 `NSAttributedString` 如果在一个 `UILabel` 或者 `NSTextView` 中渲染，结果是这个样子的：
 
 ![image](http://alisoftware.github.io/assets/StringInterpolation-AttrString.png)
 
@@ -264,7 +264,7 @@ let str: AttrString = """
 
 ## 结论
 
-我希望你享受这一系列 `StringInterpolation` 文章，让你能瞥到这个新设计威力的冰山一角。
+我希望你享受这一系列 `StringInterpolation` 文章，希望你能瞥到这个新设计威力的冰山一角。
 
 你可以 [在这下载我的 Playground 文件](http://alisoftware.github.io/assets/StringInterpolation.playground.zip) 看到 `GitHubComment`(见 [第一部分](http://alisoftware.github.io/swift/2018/12/15/swift5-stringinterpolation-part1/))，`AttrString` 的全部实现，说不定还能在我尝试的 `RegEX` 简单实现中得到一些灵感。
 
