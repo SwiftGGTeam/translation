@@ -8,7 +8,7 @@ custom_title: "Swift 5 字符串插值-简介"
 
 ------
 
-原文链接=[http://alisoftware.github.io/swift/2018/12/16/swift5-stringinterpolation-part2/](http://alisoftware.github.io/swift/2018/12/16/swift5-stringinterpolation-part2/)
+原文链接=http://alisoftware.github.io/swift/2018/12/16/swift5-stringinterpolation-part2
 作者=Olivier Halligon
 原文日期=2018-12-16
 译者=Nemocdz
@@ -73,7 +73,7 @@ extension AttrString: CustomStringConvertible {
 }
 ```
 
-挺简单的吧？仅仅给 `NSAttributedString` 封装了一下。现在，让我们添加 `ExpressibleByStringInterpolation` 的支持，来同时支持字面量和带 ` NSAttributedString` 属性注释的字符串。
+挺简单的吧？仅仅给 `NSAttributedString` 封装了一下。现在，让我们添加 `ExpressibleByStringInterpolation` 的支持，来同时支持字面量和带 `NSAttributedString` 属性注释的字符串。
 
 ```swift
 extension AttrString: ExpressibleByStringInterpolation {
@@ -175,7 +175,7 @@ extension AttrString.StringInterpolation {
   }
 ```
 
-然后我们就完成了！但…这样一次只支持一个 `Style`。为什么不允许它传入多个 `Style` 作为形参呢？这可以用一个 `[Style]` 形参来实现，但这要求我们在调用侧将样式列表用括号括起来…不如令它使用可变形参？
+然后我们就完成了！但…这样一次只支持一个 `Style`。为什么不允许它传入多个 `Style` 作为形参呢？这可以用一个 `[Style]` 形参来实现，但这要求我们在调用侧将样式列表用括号括起来…不如让它使用可变形参？
 
 让我们用这种方式来代替之前的实现：
 
