@@ -87,7 +87,7 @@ imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
 imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
 ```
 
-> *注意在实际开发中影响会更大。这里只是一个简单的场景。*
+> *实践中请注意强制解包。这里只是一个简单的场景。*
 
 完成之后就会是这个样子：
 
@@ -99,7 +99,7 @@ imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
 <UIImage: 0x600003d41a40>, {1718, 2048}
 ```
 
-需要注意的是 - 这里的单位是*点*。所以当我在 3x 或 2x 设备时，还需要额外乘上这个数字。我们可以用 vmmap 来确认这张图像是否占用了 14 MB：
+需要注意的是 - 这里的单位是*点*。所以当我在 3x 或 2x 设备时，可能还需要额外乘上这个数字。我们可以用 vmmap 来确认这张图像是否占用了 14 MB：
 
 ```shell
 vmmap --summary baylor.memgraph
@@ -134,7 +134,7 @@ Image IO  13.4M   13.4M   13.4M    0K  0K  0K   0K  2
 
 这里有很多可以把控和值得思考的地方。这也是为什么你应该用 [UIGraphicsImageRenderer](https://www.swiftjectivec.com/uigraphicsimagerenderer/) 代替 `UIGraphicsBeginImageContextWithOptions` 的原因之一。后者*总是*会使用 sRGB，因此无法使用宽色域，也无法在不需要的时候节省空间。在 iOS 12 中，`UIGraphicsImageRenderer` 会为你做正确的选择。
 
-不要忘了，大部分图像并不是真正的摄影作品，只是无关紧要的随手拍。如果你错过了我最近的文章，可以再阅读一遍下面的内容：
+不要忘了，很多图像并不是真正的摄影作品，只是一些绘图操作。如果你错过了我最近的文章，可以再阅读一遍下面的内容：
 
 ```swift
 let circleSize = CGSize(width: 60, height: 60)
