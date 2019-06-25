@@ -17,7 +17,7 @@ description: 关于 Swift 中的集合（Set）
 
 <!--此处开始正文-->
 
-集合（Set）是 Swift 集合类型（collection types）之一，集合用来存储类型相同且没有确定顺序唯一的值。你可以将集合想象成一盒台球：它们在颜色和数量上独一无二，但在盒内没有固定的顺序。
+集合（Set）是 Swift 集合类型（collection types）之一，集合用来存储类型相同且没有确定顺序唯一的值。你可以将集合想象成一盒台球：它们在颜色和数量上独一无二，但在盒内是无序的。
 
 ![](http://s12572.pcdn.co/wp-content/uploads/2018/11/billiard.jpg)
 
@@ -60,7 +60,7 @@ for value in setA {
      print(value)
 }
 ```
-注意：每次运行代码时，循环中值的顺序可能不同。从表面看来，它们像是随机返回一样。
+注意：每次运行代码时，循环中值的顺序可能不同。从表面来看，它们像是随机返回一样。
 
 ## 集合分析
 
@@ -101,7 +101,7 @@ setE.insert(5)
  
 print(setE) //[4,5,1,2,3]
 ```
-和前面所说的一样，上面代码每次执行时输出的顺序可能不同，因为集合元素没有固定顺序。
+和前面所说的一样，上面代码每次执行时输出的顺序可能不同，因为集合元素无序。
 
 ## 集合比较
 
@@ -145,7 +145,7 @@ let intSetC: Set = [3,4,5]
 intSetA.isSuperset(of: intSetC) //true
 intSetA.isStrictSuperset(of: intSetC) //true
 ```
-如果两个集合没有相同的元素，那么就说这两个集合不想交
+如果两个集合没有相同的元素，那么就说这两个集合不相交
 
 ```swift
 let intSetA: Set = [1,2,3,4,5,6,7,8,9,0]
@@ -158,7 +158,7 @@ intSetA.isDisjoint(with: intSetD) //true
 
 ## 集合结合
 
-你可以将两个集合可以合并起来，形成一个新的集合，新的集合中包含两个集合中所有的元素：
+你可以将两个集合合并成为一个新集合，新的集合中包含两个集合中所有的元素：
 
 ```swift
 let stringSetA: Set = ["a","b","c"]
