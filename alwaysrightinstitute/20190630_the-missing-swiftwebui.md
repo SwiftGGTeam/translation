@@ -1,22 +1,22 @@
 title: "所缺少的 ☑️：SwiftWebUI"
-date: 
+date: 2019-06-30
 tags: [Swift 跨平台]
 categories: [The Always Right Institute]
 permalink: swiftwebui
 keywords: SwiftWebUI, SwiftUI
 custom_title: 所缺少的：SwiftWebUI
-description: 所缺少的：SwiftWebUI
+description: 本文是关于 SwiftWebUI 的介绍。SwiftWebUI 将 SwiftUI 带到了 Web 平台上。
 
 ------
 
- 原文链接 = http://www.alwaysrightinstitute.com/swiftwebui/
- 作者 = The Always Right Institute
- 原文日期 = 2019-06-30
- 译者 = Ji4n1ng
- 校对 = 
- 定稿 = 
+原文链接=http://www.alwaysrightinstitute.com/swiftwebui/
+作者=The Always Right Institute
+原文日期=2019-06-30
+译者=Ji4n1ng
+校对= 
+定稿= 
 
-<!-- 此处开始正文 -->
+<!--此处开始正文-->
 
 六月初，Apple 在 [WWDC 2019](https://developer.apple.com/wwdc19/) 上宣布了 [SwiftUI](https://developer.apple.com/xcode/swiftui/)。 它是一个 “跨平台的”、“声明式” 框架，用于构建 tvOS、macOS、watchOS 和 iOS 上的用户界面。 [SwiftWebUI](https://github.com/SwiftWebUI/SwiftWebUI) 将它带到了 Web 上✔️。
 
