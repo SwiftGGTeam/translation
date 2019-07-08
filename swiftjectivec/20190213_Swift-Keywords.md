@@ -99,7 +99,7 @@ extension Person
 {  
     func printInfo()  
     {  
-        print("My name is (name), I'm (age) years old and I'm a (gender).")  
+        print("My name is \(name), I'm \(age) years old and I'm a \(gender).")  
     }  
 }
 ```
@@ -140,7 +140,7 @@ import UIKit
 class Foo {}
 ```
 
-**init**：一个类、结构体、枚举的实例的初始化准备过程。
+**init**：类、结构体、枚举的实例的初始化准备过程。
 
 ```swift
 class Person
@@ -444,7 +444,7 @@ for _ in 0..<3 { print ("This prints 3 times") }
 ```swift
 private func printRecordFromLastName(userLastName: String?)
 {  
-    guard let name = userLastName, userLastName != "Null" else  
+    guard let name = userLastName, name != "Null" else  
     {  
         //userLastName = "Null"，需要提前退出
         return  
