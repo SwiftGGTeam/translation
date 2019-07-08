@@ -15,9 +15,9 @@ description: Swift 扩展的应用
 校对=xxx 
 定稿=xxx
 
-这是关于一点小工作的分享。关于我在 Swift 中那种自然扩展中的体会。
+这是一篇记录我收获到的小惊喜的帖子。我非常喜欢 Swift 中自然扩展的感觉。
 
-我认为 `UnsafeMutableRawBufferPointer.baseAddress` 是可选项这回事非常不合理。它使得这种类型在实践中使用起来非常困难。我也不喜欢在分配时指定对齐方式;在大多数平台上，合理的默认值都是 `Int.bitWidth / 8`。
+我认为 `UnsafeMutableRawBufferPointer.baseAddress` 是可选项这回事非常不合理。它使得这种类型在实践中使用起来非常困难。我也不喜欢在分配时指定对齐方式；在大多数平台上，合理的默认值都是 `Int.bitWidth / 8`。
 
 通过扩展，我们可以很容易地解决这些问题。这样的解决方案能像标准库一样自然地使用。
 <!--more-->
@@ -35,7 +35,7 @@ extension BinaryInteger {
 }
 ```
 
-现在让我们默认使用自然整数宽度对齐。这种对齐能做的事情比我们需要的更多，但我们只需要关心存储在缓冲区中的内容就足够的。虽然断言仅在调试环境中有效。但这已经够应付我们的使用;我们知道 Swift 目前支持的每个平台都是如此。
+现在我们默认使用自然整数宽度对齐。这种对齐能做的事情比我们需要的更多，但现在只需要关心存储在缓冲区中的内容。虽然断言仅在调试环境中有效，但这已经够应付我们的使用；要知道 Swift 目前支持的每个平台都是如此。
 
 ```swift
 extension UnsafeMutableRawBufferPointer {
@@ -62,4 +62,4 @@ extension UnsafeRawBufferPointer {
 }
 ```
 
-一切是如此简单。
+一切如此简单。
