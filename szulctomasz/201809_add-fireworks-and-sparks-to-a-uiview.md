@@ -60,7 +60,7 @@ protocol SparkTrajectory {
 }
 ```
 
-这是一个用于表示火花轨迹的协议。为了能够更简单地创建各式各样的轨迹，我定义了这个通用接口协议，并且选择基于三阶 [贝塞尔曲线](https://en.wikipedia.org/wiki/B%C3%A9zier_curve) 来实现轨迹；还添加了一个 `init` 方法，这样我就可以通过一行代码来创建轨迹了。三阶贝塞尔曲线必须包含四个点。第一个和最后一个点定义了轨迹的开始和结束的位置，中间的两个点用于控制曲线的弯曲度。你可以用在线数学工具 [demos](https://www.desmos.com/calculator/epunzldltu) 来调整自己的贝塞尔曲线。
+这是一个用于表示火花轨迹的协议。为了能够更简单地创建各式各样的轨迹，我定义了这个通用接口协议，并且选择基于三阶 [贝塞尔曲线](https://en.wikipedia.org/wiki/B%C3%A9zier_curve) 来实现轨迹；还添加了一个 `init` 方法，这样我就可以通过一行代码来创建轨迹了。三阶贝塞尔曲线必须包含四个点。第一个和最后一个点定义了轨迹的开始和结束的位置，中间的两个点用于控制曲线的弯曲度。你可以用在线数学工具 [desmos](https://www.desmos.com/calculator/epunzldltu) 来调整自己的贝塞尔曲线。
 
 ```swift
 /// 拥有两个控制点的贝塞尔曲线
@@ -91,7 +91,7 @@ struct CubicBezierTrajectory: SparkTrajectory {
 
 ![desmos-tool](http://szulctomasz.com/uploads/programming-blog/post-54/desmos-tool.png)
 
-接下来要实现的是一个能够创建随机轨迹的工厂。前面的图中你可以看到轨迹是根据颜色来分组的。我只创建了上右和下右两块位置的轨迹，然后进行了镜像复制。这对于我们将要发射的烟花来说已经足够了  🚀
+接下来要实现的是一个能够创建随机轨迹的工厂。前面的图中你可以看到轨迹是根据颜色来分组的。我只创建了上右和下右两块位置的轨迹，然后进行了镜像复制。这对于我们将要发射的烟花来说已经足够了🚀
 
 ```swift
 protocol SparkTrajectoryFactory {}
