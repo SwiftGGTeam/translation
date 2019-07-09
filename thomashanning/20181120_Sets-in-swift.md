@@ -1,5 +1,5 @@
 title: "Swift 中的集合（Set）"
-date: 2018-11-20
+date: 2019-07-09
 tags: [Swift，iOS开发，Swift进阶]
 categories: [thomashanning]
 permalink: Sets-in-Swift
@@ -8,12 +8,13 @@ custom_title: Swift 中的集合（Set）
 description: 关于 Swift 中的集合（Set）
 
 ---
+
 原文链接=http://www.thomashanning.com/sets-in-swift/
 作者=Thomas Hanning
 原文日期=2018-09-06
 译者=rsenjoyer
-校对=
-定稿=
+校对=numbbbbb,pmst
+定稿=Forelax
 
 <!--此处开始正文-->
 
@@ -23,7 +24,7 @@ description: 关于 Swift 中的集合（Set）
 
 <!--more-->
 
-*提示：这篇文章使用的是 Swift4 和 Xcode 10*
+*提示：这篇文章使用的是 Swift 4 和 Xcode 10*
 
 ## 创建集合
 
@@ -49,6 +50,7 @@ let setC = Set(["a","b","c"])
 ```swift
 var setD = Set(["a","b"])
 ```
+
 稍后我们将了解更多有关可变集合的信息。
 
 ## 访问集合中的元素
@@ -60,6 +62,7 @@ for value in setA {
      print(value)
 }
 ```
+
 注意：每次运行代码时，循环中值的顺序可能不同。从表面来看，它们像是随机返回一样。
 
 ## 集合分析
