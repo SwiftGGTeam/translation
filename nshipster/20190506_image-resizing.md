@@ -25,16 +25,15 @@ _”如何对一张图像进行渲染优化？“_
 
 <!--more-->
 
-在本周的文章中，我们将介绍 5 种不同的 iOS 图像渲染优化技技巧（在 MacOS 上时适当地将 `UIImage` 转换成 `NSImage` ）。相比于对每一种情况都规定一种方法，我们将从人类工程学和性能表现方面进行衡量，以便更好地理解何时该用哪一种，而不是别的方法。
+在本周的文章中，我们将介绍 5 种不同的 iOS 图像渲染优化技巧（在 MacOS 上时适当地将 `UIImage` 转换成 `NSImage`）。相比于对每一种情况都规定一种方法，我们将从人类工程学和性能表现方面进行衡量，以便你更好地理解何时该用哪一种，而不是别的方法。
 
-> 你可以自己通过下载，构建和运行 [示例项目代码](https://github.com/NSHipster/Image-Resizing-Example) 来试验这些图像渲染优化技巧。
+> 你可以自己下载、构建和运行 [示例项目代码](https://github.com/NSHipster/Image-Resizing-Example) 来试验这些图像渲染优化技巧。
 
 ---
 
 ## 图像渲染优化的时机和理由
 
-在我们开始之前，让我们先确定一下_为什么_需要对图像进行渲染优化。毕竟，`UIImageView` 会自动根据 [`contentmode` 属性](https://developer.apple.com/documentation/uikit/uiview/1622619-contentmode) 规定的行为缩放和裁剪图像。在绝大多数情况下，
-`.scaleAspectFit`，`.scaleAspectFill`，或 `.scaleToFill` 已经完全满足你的所需。
+在开始之前，让我们先讨论一下_为什么_需要对图像进行渲染优化。毕竟，`UIImageView` 会自动根据 [`contentmode` 属性](https://developer.apple.com/documentation/uikit/uiview/1622619-contentmode) 规定的行为缩放和裁剪图像。在绝大多数情况下，`.scaleAspectFit`、`.scaleAspectFill` 或 `.scaleToFill` 已经完全满足你的所需。
 
 ```swift
 imageView.contentMode = .scaleAspectFit
@@ -51,13 +50,7 @@ imageView.image = image
 
 ![image-resizing-earth](https://nshipster.com/assets/image-resizing-earth-5eaad58ee8c9b4f79595ef7271d19afa50f2240f128465746b3c930c1d420524.jpg)
 
-想要完整渲染它，这张图片宽高为 1,2000 px 存储的话需要高达 20 MB。
-对于当今的硬件来说，你可能不会在意这么少兆字节的占用。
-但那只是它压缩后的尺寸。要展示它，`UIImageView` 首先需要把 JPEG 数据解码成位图（bitmap）， 
-如果要在一个 `UIImageView` 上按原样设置这张全尺寸图片，
-你的应用内存占用将会激增到**几百兆**，对用户明显没有什么好处（毕竟，屏幕能显示的像素有限）。
-
-但只要在设置 `UIImageView` 的 `image` 属性之前，将图像大小调整成 `UIImageView` 的大小，你用到的内存就会少一个数量级：
+想要完整渲染它，这张图片宽高为 12,000 px 存储的话需要高达 20 MB 空间。对于当今的硬件来说，你可能不会在意这么少兆字节的占用。但那只是它压缩后的尺寸。要展示它，`UIImageView` 首先需要把 JPEG 数据解码成位图（bitmap），如果要在一个 `UIImageView` 上按原样设置这张全尺寸图片，你的应用内存占用将会激增到**几百兆**，对用户明显没有什么好处（毕竟，屏幕能显示的像素有限）。但只要在设置 `UIImageView` 的 `image` 属性之前，将图像渲染的尺寸调整成 `UIImageView` 的大小，你用到的内存就会少一个数量级：
 
 |                      | 内存消耗 _(MB)_      |
 | -------------------- | ------------------- |
@@ -66,7 +59,7 @@ imageView.image = image
 
 这个技巧就是众所周知的_下采样（downsampling）_，在这些情况下，它可以有效地优化你应用的性能表现。如果你想了解更多关于下采样的知识或者其它图形图像的最佳实践，请参照 [来自 WWDC 2018 的精彩课程](https://developer.apple.com/videos/play/wwdc2018/219/)。
 
-而现在，很少有应用程序会尝试一次加载这么大的图像了，但是也跟我从设计师那里拿到的图片资源不会差_太_多。_（认真的吗？一张颜色渐变的_ _PNG_ _图片要 3 MB?）_考虑到这一点，让我们来看看有什么不同的方法你可以用来对图像进行优化或者下采样。
+而现在，很少有应用程序会尝试一次加载这么大的图像了，但是也跟我从设计师那里拿到的图片资源不会差_太_多。_（认真的吗？一张颜色渐变的_ _PNG_ _图片要 3 MB?）_考虑到这一点，让我们来看看有什么不同的方法，可以让你用来对图像进行优化或者下采样。
 
 > 不用说，这里所有从 URL 加载的示例图像都是针对**本地**文件。记住，在应用的主线程同步使用网络请求图像**绝不**是什么好主意。
 
@@ -74,7 +67,7 @@ imageView.image = image
 
 ## 图像渲染优化技巧
 
-优化图像渲染的方法有很多种，每种都有不同的功能和性能特性，我们在本文看到的这些例子，架构层次跨度上从底层的 Core Graphics、vImage、 Image I/O 到上层的 Core Image 和 UIKit 都有。
+优化图像渲染的方法有很多种，每种都有不同的功能和性能特性。我们在本文看到的这些例子，架构层次跨度上从底层的 Core Graphics、vImage、Image I/O 到上层的 Core Image 和 UIKit 都有。
 
 1. [绘制到 UIGraphicsImageRenderer 上](#technique-1-drawing-to-a-uigraphicsimagerenderer)
 2. [绘制到 Core Graphics Context 上](#technique-2-drawing-to-a-core-graphics-context)
@@ -82,7 +75,7 @@ imageView.image = image
 4. [使用 Core Image 进行 Lanczos 重采样](#technique-4-lanczos-resampling-with-core-image)
 5. [使用 vImage 优化图片渲染](#technique-5-image-scaling-with-vimage)
 
-为了一致调用，以下的每种技术共用一个公共接口方法：
+为了统一调用方式，以下的每种技术共用一个公共接口方法：
 
 ```swift
 func resizedImage(at url: URL, for size: CGSize) -> UIImage? { <#...#> }
@@ -90,7 +83,7 @@ func resizedImage(at url: URL, for size: CGSize) -> UIImage? { <#...#> }
 imageView.image = resizedImage(at: url, for: size)
 ```
 
-这里，`size` 是用 `point` 的一个尺寸计量单位，而不是用 `pixel`。想要计算出你调整大小后图像的等效尺寸，用主 `UIScreen` 的 `scale`，等比例放大你 `UIImageView` 的 `size` 大小：
+这里，`size` 的计量单位不是用 `pixel`，而是用 `point`。想要计算出你调整大小后图像的等效尺寸，用主 `UIScreen` 的 `scale`，等比例放大你 `UIImageView` 的 `size` 大小：
 
 ```swift
 let scaleFactor = UIScreen.main.scale
@@ -98,7 +91,7 @@ let scale = CGAffineTransform(scaleX: scaleFactor, y: scaleFactor)
 let size = imageView.bounds.size.applying(scale)
 ```
 
-> 如果你是在异步加载一张大图，使用一个过渡动画让你的图像逐渐显示到 `UIImageView`上。例如:
+> 如果你是在异步加载一张大图，使用一个过渡动画让图像逐渐显示到 `UIImageView` 上。例如:
 
 ```swift
 class ViewController: UIViewController {
@@ -149,10 +142,9 @@ func resizedImage(at url: URL, for size: CGSize) -> UIImage? {
 }
 ```
 
-[`UIGraphicsImageRenderer`](https://developer.apple.com/documentation/uikit/uigraphicsimagerenderer) 是一项相对较新的技术，它是在 iOS 10 中引入以取代旧版本的。在上面的 `UIGraphicsBeginImageContextWithOptions` / `UIGraphicsEndImageContext` 的 API 中，你通过指定以 `point` 计量的 `size` 创建了
-一个 `UIGraphicsImageRenderer`。`image` 方法通过传递一个闭包参数然后返回一个经过闭包处理后的位图。在这种情况下，得到的结果就是原始的图像会在缩小到指定的范围内绘制。
+[`UIGraphicsImageRenderer`](https://developer.apple.com/documentation/uikit/uigraphicsimagerenderer) 是一项相对较新的技术，它是在 iOS 10 中引入以取代旧版本的。在上面的 `UIGraphicsBeginImageContextWithOptions` / `UIGraphicsEndImageContext` 的 API 中，你通过指定以 `point` 计量的 `size` 创建了一个 `UIGraphicsImageRenderer`。`image` 方法带有一个闭包参数，返回的是一个经过闭包处理后的位图。最终，原始图像便会在缩小到指定的范围内绘制。
 
-> 在不改变图像原始 aspect ratio（纵横比）的情况下，缩小图像原始的尺寸来显示 通常很有用。[`AVMakeRect(aspectRatio:insideRect:)`](https://developer.apple.com/documentation/avfoundation/1390116-avmakerect) 是在 AVFoundation 框架中很方便的一个函数，负责帮你做如下的计算：
+> 在不改变图像原始纵横比（aspect ratio）的情况下，缩小图像原始的尺寸来显示通常很有用。[`AVMakeRect(aspectRatio:insideRect:)`](https://developer.apple.com/documentation/avfoundation/1390116-avmakerect) 是在 AVFoundation 框架中很方便的一个函数，负责帮你做如下的计算：
 
 ```swift
 import func AVFoundation.AVMakeRect
@@ -197,7 +189,7 @@ func resizedImage(at url: URL, for size: CGSize) -> UIImage? {
 <a name="technique-3-creating-a-thumbnail-with-image-io"></a>
 ### 技巧 #3：使用 Image I/O 创建缩略图像
 
-Image I/O 是一个强大(却鲜有人知)的图像处理框架。抛开 Core Graphics 不说，它可以用许多不同格式中读写图像的元数据，还有执行常规的图像处理操作。这个框架通过先进的缓存机制提供了平台上最快的图片编码器和解码器，甚至可以增量加载图片。这个重要的 `CGImageSourceCreateThumbnailAtIndex` 提供了一个带有许多不同配置选项的 API，比起在 Core Graphics 中等价的处理操作要简洁得多：
+Image I/O 是一个强大（却鲜有人知）的图像处理框架。抛开 Core Graphics 不说，它可以用许多不同格式读写图像的元数据，还有执行常规的图像处理操作。这个框架通过先进的缓存机制，提供了平台上最快的图片编码器和解码器，甚至可以增量加载图片。这个重要的 `CGImageSourceCreateThumbnailAtIndex` 提供了一个带有许多不同配置选项的 API，比起在 Core Graphics 中等价的处理操作要简洁得多：
 
 ```swift
 import ImageIO
@@ -256,7 +248,7 @@ func resizedImage(at url: URL, scale: CGFloat, aspectRatio: CGFloat) -> UIImage?
 }
 ```
 
-这个名叫 `CILanczosScaleTransform` 的 Core Image 滤镜分别接收了 `inputImage`、`inputScale`、和 `inputAspectRatio` 三个参数，每一个参数的意思也都不言自明。
+这个名叫 `CILanczosScaleTransform` 的 Core Image 滤镜分别接收了 `inputImage`、`inputScale` 和 `inputAspectRatio` 三个参数，每一个参数的意思也都不言自明。
 
 更有趣的是，`CIContext` 在这里被用来创建一个 `UIImage`（间接通过 `CGImageRef` 表示），因为 `UIImage(CIImage:)` 经常不能按我们本意使用。创建 `CIContext` 是一个代价很昂贵的操作，所以使用上下文缓存以便重复的渲染工作。
 
@@ -267,13 +259,13 @@ func resizedImage(at url: URL, scale: CGFloat, aspectRatio: CGFloat) -> UIImage?
 
 最后一个了，它是古老的 [Accelerate 框架](https://developer.apple.com/documentation/accelerate) --- 更具体点来说，它是 `vImage` 的图像处理子框架。
 
-vImage 附带有 [一些不同的功能](https://developer.apple.com/documentation/accelerate/vimage/vimage_operations/image_scaling)，可以用来裁剪图像缓冲区大小。这些底层 API 保证了高性能同时低能耗，但会导致你对缓冲区的管理操作增加（更不用说，要编写更多的代码了）：
+vImage 附带有 [一些不同的功能](https://developer.apple.com/documentation/accelerate/vimage/vimage_operations/image_scaling)，可以用来裁剪图像缓冲区大小。这些底层 API 保证了高性能同时低能耗，但会导致你对缓冲区的管理操作增加（更不用说要编写更多的代码了）：
 
 ```swift
 import UIKit
 import Accelerate.vImage
 
-// Technique #5
+// 技巧 #5
 func resizedImage(at url: URL, for size: CGSize) -> UIImage? {
     // 解码源图像
     guard let imageSource = CGImageSourceCreateWithURL(url as NSURL, nil),
@@ -343,7 +335,7 @@ func resizedImage(at url: URL, for size: CGSize) -> UIImage? {
 
 - 首先，根据你传入的图像创建一个输入的源缓冲区，
 - 然后，创建一个输出的目标缓冲区来接受优化后的图像，
-- 接着，在源缓冲区裁剪图像数据然后传给目标缓冲区，
+- 接着，在源缓冲区裁剪图像数据，然后传给目标缓冲区，
 - 最后，从目标缓冲区中根据处理完后的图像创建 `UIImage` 对象。
 
 ---
@@ -352,9 +344,9 @@ func resizedImage(at url: URL, for size: CGSize) -> UIImage? {
 
 那么这些不同的方法是如何相互对比的呢？
 
-在 [这个项目](https://github.com/NSHipster/Image-Resizing-Example) 中是运行 iPhone 7 running iOS 12.2 的一些 [性能对比](https://nshipster.com/benchmarking/) 结果。
+[这个项目](https://github.com/NSHipster/Image-Resizing-Example) 是一些 [性能对比](https://nshipster.com/benchmarking/) 结果，运行环境是 iPhone 7 iOS 12.2。
 
-{% asset image-resizing-app-screenshot.png width="325" %}
+![image-resizing-app-screenshot](https://nshipster.com/assets/image-resizing-app-screenshot-02998a420a75691f6b5c8de44ba24d6119853776bd78bb9e1bfa3a36cdd7d48d.png)
 
 下面的这些数字是多次迭代加载、优化、渲染之前那张 [超大地球图片](https://visibleearth.nasa.gov/view.php?id=78314) 的平均时间：
 
@@ -374,6 +366,6 @@ func resizedImage(at url: URL, for size: CGSize) -> UIImage? {
 
 ## 总结
 
-- **UIKit**, **Core** **Graphics**, 和 **Image** **I/O** 都能很好地用于大部分图片的优化操作。如果你（在 iOS 平台，至少）要选择一个的话，`UIGraphicsImageRenderer` 是你最佳的选择。
-- **Core** **Image** 在图像优化渲染操作方面性能表现优越。实际上，根据 Apple 官方 [_Core_ _Image_ _编程规范中的性能最佳实践单元_](https://developer.apple.com/library/mac/documentation/graphicsimaging/Conceptual/CoreImaging/ci_performance/ci_performance.html#//apple_ref/doc/uid/TP30001185-CH10-SW1)，你应该使用 Core Graphics 或 Image I/O 对图像进行裁剪和下采样而不是用 Core Image。
-- 除非你已经在使用 **`vImage`**，否则用到底层的 Accelerate API 所需的额外工作在大多数情况下可能是不合理的。
+- **UIKit**, **Core** **Graphics**, 和 **Image** **I/O** 都能很好地用于大部分图片的优化操作。如果（在 iOS 平台，至少）要选择一个的话，`UIGraphicsImageRenderer` 是你最佳的选择。
+- **Core** **Image** 在图像优化渲染操作方面性能表现优越。实际上，根据 Apple 官方 [_Core_ _Image_ _编程规范中的性能最佳实践单元_](https://developer.apple.com/library/mac/documentation/graphicsimaging/Conceptual/CoreImaging/ci_performance/ci_performance.html#//apple_ref/doc/uid/TP30001185-CH10-SW1)，你应该使用 Core Graphics 或 Image I/O 对图像进行裁剪和下采样，而不是用 Core Image。
+- 除非你已经在使用 **`vImage`**，否则在大多数情况下用到底层的 Accelerate API 所需的额外工作可能是不合理的。
