@@ -39,6 +39,7 @@
 | WAMaker ||| [WAMaker](https://github.com/WAMaker) |
 | 脱脂棉布团 ||[陈栋楠的Blog](http://blog.chendongnan.com)|[Dongnan Chen](https://github.com/ChenDongnan) |
 | RocZhang | [张鹏RocZhang](http://weibo.com/u/3210801545) | [Roc Zhang's Blog](https://www.roczhang.com) | [RocZhang9673](https://github.com/RocZhang9673) |
+| SunsetWan ||| [SunsetWan](https://github.com/SunsetWan)|
 
 ## 校对
 
