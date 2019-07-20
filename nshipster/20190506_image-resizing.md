@@ -19,9 +19,9 @@ description: 长期以来，iOS 开发人员就为一个奇怪的问题所困扰
 
 长期以来，iOS 开发人员一直被一个奇怪的问题困扰着：
 
-_“如何对一张图像进行渲染优化？”_
+*“如何对一张图像进行渲染优化？”*
 
-这个令人困扰的问题，是由于开发者和平台的相互不信任引起的。各种各样的代码示例充斥着 Stack Overflow，每个人都声称只有自己的方法是真正的解决方案 --- 而别人的是错的。
+这个令人困扰的问题，是由于开发者和平台的相互不信任引起的。各种各样的代码示例充斥着 Stack Overflow，每个人都声称只有自己的方法是真正的解决方案 —— 而别人的是错的。
 
 <!--more-->
 
@@ -33,7 +33,7 @@ _“如何对一张图像进行渲染优化？”_
 
 ## 图像渲染优化的时机和理由
 
-在开始之前，让我们先讨论一下_为什么_需要对图像进行渲染优化。毕竟，`UIImageView` 会自动根据 [`contentmode` 属性](https://developer.apple.com/documentation/uikit/uiview/1622619-contentmode) 规定的行为缩放和裁剪图像。在绝大多数情况下，`.scaleAspectFit`、`.scaleAspectFill` 或 `.scaleToFill` 已经完全满足你的所需。
+在开始之前，让我们先讨论一下*为什么*需要对图像进行渲染优化。毕竟，`UIImageView` 会自动根据 [`contentmode` 属性](https://developer.apple.com/documentation/uikit/uiview/1622619-contentmode) 规定的行为缩放和裁剪图像。在绝大多数情况下，`.scaleAspectFit`、`.scaleAspectFill` 或 `.scaleToFill` 已经完全满足你的所需。
 
 ```swift
 imageView.contentMode = .scaleAspectFit
@@ -52,14 +52,14 @@ imageView.image = image
 
 想要完整渲染这张宽高为 12,000 px 的图片，需要高达 20 MB 的空间。对于当今的硬件来说，你可能不会在意这么少兆字节的占用。但那只是它压缩后的尺寸。要展示它，`UIImageView` 首先需要把 JPEG 数据解码成位图（bitmap），如果要在一个 `UIImageView` 上按原样设置这张全尺寸图片，你的应用内存占用将会激增到**几百兆**，对用户明显没有什么好处（毕竟，屏幕能显示的像素有限）。但只要在设置 `UIImageView` 的 `image` 属性之前，将图像渲染的尺寸调整成 `UIImageView` 的大小，你用到的内存就会少一个数量级：
 
-|                      | 内存消耗 _(MB)_      |
+|                      | 内存消耗 *(MB)*      |
 | -------------------- | ------------------- |
 | 无下采样				   | 220.2               |
 | 下采样				   | 23.7                |
 
-这个技巧就是众所周知的_下采样（downsampling）_，在这些情况下，它可以有效地优化你应用的性能表现。如果你想了解更多关于下采样的知识或者其它图形图像的最佳实践，请参照 [来自 WWDC 2018 的精彩课程](https://developer.apple.com/videos/play/wwdc2018/219/)。
+这个技巧就是众所周知的*下采样（downsampling）*，在这些情况下，它可以有效地优化你应用的性能表现。如果你想了解更多关于下采样的知识或者其它图形图像的最佳实践，请参照 [来自 WWDC 2018 的精彩课程](https://developer.apple.com/videos/play/wwdc2018/219/)。
 
-而现在，很少有应用程序会尝试一次性加载这么大的图像了，但是也跟我从设计师那里拿到的图片资源不会差_太_多。_（认真的吗？一张颜色渐变的_ _PNG_ _图片要 3 MB?）_考虑到这一点，让我们来看看有什么不同的方法，可以让你用来对图像进行优化或者下采样。
+而现在，很少有应用程序会尝试一次性加载这么大的图像了，但是也跟我从设计师那里拿到的图片资源不会差*太*多。*（认真的吗？一张颜色渐变的* *PNG* *图片要 3 MB?）*考虑到这一点，让我们来看看有什么不同的方法，可以让你用来对图像进行优化或者下采样。
 
 > 不用说，这里所有从 URL 加载的示例图像都是针对**本地**文件。记住，在应用的主线程同步使用网络请求图像**绝不**是什么好主意。
 
@@ -260,12 +260,12 @@ func resizedImage(at url: URL, scale: CGFloat, aspectRatio: CGFloat) -> UIImage?
 
 更有趣的是，`CIContext` 在这里被用来创建一个 `UIImage`（间接通过 `CGImageRef` 表示），因为 `UIImage(CIImage:)` 经常不能按我们本意使用。创建 `CIContext` 是一个代价很昂贵的操作，所以使用上下文缓存以便重复的渲染工作。
 
-> 一个 `CIContext` 可以使用 GPU 或者 CPU（慢很多）渲染创建出来。通过指定构造方法中的 `.useSoftwareRenderer` 选项来选择使用哪个硬件。_（提示：用更快的那个，你觉得呢？）_
+> 一个 `CIContext` 可以使用 GPU 或者 CPU（慢很多）渲染创建出来。通过指定构造方法中的 `.useSoftwareRenderer` 选项来选择使用哪个硬件。*（提示：用更快的那个，你觉得呢？）*
 
 <a name="technique-5-image-scaling-with-vimage"></a>
 ### 技巧 #5: 使用 vImage 优化图片渲染
 
-最后一个了，它是古老的 [Accelerate 框架](https://developer.apple.com/documentation/accelerate) --- 更具体点来说，它是 `vImage` 的图像处理子框架。
+最后一个了，它是古老的 [Accelerate 框架](https://developer.apple.com/documentation/accelerate) —— 更具体点来说，它是 `vImage` 的图像处理子框架。
 
 vImage 附带有 [一些不同的功能](https://developer.apple.com/documentation/accelerate/vimage/vimage_operations/image_scaling)，可以用来裁剪图像缓冲区大小。这些底层 API 保证了高性能同时低能耗，但会导致你对缓冲区的管理操作增加（更不用说要编写更多的代码了）：
 
@@ -358,7 +358,7 @@ func resizedImage(at url: URL, for size: CGSize) -> UIImage? {
 
 下面的这些数字是多次迭代加载、优化、渲染之前那张 [超大地球图片](https://visibleearth.nasa.gov/view.php?id=78314) 的平均时间：
 
-|                                       | 耗时 _(seconds)_ |
+|                                       | 耗时 *(seconds)* |
 | ------------------------------------- | ---------------- |
 | 技巧 #1: `UIKit`                      | 0.1420           |
 | 技巧 #2: `Core Graphics` <sup>1</sup> | 0.1722           |
@@ -375,5 +375,5 @@ func resizedImage(at url: URL, for size: CGSize) -> UIImage? {
 ## 总结
 
 - **UIKit**, **Core** **Graphics**, 和 **Image** **I/O** 都能很好地用于大部分图片的优化操作。如果（在 iOS 平台，至少）要选择一个的话，`UIGraphicsImageRenderer` 是你最佳的选择。
-- **Core** **Image** 在图像优化渲染操作方面性能表现优越。实际上，根据 Apple 官方 [_Core_ _Image_ _编程规范中的性能最佳实践单元_](https://developer.apple.com/library/mac/documentation/graphicsimaging/Conceptual/CoreImaging/ci_performance/ci_performance.html#//apple_ref/doc/uid/TP30001185-CH10-SW1)，你应该使用 Core Graphics 或 Image I/O 对图像进行裁剪和下采样，而不是用 Core Image。
+- **Core** **Image** 在图像优化渲染操作方面性能表现优越。实际上，根据 Apple 官方 [*Core* *Image* *编程规范中的性能最佳实践单元*](https://developer.apple.com/library/mac/documentation/graphicsimaging/Conceptual/CoreImaging/ci_performance/ci_performance.html#//apple_ref/doc/uid/TP30001185-CH10-SW1)，你应该使用 Core Graphics 或 Image I/O 对图像进行裁剪和下采样，而不是用 Core Image。
 - 除非你已经在使用 **`vImage`**，否则在大多数情况下用到底层的 Accelerate API 所需的额外工作可能是不合理的。
