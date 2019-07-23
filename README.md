@@ -40,6 +40,10 @@
 | 脱脂棉布团 ||[陈栋楠的Blog](http://blog.chendongnan.com)|[Dongnan Chen](https://github.com/ChenDongnan) |
 | RocZhang | [张鹏RocZhang](http://weibo.com/u/3210801545) | [Roc Zhang's Blog](https://www.roczhang.com) | [RocZhang9673](https://github.com/RocZhang9673) |
 | ericchuhong | | | [ericchuhong](https://github.com/ericchuhong) |
+| CyberHex | [Penstein](https://weibo.com/u/2392553762) | [CyberHex](https://cyberhex.me/) | [quintessencegpy](https://github.com/quintessencegpy) |
+| Joeytat | [JoeyQAQ](https://weibo.com/u/1592639685) | [Joeytat's Blog](https://joeytat.github.io/) | [Joeytat](https://github.com/joeytat) |
+| Sunsetwan | | | [Sunsetwan](https://github.com/SunsetWan)
+| Ji4n1ng | [Ji4n1ng](https://weibo.com/u/5254121984) | [Jianing's Blog](https://jianing.wang/) | [Ji4n1ng](https://github.com/Ji4n1ng) |
 
 ## 校对
 
