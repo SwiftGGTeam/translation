@@ -16,7 +16,7 @@ permalink: add-fireworks-and-sparks-to-a-uiview
 
 <!--more-->
 
-你也很喜欢常用 app 里的那些小细节吧？当我从 dribbble 中寻找灵感时，就发现了这个漂亮的设计；当用户在某个重要的视图中修改设置或者进行了什么操作时，会有烟花在周围绽放。于是我就在想这个东西有多难实现，然后过了一段时间，我完成了 :)
+你也很喜欢常用 app 里的那些小细节吧？当我从 [dribbble](https://dribbble.com/) 中寻找灵感时，就发现了这个漂亮的设计：当用户在某个重要的视图中修改设置或者进行了什么操作时，会有烟花在周围绽放。于是我就在想这个东西有多难实现，然后过了一段时间，我完成了 :)
 
 ![hero](http://szulctomasz.com/uploads/programming-blog/post-54/hero.gif)
 
