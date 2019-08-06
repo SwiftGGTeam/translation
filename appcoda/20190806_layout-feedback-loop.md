@@ -374,4 +374,3 @@ struct LayoutLoopHunter {
 完整代码可以从这个 [GitHub 仓库](https://github.com/rsrbk/LayoutLoopHunter) 里获取，并且也将会通过 CocoaPods 的方式分发出来，以跟踪项目中的布局循环。
 
 附：我想特别感谢 Aleksandr Gusev 帮助审阅并且为本文提供了很多意见。
-
