@@ -5,7 +5,7 @@ categories: [khanlou, iOS]
 permalink: analyzing-complexity
 keywords: [Swift, Swift Algorithm]
 custom_title: "分析复杂度"
-description: "本文中介绍了在 Swift 中如何对一些集合类型的操作进行性能分析与优化。"
+description: "本文介绍了在 Swift 中如何对一些集合类型的操作进行性能分析与优化。"
 
 ---
 
@@ -22,29 +22,29 @@ description: "本文中介绍了在 Swift 中如何对一些集合类型的操�
 
 <!--more-->
 
-第一个例子是 Swift 3 中添加的一个方法:
+第一个例子是 Swift 3 添加的一个方法:
 
 ```swift
 // 当你看到:
 myArray.filter({ /* some test */ }).first
 
-// 你应该把它变成:
+// 你应该把它改成:
 myArray.first(where: { /* some test */ })
 ```
 
 这里两种写法的断言描述闭包和操作结果都完全相同，但下面的写法更简短，语义更清晰，而且性能更好。因为它不会进行新数组的分配，也不需要对数组中每一个元素是否能够通过测试都进行判断，只需要找出第一个就好了。
 
-另一个例子是[我帮助添加到 Swift 5](https://github.com/apple/swift-evolution/blob/master/proposals/0220-count-where.md) 中的 `count(where:)` 函数:
+另一个例子是 [我帮助添加到 Swift 5](https://github.com/apple/swift-evolution/blob/master/proposals/0220-count-where.md) 中的 `count(where:)` 函数:
 
 ```swift
 // 当你看到:
 myArray.filter({ /* some test */ }).count
 
-// 你应该把它变成:
+// 你应该把它改成:
 myArray.count(where: { /* some test */ })
 ```
 
-又一次更短、更清晰而且更快的例子。没有额外要被分配的数组，也没有多余的操作。
+这又是一个更短、更清晰而且更快的例子。没有额外要被分配的数组，也没有多余的操作。
 
 在我们的一个项目中，有一个通用的范式，需要先将集合进行 `sort`，随后再进行 `prefix` 操作。例如下述的示例代码，需要找出前 20 张最新创建的图像：
 
@@ -92,7 +92,7 @@ if let insertionIndex = result.index(where: { areInIncreasingOrder(element, $0) 
 result.insert(element, at: insertionIndex)
 ```
 
-再将最后一个元素移除（因为它现在已经超出我们想要 m 个的数量限制了）：
+再将最后一个元素移除（因为我们只需要 m 个元素）：
 
 ```swift
 result.removeLast()
@@ -121,7 +121,7 @@ extension Sequence {
 
 如果这让你想起了之前在计算机科学中学过的课程，那就再好不过了。实际上这里的算法就类似于选择排序的过程（但它们并非完全相同，因为这里会预先排序一部分元素，而选择排序则不同，是可变序列算法（mutating algorithm））。
 
-这里的时间复杂度分析起来可能会有些困难，但是我们还是可以尝试进行分析。初始部分的排序是 O(mlogm)，外层的循环是 O(n)。每次的循环中，会分别调用时间复杂度都为 O(m) 的 `index(where:)` 和 `insert(_:at:)` （插入操作的时间复杂度是 O(m) 的原因在于，它可能需要将所有的元素后移，为新元素腾出空间）。因此，总时间复杂度应为 O(mlogm + n * (m + m))，或者说 O(mlogm + 2nm)。常数项被移除后，留下的则是 O(mlogm + nm)。
+这里的时间复杂度分析起来可能会有些困难，但是我们还是可以尝试进行分析。初始部分的排序是 O(mlogm)，外层的循环是 O(n)。每次的循环中，会分别调用时间复杂度都为 O(m) 的 `index(where:)` 和 `insert(_:at:)`（插入操作的时间复杂度是 O(m) 的原因在于，它可能需要将所有的元素后移，为新元素腾出空间）。因此，总时间复杂度应为 O(mlogm + n * (m + m))，或者说 O(mlogm + 2nm)。常数项被移除后，留下的则是 O(mlogm + nm)。
 
 当 m 比 n 小得多时，m 项会接近于常数，最终我们得到的会是 O(n)。相较于之前的 O(nlogn) 而言，这是一个巨大的改进。对应到之前提到的 55000 张图片的例子，这可能会是多达 5 倍的性能提升。
 
@@ -139,11 +139,11 @@ if let last = result.last, areInIncreasingOrder(last, e) { continue }
 
 为了能够更好的理解这些优化会如何影响算法的性能，Nate Cook 帮助我了解了 Karoy Lorentey 的 [Attabench 工具](https://github.com/attaswift/Attabench)，它能够对这些解决方案进行基准测试。因为截止目前，我们对复杂度的分析都是停留在理论层面的，在真正对代码进行实际测试之前（最理想的情况应该是在真实的设备上），所有的结论都只是有根据的推测。例如，通常来说排序的复杂度为 O(nlogn)，但不同的算法处理不同类型的数据时，其表现也会有所不同。具体来说，已经排好序的数据在特定的算法中可能会变得更快或更慢。
 
-Attabench 向我展示出了一些信息：
+Attabench 的执行结果如下：
 
 ![](http://khanlou.com/images/SmallestNProfile.png)
 
-（我还添加了一个[由 Time Vermuelen 所写的优先队列/堆解决方案](https://gist.github.com/timvermeulen/2174f84ade2d1f97c4d994b7a3156454)，因为有些人好奇它与其他方案比较起来如何。）
+（我还添加了一个 [由 Time Vermuelen 所写的优先队列/堆解决方案](https://gist.github.com/timvermeulen/2174f84ade2d1f97c4d994b7a3156454)，因为有些人好奇它与其他方案比较起来表现如何。）
 
 首先，我对在数组中进行单次搜索比对数组进行完整排序要快的猜测是正确的。尤其是在实际问题中序列可能会很长，排序的性能则会变得更差，但我们的“简单优化”（图中的 “Naive Optimization”）却能保持在常数水平上（Y 轴表示的是单个元素上所花的时间，而不是总时间。这意味着 O(n) 的算法在图中会是一条直线）。
 
