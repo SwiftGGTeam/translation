@@ -68,7 +68,7 @@ class TrackableView: UIView {
 
 我们会做同样的事情——创建一个子类，重写 `layoutSubviews()` 方法并计算其调用次数。唯一的区别是所有这些都将在运行时完成，而不是在项目中创建重复的类。
 
-让我们开始吧：我们将创建自定义子类，并将原始视图的类更改为新的子类：
+让我们开始吧——我们将创建自定义子类，并将原始视图的类更改为新的子类：
 
 ```
 struct LayoutLoopHunter {
@@ -313,7 +313,7 @@ struct LayoutLoopHunter {
     }
  
     static func setUp(for view: UIView, threshold: Int = 100, onLoop: @escaping () -> ()) {
-        // 我们根据我们功能的前缀和原始类名为我们的新类创建名称。
+        // 我们根据功能的前缀和原始类名为新类创建名称。
         let classFullName = “\(RuntimeConstants.Prefix)_\(String(describing: view.self))”
         let originalClass = type(of: view)
  
