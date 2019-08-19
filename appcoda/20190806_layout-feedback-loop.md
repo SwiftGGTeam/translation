@@ -62,11 +62,11 @@ class TrackableView: UIView {
 }
 ```
 
-对于一个视图，这段代码运行正常。但是现在你想要在另一个视图上实现它。当然，你可以创建一个 `UIView` 的子类，在这里实现它并使你项目中的所有视图都继承这个子类。然后为UITableView，UIScrollView，UIStackView等做同样的事情。
+对于一个视图，这段代码运行正常。但是现在你想要在另一个视图上实现它。当然，你可以创建一个 `UIView` 的子类，在这里实现它并使你项目中的所有视图都继承这个子类。然后为 UITableView，UIScrollView，UIStackView 等做同样的事情。
 
 你希望可以将此逻辑注入你想要的任何类，而无需编写大量重复的代码。这正是运行时编程允许你执行的操作。
 
-我们会做同样的事情：创建一个子类，重写 `layoutSubviews()` 方法并计算其调用次数。唯一的区别是所有这些都将在运行时完成，而不是在项目中创建重复的类。
+我们会做同样的事情——创建一个子类，重写 `layoutSubviews()` 方法并计算其调用次数。唯一的区别是所有这些都将在运行时完成，而不是在项目中创建重复的类。
 
 让我们开始吧：我们将创建自定义子类，并将原始视图的类更改为新的子类：
 
@@ -78,7 +78,7 @@ struct LayoutLoopHunter {
     }
  
     static func setUp(for view: UIView, threshold: Int = 100, onLoop: @escaping () -> ()) {
-        // 我们根据功能的前缀和原始类名为我们的新类创建名称。
+        // 我们根据功能的前缀和原始类名为新类创建名称。
         let classFullName = “\(RuntimeConstants.Prefix)_\(String(describing: view.self))”
         let originalClass = type(of: view)
  
@@ -150,14 +150,14 @@ struct objc_method {
 * 方法类型字符串包括方法的签名。你可以在 [这里](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html) 详细了解其格式。但是在现在的情况下，需要明确说明的字符串是 `“v@:”`。作为返回类型，`v` 代表 `void`，而 `@` 和 `:` 分别代表接收者和消息选择器。
 * 选择器是在运行时期间查找方法实现的关键。
 
-你可以把 witness table（在其他编程语言中，它也被称作分发表）想象成一个简单的字典数据结构。那么选择器会成为对应的键（Key），且实现部分则为对应的值。
+你可以把 Witness Table（在其他编程语言中，它也被称作分发表）想象成一个简单的字典数据结构。那么选择器会成为对应的键（Key），且实现部分则为对应的值。
 在下面这行代码中:
 ```
 class_addMethod(trackableClass,#selector(originalClass.layoutSubviews), implementation, "v@:")
 ``` 
-我们所做的是为与 `layoutSubviews()` 方法对应的键分配新值。我们获得这个计数器，使它的计数值加一。如果计数值超过临界值，我们会发送分析事件，其中包含类名和我们想要的任何数据体。
+我们所做的是为与 `layoutSubviews()` 方法对应的键分配新值。我们获得这个计数器，使它的计数值加一。如果计数值超过临界值，我们会发送分析事件，其中包含类名和想要的任何数据体。
 
-让我们回顾一下我们如何为关联对象实现和使用键：
+让我们回顾一下如何为关联对象实现和使用键：
 
 ```
 static var CounterKey = “_counter”
@@ -185,9 +185,9 @@ closure()
 // 最后两个函数调用的地址将始终不同 
 ```
 
-通过引用的方式传递这个键总是一个好想法，因为有时，即使你没有使用闭包，变量的地址仍然可以因内存管理而被更改。举个例子，如果你把上面的代码运行多次，你可能看到前两个 `printAddress()` 的调用会输出不同的地址。
+通过引用的方式传递这个键总是一个好想法，因为有时，即使你没有使用闭包，变量的地址仍然可以因内存管理而被更改。举个例子，如果你把上面的代码运行多次，可能看到前两个 `printAddress()` 的调用会输出不同的地址。
 
-让我们回到运行时的魔法里来。在新 `layoutSubviews()` 的实现里，我们还有一件很重要的事情没有完成。这件事是我们每次重写父类的方法时通常都会做的事情——调用父类实现。`layoutSubviews()` 的文档提及：
+让我们回到运行时的魔法里来。在新 `layoutSubviews()` 的实现里，还有一件很重要的事情没有完成。这件事是每次重写父类的方法时通常都会做的事情——调用父类实现。`layoutSubviews()` 的文档提及：
 > 在 iOS 5.1 及更早版本中，这个方法的默认实现不执行任何操作。反之，默认实现使用你设置的任何约束来确定任何子视图的大小和位置。
 
 为了避免任何难以预料的布局行为，我们得调用父类的实现，但这不会和往常一样简单明了：
@@ -205,7 +205,7 @@ let originalLayoutSubviews = unsafeBitCast(originalImpl, to: ObjCVoidVoidFn.self
 originalLayoutSubviews(view, selector)
 ```
 
-这里实际发生的是：我们自己检索所需的实现并直接从我们的代码中调用它，而不是用常见的调用一个方法的方式（即执行一个会在 Witness table 中寻找对应实现的选择器）。
+这里实际发生的是：我们自己检索所需的实现并直接从代码中调用它，而不是用常见的调用一个方法的方式（即执行一个会在 Witness Table 中寻找对应实现的选择器）。
 
 目前为止，让我们看看实现部分：
 
@@ -275,7 +275,7 @@ class ViewController: UIViewController {
     }
 }
 ```
-我们是不是忘记了什么事情？让我们再次回顾一下 `UIViewLayoutFeedbackLoopDebuggingThreshold` 断点的工作原理：
+是不是忘记了什么事情？让我们再次回顾一下 `UIViewLayoutFeedbackLoopDebuggingThreshold` 断点的工作原理：
 > 在被认为是一个反馈循环之前，定义某个视图必须在单个运行循环中布置其子视图的次数
 
 我们从未把“单个运行循环”这一条件考虑进来。如果视图在屏幕上停留了相当长的时间，并经常被反复布置，计数器迟早会超过临界值。但这不是因为内存的问题。
@@ -319,7 +319,7 @@ struct LayoutLoopHunter {
  
         if let trackableClass = objc_allocateClassPair(originalClass, classFullName, 0) {
             // 在当前运行时会话期间尚未创建此类。
-            // 我们需要注册我们的类，并且用原始视图的类来和它交换。
+            // 我们需要注册这个类，并且用原始视图的类来和它交换。
             objc_registerClassPair(trackableClass)
             object_setClass(view, trackableClass)
  
