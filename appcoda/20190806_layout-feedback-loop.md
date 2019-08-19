@@ -84,7 +84,7 @@ struct LayoutLoopHunter {
  
         if let trackableClass = objc_allocateClassPair(originalClass, classFullName, 0) {
             // 在当前运行时会话期间尚未创建此类。
-            // 我们需要注册我们的类，并且用原始视图的类来和它交换。
+            // 我们需要注册这个类，并且用原始视图的类来和它交换。
             objc_registerClassPair(trackableClass)
             object_setClass(view, trackableClass)
         } else if let trackableClass = NSClassFromString(classFullName) {
@@ -211,17 +211,17 @@ originalLayoutSubviews(view, selector)
 
 ```
 static func setUp(for view: UIView, threshold: Int = 100, onLoop: @escaping () -> ()) {
-    // 我们根据功能的前缀和原始类名为我们的新类创建名称
+    // 我们根据功能的前缀和原始类名为新类创建名称
     let classFullName = “\(RuntimeConstants.Prefix)_\(String(describing: view.self))”
     let originalClass = type(of: view)
 
     if let trackableClass = objc_allocateClassPair(originalClass, classFullName, 0) {
         // 在当前运行时会话期间尚未创建此类
-        // 我们需要注册我们的类并将其与原始视图的类交换
+        // 我们需要注册这个类并将其与原始视图的类交换
         objc_registerClassPair(trackableClass)
         object_setClass(view, trackableClass)
 
-        // 我们现在可以创建关联对象
+        // 现在可以创建关联对象
         objc_setAssociatedObject(view, &RuntimeConstants.CounterKey, 0, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
 
         // 添加我们自己 layoutSubviews 的实现
@@ -323,7 +323,7 @@ struct LayoutLoopHunter {
             objc_registerClassPair(trackableClass)
             object_setClass(view, trackableClass)
  
-            // 我们现在可以创建关联对象
+            // 现在可以创建关联对象
             objc_setAssociatedObject(view, &RuntimeConstants.CounterKey, 0, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
  
             // 添加我们自己 layoutSubviews 的实现
