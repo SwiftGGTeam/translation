@@ -207,7 +207,7 @@ originalLayoutSubviews(view, selector)
 
 这里实际发生的是：我们检索方法所需的实现部分，并直接从代码中调用它，而不是用常见的方式来调用方法（即执行一个会在 Witness Table 中寻找对应实现的选择器）。
 
-目前为止，让我们看看实现部分：
+现在我们的代码部分是这样：
 
 ```
 static func setUp(for view: UIView, threshold: Int = 100, onLoop: @escaping () -> ()) {
