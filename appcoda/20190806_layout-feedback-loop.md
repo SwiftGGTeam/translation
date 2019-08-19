@@ -84,7 +84,7 @@ struct LayoutLoopHunter {
  
         if let trackableClass = objc_allocateClassPair(originalClass, classFullName, 0) {
             // 在当前运行时会话期间尚未创建此类。
-            // 我们需要注册这个类，并且用原始视图的类来和它交换。
+            // 注册这个类，并且用原始视图的类来和它交换。
             objc_registerClassPair(trackableClass)
             object_setClass(view, trackableClass)
         } else if let trackableClass = NSClassFromString(classFullName) {
@@ -217,7 +217,7 @@ static func setUp(for view: UIView, threshold: Int = 100, onLoop: @escaping () -
 
     if let trackableClass = objc_allocateClassPair(originalClass, classFullName, 0) {
         // 在当前运行时会话期间尚未创建此类
-        // 我们需要注册这个类并将其与原始视图的类交换
+        // 注册这个类并将其与原始视图的类交换
         objc_registerClassPair(trackableClass)
         object_setClass(view, trackableClass)
 
@@ -319,7 +319,7 @@ struct LayoutLoopHunter {
  
         if let trackableClass = objc_allocateClassPair(originalClass, classFullName, 0) {
             // 在当前运行时会话期间尚未创建此类。
-            // 我们需要注册这个类，并且用原始视图的类来和它交换。
+            // 注册这个类，并且用原始视图的类来和它交换。
             objc_registerClassPair(trackableClass)
             object_setClass(view, trackableClass)
  
