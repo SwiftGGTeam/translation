@@ -23,7 +23,7 @@ custom_title: "Swift 5 字符串插值-简介"
 
  ## 目标
 
-我看到 [Swift 5 这个全新的 StringInterpolation 设计](https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md) 时，马上想到的应用之一就是简化 `NSAttributedString` 的生成。
+在看到 [Swift 5 这个全新的 StringInterpolation 设计](https://github.com/apple/swift-evolution/blob/master/proposals/0228-fix-expressiblebystringinterpolation.md) 时，我马上想到的应用之一就是简化 `NSAttributedString` 的生成。
 
 我的目标是做到用类似下面的语法创建一个 attributed 字符串：
 
@@ -41,7 +41,7 @@ let str: AttrString = """
   """
 ```
 
-这一大串字符串不仅使用了多行字符串的字面量语法([Swift 4 中新增，避免错过](https://github.com/apple/swift-evolution/blob/master/proposals/0168-multi-line-string-literals.md)) - 而且在其中一个多行字符串字面量中包含了另一个(见 `\(wrap: ...)` 段落）！- 甚至还包含了给一部分字符添加一些样式的插值…所以用上了大量 Swift 新特性！
+这一大串字符串不仅使用了多行字符串的字面量语法（[顺带一提，这个特性是在 Swift4 中新增的，以免你错过了](https://github.com/apple/swift-evolution/blob/master/proposals/0168-multi-line-string-literals.md)） ——而且在其中一个多行字符串字面量中包含了另一个(见 `\(wrap: ...)` 段落）！- 甚至还包含了给一部分字符添加一些样式的插值…所以由大量 Swift 新特性组合而成！
 
 这个 `NSAttributedString` 如果在一个 `UILabel` 或者 `NSTextView` 中渲染，结果是这个样子的：
 
@@ -51,9 +51,9 @@ let str: AttrString = """
 
 ## 初步实现
 
-所以，我们从哪里开始实现？当然是和我们在第一部分中如何实现 `GitHubComment` 差不多！
+所以，从哪里开始实现？当然和第一部分中如何实现 `GitHubComment` 差不多！
 
-好的，在实际解决字符串插值之前，让我们先从声明特有类型开始。
+好的，在实际解决字符串插值之前，我们先从声明特有类型开始。
 
 ```swift
 struct AttrString {
@@ -101,7 +101,7 @@ extension AttrString: ExpressibleByStringInterpolation {
 }
 ```
 
-这时，我们已经可以用下面这种方式简单地构建一个 `NSAttributedString` 了：
+这时，已经可以用下面这种方式简单地构建一个 `NSAttributedString` 了：
 
 ```swift
 let user = "AliSoftware"
@@ -114,9 +114,9 @@ let str: AttrString = """
 
 ## 方便的样式添加
 
-但用字典 `[NAttributedString.Key: Any]` 的方式处理属性不够优雅。特别是由于 `Any` 没有明确类型，要求我们了解每一个键值的明确类型…
+但用字典 `[NAttributedString.Key: Any]` 的方式处理属性不够优雅。特别是由于 `Any` 没有明确类型，要求了解每一个键值的明确类型…
 
-所以我们可以通过创建特有的 `Style` 类型让它变得更优雅，并帮助我们构建属性的字典：
+所以可以通过创建特有的 `Style` 类型让它变得更优雅，并帮助我们构建属性的字典：
 
 ```swift
 extension AttrString {
@@ -153,7 +153,7 @@ extension AttrString {
 }
 ```
 
-这允许我们使用 `Style.color(.blue)` 来简单地创建一个封装了 `[.foregroundColor: NSColor.blue]` 的 `Style`。
+这允许使用 `Style.color(.blue)` 来简单地创建一个封装了 `[.foregroundColor: NSColor.blue]` 的 `Style`。
 
 可别止步于此，现在让我们的 `StringInterpolation` 可以处理下面这样的 `Style` 属性！
 
@@ -175,7 +175,7 @@ extension AttrString.StringInterpolation {
   }
 ```
 
-然后我们就完成了！但…这样一次只支持一个 `Style`。为什么不允许它传入多个 `Style` 作为形参呢？这可以用一个 `[Style]` 形参来实现，但这要求我们在调用侧将样式列表用括号括起来…不如让它使用可变形参？
+然后就完成了！但…这样一次只支持一个 `Style`。为什么不允许它传入多个 `Style` 作为形参呢？这可以用一个 `[Style]` 形参来实现，但这要求调用侧将样式列表用括号括起来…不如让它使用可变形参？
 
 让我们用这种方式来代替之前的实现：
 
@@ -190,7 +190,7 @@ extension AttrString.StringInterpolation {
 }
 ```
 
-现在我们可以将多种样式混合起来了！
+现在可以将多种样式混合起来了！
 
 ```swift
 let str: AttrString = """
@@ -202,7 +202,7 @@ let str: AttrString = """
 
 `NSAttributedString` 的另一种能力是使用 `NSAttributedString(attachment: NSTextAttachment)` 添加图像，让它成为字符串的一部分。要实现它，仅需要实现 `appendInterpolation(image: NSImage)` 并调用它。
 
-我希望为这个特性顺便加上缩放图像的能力。由于我是在 macOS 的 playground 上尝试的，它的图形上下文是翻转的，所以我也得将图像翻转回来（注意这个细节可能会和 iOS 上实现对 UIImage 的支持时不一样）。这里是我的做法：
+我希望为这个特性顺便加上缩放图像的能力。由于我是在 macOS 的 playground 上尝试的，它的图形上下文是翻转的，所以也得将图像翻转回来（注意这个细节可能会和 iOS 上实现对 UIImage 的支持时不一样）。这里是我的做法：
 
 ```swift
 extension AttrString.StringInterpolation {
@@ -244,7 +244,7 @@ extension AttrString.StringInterpolation {
 }
 ```
 
-上面这些全部完成之后，我们目标就达成了，终于可以用单纯的字符串加上插值创建一个 AttributedString：
+上面这些全部完成之后，目标就达成了，终于可以用单纯的字符串加上插值创建一个 AttributedString：
 
 ```swift
 let username = "AliGator"
@@ -264,7 +264,7 @@ let str: AttrString = """
 
 ## 结论
 
-期待你享受这一系列 `StringInterpolation` 文章，并且从中你能瞥到这个新设计威力的冰山一角。
+期待你享受这一系列 `StringInterpolation` 文章，并且能从中瞥到这个新设计威力的冰山一角。
 
 你可以 [在这下载我的 Playground 文件](http://alisoftware.github.io/assets/StringInterpolation.playground.zip)，里面有 `GitHubComment`(见 [第一部分](http://alisoftware.github.io/swift/2018/12/15/swift5-stringinterpolation-part1/))，`AttrString` 的全部实现，说不定还能从我简单实现 `RegEX` 的尝试中得到一些灵感。
 
@@ -273,4 +273,4 @@ let str: AttrString = """
 ---
 
 1. 这篇文章和 Playground 里的代码，需要使用 Swift 5。在写作时，最新的 Xcode 版本是 10.1，Swift 4.2，所以如果你想尝试这些代码，需要遵循官方指南去下载开发中的 Swift 5 快照。安装 Swift 5 工具链并在 Xcode 偏好设置里启用并不困难(见官方指南)。
-2. 当然，这里我作为 Demo，只实现了一部分样式。未来可以延伸思路让 `Style` 类型支持更多的样式，在理想情况下，可以覆盖所有存在 `NSAttributedString.Key`。
+2. 当然，这里仅作为 Demo，只实现了一部分样式。未来可以延伸思路让 `Style` 类型支持更多的样式，在理想情况下，可以覆盖所有存在 `NSAttributedString.Key`。
