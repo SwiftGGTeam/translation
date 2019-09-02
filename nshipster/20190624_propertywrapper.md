@@ -17,22 +17,21 @@ description: Swift 属性修饰器要让 SwiftUI 成为可能还有很长的路�
 
 <!--此处开始正文-->
 
-几年前，我们
-我们 [会说](/at-compiler-directives/) “at 符号”（`@`）——以及方括号和可笑的长方法名称——是 Objective-C 的特性，正如括号之于 [Lisp](https://en.wikipedia.org/wiki/Lisp_%28programming_language%29) 或者标点之于 [Perl](https://nshipster.com/assets/qbert-fe44c1a26bd163d2dfafa5334c7bfa7957c3c243cd0c19591f494a9cea9302dc.png)。
+几年前，我们 [会说](https://nshipster.com/at-compiler-directives/) “at 符号”（`@`）——以及方括号和可笑的长方法名称——是 Objective-C 的特性，正如括号之于 [Lisp](https://en.wikipedia.org/wiki/Lisp_%28programming_language%29) 或者标点之于 [Perl](https://nshipster.com/assets/qbert-fe44c1a26bd163d2dfafa5334c7bfa7957c3c243cd0c19591f494a9cea9302dc.png)。
 
 然后 Swift 来了，并用它来结束这些古怪小 🥨 图案一样的字形。或者我们想到的是这样。
 
 <!--more-->
 
-首先，`@` 的功能仅限于 Objective-C 的相互操作性：`@IBAction`，`@NSCopying`，`@UIApplicationMain`，等等。但同时，Swift 继续采用越来越多的 `@` 前缀 [属性](https://docs.swift.org/swift-book/ReferenceManual/Attributes.html)。
+一开始，Swift 中 `@` 的用法只用在和 Objective-C 的混编中：`@IBAction`、`@NSCopying`、`@UIApplicationMain`等等。但之后 Swift 扩展出了越来越多的带有 `@` 前缀的 [属性](https://docs.swift.org/swift-book/ReferenceManual/Attributes.html)。
 
-我们在 [WWDC 2019](/wwdc-2019/) 上第一次看到了 Swift 5.1 和 SwiftUI 的同时公布。并且随着每一张“令人兴奋”的幻灯片出现了一个个前所未有的属性：`@State`，`@Binding`，`@EnvironmentObject`……
+我们在 [WWDC 2019](https://nshipster.com/wwdc-2019/) 上第一次看到了 Swift 5.1 和 SwiftUI 的同时公布。并且随着每一张“令人兴奋”的幻灯片出现了一个个前所未有的属性：`@State`、`@Binding`、`@EnvironmentObject`……
 
-我们看到了Swift的未来，它充满了 `@` 的符号。
+我们看到了Swift的未来，它充满了 `@` 符号。
 
 ---
 
-一旦开始逐步升温一段时间，我们就会深入了解 SwiftUI。
+等 SwiftUI 逐步成熟起来，我们就会深入介绍它。
 
 但本周，我们想仔细看看 SwiftUI 的一个关键语言特性——可能会对 Swift 5.1 之前版本产生最大影响的东西：*属性修饰器*
 
@@ -48,10 +47,10 @@ description: Swift 属性修饰器要让 SwiftUI 成为可能还有很长的路�
 
 ```swift
 struct <#Structure#> {
-    // 使用lazy关键字进行属性延迟初始化
+    // 使用 lazy 关键字进行属性延迟初始化
     lazy var deferred = <#...#>
 
-    // 没有lazy关键字的等效行为
+    // 没有 lazy 关键字的等效行为
     private var _deferred: <#Type#>?
     var deferred: <#Type#> {
         get {
@@ -68,12 +67,11 @@ struct <#Structure#> {
 }
 ```
 
-[SE-0258: 属性修饰器](https://github.com/apple/swift-evolution/blob/master/proposals/0258-property-wrappers.md) 目前正在进行第三次审核
-（预定于昨天结束，就在发布的时候）, 并且承诺开放像 `lazy` 这样的功能，以便库作者可以自己实现类似的功能。
+[SE-0258: 属性修饰器](https://github.com/apple/swift-evolution/blob/master/proposals/0258-property-wrappers.md) 目前正在进行第三次审核（预定于昨天结束，就在发布的时候）, 并且承诺开放像 `lazy` 这样的功能，以便库作者可以自己实现类似的功能。
 
 这个提案在概述其设计和实现非常出色。因此比起尝试改善这种解释，我们认为着眼于让属性修饰器实现一些可能的新模式要有趣些——而且，在这个过程中，我们可以更好了解如何在项目使用这些功能。
 
-所以，供你参考，以下是新的 `@propertyWrapper` 属性的四个潜在用例：
+所以，供你参考，以下是新 `@propertyWrapper` 属性的四个潜在用例：
 
 - [约束值](#constraining-values)
 - [转换属性赋值时的值](#transforming-values-on-property-assignment)
@@ -87,9 +85,9 @@ struct <#Structure#> {
 
 SE-0258 提供了大量实用案例，包括了 `@Lazy`，`@Atomic`，`@ThreadSpecific` 和 `@Box`。但最让我们兴奋的是那个关于 `@Constrained` 的属性修饰器。
 
-Swift 的标准库提供了 [正确](https://en.wikipedia.org/wiki/IEEE_754)，你可以拥有高性能，浮点数类型，并且你可以拥有任何你想要的大小——只要他是 [32](https://developer.apple.com/documentation/swift/float) 或 [64](https://developer.apple.com/documentation/swift/double) （或 [80](https://developer.apple.com/documentation/swift/float80)）位长度（[就像 Henry Ford](https://en.wikiquote.org/wiki/Henry_Ford)）。
+Swift 标准库提供了 [精确](https://en.wikipedia.org/wiki/IEEE_754)、高性能的浮点数类型，并且你可以拥有任何想要的大小——只要他是 [32](https://developer.apple.com/documentation/swift/float) 或 [64](https://developer.apple.com/documentation/swift/double)（或 [80](https://developer.apple.com/documentation/swift/float80)）位长度（[就像 Henry Ford](https://en.wikiquote.org/wiki/Henry_Ford)）。
 
-如果你想要实现自定义浮点数类型，而且有强制要求有效值范围，这从 [Swift 3](https://github.com/apple/swift-evolution/blob/master/proposals/0067-floating-point-protocols.md)开始 已经成为可能。但是这样做需要遵循错综复杂的协议要求：
+如果你想要实现自定义浮点数类型，而且有强制要求有效值范围，这从 [Swift 3](https://github.com/apple/swift-evolution/blob/master/proposals/0067-floating-point-protocols.md) 开始已经成为可能。但是这样做需要遵循错综复杂的协议要求：
 
 <svg xmlns="http://www.w3.org/2000/svg" font-size="14" viewBox="0 0 808 592" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none">
     <defs>
@@ -477,9 +475,10 @@ Swift 的标准库提供了 [正确](https://en.wikipedia.org/wiki/IEEE_754)，�
       <line marker-start="url(#open_circle)" x1="660" x2="660" y1="520" y2="544"></line>
     </g>
  </svg>
+
 来自：[航空学院的 Swift 数字指引](https://flight.school/books/numbers/)
             
-查看下来是个不小的壮举，并且对于大多数用例，通常需要非常多工作才能证明。
+要把这么多协议实现下来不是一件小事，并且对于大多数用例，通常需要大量的工作来验证。
 
 幸好，属性修饰器提供了一种将标准数字类型参数化的方式，同时又大大减少工作量。
 
@@ -537,7 +536,7 @@ struct UnitInterval<Value: FloatingPoint> {
 }
 ```
 
-再比如，你可以使用 `@UnitInterval` 属性修饰器定义一个 `RGB` 的类型，用来表示红色，绿色，蓝色的百分比强度。
+再比如，你可以使用 `@UnitInterval` 属性修饰器定义一个 `RGB` 的类型，用来表示红色、绿色、蓝色的百分比强度。
 
 ```swift
 struct RGB {
@@ -549,7 +548,7 @@ struct RGB {
 let cornflowerBlue = RGB(red: 0.392, green: 0.584, blue: 0.929)
 ```
 
-#### 有关想法
+#### 举一反三
 
 - 实现一个 `@Positive`/`@NonNegative` 属性装饰器，将无符号整数赋值成有符号整数类型。
 - 实现一个 `@NonZero` 属性装饰器，使得一个数值要么大于，要么小于 `0`。
@@ -558,7 +557,7 @@ let cornflowerBlue = RGB(red: 0.392, green: 0.584, blue: 0.929)
 <a name="transforming-values-on-property-assignment"></a>
 ## 转换属性赋值时的值
 
-从用户接受文本输入是应用开发者经常头疼的问题。有很多事情需要跟踪，从字符串编码的乏味，到尝试通过文本字段恶意注入代码。但在开发者面对的的问题中，最难以捉摸和令人困扰的是接收用户生成的内容，而且这些内容开头和结尾都带有空格。
+从用户接受文本输入是应用开发者经常头疼的问题。从字符串编码的乏味、到尝试通过文本字段恶意注入代码，开发者实在有太多的事情需要注意。但在开发者面对的的问题中，最难以捉摸和令人困扰的是接收用户生成的内容，而且这些内容开头和结尾都带有空格。
 
 在内容开头有一个单独的空格，可以让 URL 无效，混淆日期解析器，还有通过一个接一个的错误来造成混乱：
 
@@ -649,7 +648,7 @@ quine.title = "      @propertyWrapper     "
 quine.title // "@propertyWrapper" (still no leading or trailing spaces!)
 ```
 
-#### 有关想法
+#### 举一反三
 
 - 实现一个 `@Transformed` 属性修饰器，它允许对输入的字符串进行 [ICU 转换](https://developer.apple.com/documentation/foundation/nsstring/1407787-applyingtransform)。
 - 实现一个 `@Normalized` 属性修饰器，它允许一个 `String` 属性自定义它[规范化形式](https://unicode.org/reports/tr15/#Norm_Forms)
@@ -1067,7 +1066,7 @@ extension Account: Equatable {
 }
 ```
 
-#### 有关想法
+#### 举一反三
 
 - 定义 `@CompatibilityEquivalence`，这样被修饰的 `String` 属性，在带有 `"①"` 和 `"1"` 的值会被认为是相等。
 - 实现一个 `@Approximate` 属性修饰器，来重新定义浮点数类型的相等语义 （另见 [SE-0259](https://github.com/apple/swift-evolution/blob/master/proposals/0259-approximately-equal.md)）。
@@ -1117,7 +1116,7 @@ class ExpenseReport {
 }
 ```
 
-### 有关想法
+### 举一反三
 
 - 实现一个 `@Audited` 属性修饰器可以每次读取或者写入的时候都打印到日志。
 - 实现一个 `@Decaying` 属性修饰器，它在每次值被读取的时候都会去除以一个设定的值。
