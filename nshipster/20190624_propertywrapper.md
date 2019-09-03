@@ -19,11 +19,11 @@ description: Swift 属性修饰器要让 SwiftUI 成为可能还有很长的路�
 
 几年前，我们 [会说](https://nshipster.com/at-compiler-directives/) “at 符号”（`@`）——以及方括号和可笑的长方法名称——是 Objective-C 的特性，正如括号之于 [Lisp](https://en.wikipedia.org/wiki/Lisp_%28programming_language%29) 或者标点之于 [Perl](https://nshipster.com/assets/qbert-fe44c1a26bd163d2dfafa5334c7bfa7957c3c243cd0c19591f494a9cea9302dc.png)。
 
-然后 Swift 来了，并用它来结束这些古怪小 🥨 图案一样的字形。或者我们想到的是这样。
+然后 Swift 来了，并用它来结束这些古怪小 🥨 图案一样的字形。或者说我们本以为会这样。
 
 <!--more-->
 
-一开始，Swift 中 `@` 的用法只用在和 Objective-C 的混编中：`@IBAction`、`@NSCopying`、`@UIApplicationMain`等等。但之后 Swift 扩展出了越来越多的带有 `@` 前缀的 [属性](https://docs.swift.org/swift-book/ReferenceManual/Attributes.html)。
+一开始，Swift 中的 `@` 只用在和 Objective-C 的混编中：`@IBAction`、`@NSCopying`、`@UIApplicationMain`等等。但之后 Swift 扩展出了越来越多的带有 `@` 前缀的 [属性](https://docs.swift.org/swift-book/ReferenceManual/Attributes.html)。
 
 我们在 [WWDC 2019](https://nshipster.com/wwdc-2019/) 上第一次看到了 Swift 5.1 和 SwiftUI 的同时公布。并且随着每一张“令人兴奋”的幻灯片出现了一个个前所未有的属性：`@State`、`@Binding`、`@EnvironmentObject`……
 
@@ -85,7 +85,7 @@ struct <#Structure#> {
 
 SE-0258 提供了大量实用案例，包括了 `@Lazy`，`@Atomic`，`@ThreadSpecific` 和 `@Box`。但最让我们兴奋的是那个关于 `@Constrained` 的属性修饰器。
 
-Swift 标准库提供了 [精确](https://en.wikipedia.org/wiki/IEEE_754)、高性能的浮点数类型，并且你可以拥有任何想要的大小——只要他是 [32](https://developer.apple.com/documentation/swift/float) 或 [64](https://developer.apple.com/documentation/swift/double)（或 [80](https://developer.apple.com/documentation/swift/float80)）位长度（[就像 Henry Ford](https://en.wikiquote.org/wiki/Henry_Ford)）。
+Swift 标准库提供了 [精确](https://en.wikipedia.org/wiki/IEEE_754)、高性能的浮点数类型，并且你可以拥有任何想要的精度——只要它是 [32](https://developer.apple.com/documentation/swift/float) 或 [64](https://developer.apple.com/documentation/swift/double)（或 [80](https://developer.apple.com/documentation/swift/float80)）位长度（[就像 Henry Ford](https://en.wikiquote.org/wiki/Henry_Ford)）。
 
 如果你想要实现自定义浮点数类型，而且有强制要求有效值范围，这从 [Swift 3](https://github.com/apple/swift-evolution/blob/master/proposals/0067-floating-point-protocols.md) 开始已经成为可能。但是这样做需要遵循错综复杂的协议要求：
 
@@ -478,7 +478,7 @@ Swift 标准库提供了 [精确](https://en.wikipedia.org/wiki/IEEE_754)、高�
 
 来自：[航空学院的 Swift 数字指引](https://flight.school/books/numbers/)
             
-要把这么多协议实现下来不是一件小事，并且对于大多数用例，通常需要大量的工作来验证。
+要把这么多协议实现下来工作量可不小，并且对于大多数用例，通常需要大量的工作来验证。
 
 幸好，属性修饰器提供了一种将标准数字类型参数化的方式，同时又大大减少工作量。
 
@@ -557,7 +557,7 @@ let cornflowerBlue = RGB(red: 0.392, green: 0.584, blue: 0.929)
 <a name="transforming-values-on-property-assignment"></a>
 ## 转换属性赋值时的值
 
-从用户接受文本输入是应用开发者经常头疼的问题。从字符串编码的乏味、到尝试通过文本字段恶意注入代码，开发者实在有太多的事情需要注意。但在开发者面对的的问题中，最难以捉摸和令人困扰的是接收用户生成的内容，而且这些内容开头和结尾都带有空格。
+从用户接受文本输入是应用开发者经常头疼的问题。从无聊的字符串编码到恶意的文本字段注入攻击，开发者有太多事情需要注意。但在开发者面对的的问题中，最难以捉摸和令人困扰的是接收用户生成的内容，而且这些内容开头和结尾都带有空格。
 
 在内容开头有一个单独的空格，可以让 URL 无效，混淆日期解析器，还有通过一个接一个的错误来造成混乱：
 
