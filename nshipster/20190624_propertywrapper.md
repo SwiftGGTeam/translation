@@ -31,19 +31,19 @@ description: Swift 属性修饰器要让 SwiftUI 成为可能还有很长的路�
 
 ---
 
-等 SwiftUI 逐步成熟起来，我们就会深入介绍它。
+等 SwiftUI 逐步成熟起来，我们才会深入介绍它。
 
-但本周，我们想仔细看看 SwiftUI 的一个关键语言特性——可能会对 Swift 5.1 之前版本产生最大影响的东西：*属性修饰器*
+本周，我们想仔细看看 SwiftUI 的一个关键语言特性——可能会对 Swift 5.1 之前版本产生最大影响的东西：*属性修饰器*
 
 ---
 
 ## 关于 属性 ~~代理~~ ++修饰器++
 
-属性修饰器是在 2019 年 3 月第一次 [开始在 Swift 论坛使用](https://forums.swift.org/t/pitch-property-delegates/21895)——SwiftUI 公布的前一个月。
+属性修饰器是在 2019 年 3 月第一次 [在 Swift 论坛首次出现](https://forums.swift.org/t/pitch-property-delegates/21895)——SwiftUI 公布的前一个月。
 
-在它开始使用的时候，Swift 核心团队成员 Douglas Gregor 称该特性（当时称为 *“属性代理”*）为用户可使用的功能统称，现在则由 `lazy` 关键字等语言特性提供。
+在开始的时候，Swift 核心团队成员 Douglas Gregor 将它作为用户常用功能特性的一个统称（当时称为 *“属性代理”*），像有 `lazy` 关键字之类的。
 
-懒惰是编程的一种美德，这种普遍适用的功能是周到设计决策的特征，这让 Swift 成为一种很好用的语言。当一个属性被声明为 `lazy` 时，它推迟初始化其默认值，直到第一次访问才进行初始化。例如，你可以自己尝试实现这样的功能，使用一个私有属性，它需通过计算后才行被访问。而单单一个 `lazy` 关键字就可以让所有这些都变得没有必要。
+懒惰是程序员的美德，这种普遍适用的功能是周到设计决策的特征，这让 Swift 成为一种很好用的语言。当一个属性被声明为 `lazy` 时，它推迟初始化其默认值，直到第一次访问才进行初始化。例如，你可以自己尝试实现这样的功能，使用一个私有属性，它需通过计算后才行被访问。而单单一个 `lazy` 关键字就可以让所有这些都变得没有必要。
 
 ```swift
 struct <#Structure#> {
@@ -69,7 +69,7 @@ struct <#Structure#> {
 
 [SE-0258: 属性修饰器](https://github.com/apple/swift-evolution/blob/master/proposals/0258-property-wrappers.md) 目前正在进行第三次审核（预定于昨天结束，就在发布的时候）, 并且承诺开放像 `lazy` 这样的功能，以便库作者可以自己实现类似的功能。
 
-这个提案在概述其设计和实现非常出色。因此比起尝试改善这种解释，我们认为着眼于让属性修饰器实现一些可能的新模式要有趣些——而且，在这个过程中，我们可以更好了解如何在项目使用这些功能。
+由于这个提案在其设计和实现上的阐述非常出色，我们这里就不做更多的解释了。我们不妨把重点放在别处，一起来看看这个功能为 Swift 带来了哪些新的可能——而且，在这个过程中，我们可以更好了解如何在项目使用这个新功能。
 
 所以，供你参考，以下是新 `@propertyWrapper` 属性的四个潜在用例：
 
@@ -85,7 +85,7 @@ struct <#Structure#> {
 
 SE-0258 提供了大量实用案例，包括了 `@Lazy`，`@Atomic`，`@ThreadSpecific` 和 `@Box`。但最让我们兴奋的是那个关于 `@Constrained` 的属性修饰器。
 
-Swift 标准库提供了 [精确](https://en.wikipedia.org/wiki/IEEE_754)、高性能的浮点数类型，并且你可以拥有任何想要的精度——只要它是 [32](https://developer.apple.com/documentation/swift/float) 或 [64](https://developer.apple.com/documentation/swift/double)（或 [80](https://developer.apple.com/documentation/swift/float80)）位长度（[就像 Henry Ford](https://en.wikiquote.org/wiki/Henry_Ford)）。
+Swift 标准库提供了 [精确](https://en.wikipedia.org/wiki/IEEE_754)、高性能的浮点数类型，并且你可以拥有任何想要的精度——只要它是 [32](https://developer.apple.com/documentation/swift/float) 或 [64](https://developer.apple.com/documentation/swift/double)（或 [80](https://developer.apple.com/documentation/swift/float80)）位长度。
 
 如果你想要实现自定义浮点数类型，而且有强制要求有效值范围，这从 [Swift 3](https://github.com/apple/swift-evolution/blob/master/proposals/0067-floating-point-protocols.md) 开始已经成为可能。但是这样做需要遵循错综复杂的协议要求：
 
@@ -557,9 +557,9 @@ let cornflowerBlue = RGB(red: 0.392, green: 0.584, blue: 0.929)
 <a name="transforming-values-on-property-assignment"></a>
 ## 转换属性赋值时的值
 
-从用户接受文本输入是应用开发者经常头疼的问题。从无聊的字符串编码到恶意的文本字段注入攻击，开发者有太多事情需要注意。但在开发者面对的的问题中，最难以捉摸和令人困扰的是接收用户生成的内容，而且这些内容开头和结尾都带有空格。
+从用户接收文本输入是应用开发者经常头疼的问题。从无聊的字符串编码到恶意的文本字段注入攻击，开发者有太多事情需要注意。但在开发者面对的的问题中，最难以捉摸和令人困扰的是接收用户生成的内容，而且这些内容开头和结尾都带有空格。
 
-在内容开头有一个单独的空格，可以让 URL 无效，混淆日期解析器，还有通过一个接一个的错误来造成混乱：
+在内容开头有一个单独的空格，可以让 URL 无效，也可以混淆日期解析器，还可能造成差一错误（off-by-one error）：
 
 ```swift
 import Foundation
@@ -572,28 +572,28 @@ let words = " Hello, world!".components(separatedBy: .whitespaces)
 words.count // 3 (!)
 ```
 
-说到用户输入，客户端经常以没留意做理由，然后把任何东西 *原原本本* 发送给服务器。`¯\_(ツ)_/¯`。
+说到用户输入，客户端经常以没留意做理由，然后把所有东西 *原原本本* 发送给服务器。`¯\_(ツ)_/¯`。
 
 当然我不是在倡导客户端应该为此负责更多处理工作，这种情况就涉及到了 Swift 属性修饰器另外一个引人注目的用例。
 
 ---
 
-Foundation 框架将 `trimmingCharacters(in:)` 方法桥接到了 Swift 的字符串中，除了一些其他作用以外，它提供了方便的方式来裁剪掉 `String` 值首位两端的空格。你想每次通过调用这个方法来保证数据健全，但是，它到底不太方便。如果你曾经或多或少做过这种事，你肯定会想知道有没有更好的方法来实现。
+Foundation 框架将 `trimmingCharacters(in:)` 方法桥接到了 Swift 的字符串中，除了一些其他作用以外，它提供了便利的方式来裁剪掉 `String` 值首位两端的空格。虽然可以通过调用这个方法来保证数据健全，但是还不够便利。如果你也有过类似的经历，你肯定会想知道有没有更好的方案。
 
-或许你找到了一种不是那么特别的方法，通过 `willSet` 属性回调来寻解脱……而结果只有感到失望，因为你不能用这个办法去改变已经发生的事情。
+或许你找到了一种较为通用的方法，通过 `willSet` 属性回调来寻解脱……唯一让人不能满意的是，这个方法无法改变已经发生的事情。
 
 ```swift
 struct Post {
     var title: String {
         willSet {
             title = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
-            /* ⚠️ 尝试在它自己的 willSet 中存储属性 'title'，但该属性将会被新值覆盖*/
+            /* ⚠️ 尝试在它自己的 willSet 中存储属性 'title'，该属性将会被新值覆盖*/
         }
     }
 }
 ```
 
-从上面看，你可能想到可以用 `didSet`，作为解决问题的康庄大道……但往往后来才发现，`didSet` 在属性初始化赋值时没有被调用。
+从上面看，你可能想到可以用 `didSet`，作为解决问题的康庄大道……不过我想你马上就会想起来 Swift 里的一条规定，即 `didSet` 在属性初始化赋值时是不会被调用的。
 
 ```swift
 struct Post {
@@ -607,9 +607,9 @@ struct Post {
 ```
 > 在属性自己的 `didSet` 回调方法里面，很幸运不会再次触发回调，所以你不必担心意料之外的递归调用。
 
-顺利的，你可能试了其他方法……想要同时满足人类工程学和性能要求，最终却找不到可以接受的方式。
+在你的坚持不懈下，你很可能用尽了一切办法......但回过头来，你发现其实并没有什么方法能够既满足人因工程学的标准，又满足性能方面的要求
 
-如果你个人有遇上面到任何一种经历，那可以为此感到高兴，你对方法的探索已经结束了：属性装饰器就是你长久以来等待的解决方案。
+如果你对此深有体会，那么恭喜你，你在这方面的探索可以到此为止了，因为属性装饰器将是这个问题的终极解决方案。
 
 ### 实现为字符串值裁截空格的属性修饰器
 
@@ -633,7 +633,7 @@ struct Trimmed {
 }
 ```
 
-通过在下面的 `Post` 结构中，给每个 `String` 属性标记上 `@Trimmed`。任何赋值给 `title` 或 `body` 的字符串值——无论是在初始化期间还是通过属性访问后——都将自动删除其开头或结尾的空格。
+下面的代码为 `Post` 结构中每个 `String` 属性标记了 `@Trimmed` ，通过这种方式，任何赋值给 `title` 或 `body` 的字符串值——无论是在初始化期间还是通过属性访问后——都将自动删除其开头或结尾的空格。
 
 ```swift
 struct Post {
@@ -651,27 +651,29 @@ quine.title // "@propertyWrapper" (still no leading or trailing spaces!)
 #### 举一反三
 
 - 实现一个 `@Transformed` 属性修饰器，它允许对输入的字符串进行 [ICU 转换](https://developer.apple.com/documentation/foundation/nsstring/1407787-applyingtransform)。
-- 实现一个 `@Normalized` 属性修饰器，它允许一个 `String` 属性自定义它[规范化形式](https://unicode.org/reports/tr15/#Norm_Forms)
+- 实现一个 `@Normalized` 属性修饰器，它允许一个 `String` 属性自定义它[正规形式](https://unicode.org/reports/tr15/#Norm_Forms)
 - 实现一个 `@Quantized`/`@Rounded`/`@Truncated` 属性修饰器，它会把数值转换到一种特定的精度（例如：向上舍入到最近的 ½ 精度），但是内部要关注到精确过程的中间值，防止连锁的舍入错误。
 
 <a name="changing-synthesized-equality-and-comparison-semantics"></a>
 ## 改变生成的等式和比较语义
 
-> 这个方式取决于遵循 synthesized 协议的实现细节，并且可能会在这个功能完成之前改变掉（尽管我们希望这个方法仍然像下面所说一样继续可用）。
+> 这个方式取决于遵循 synthesized 协议的实现细节，并且可能会在这个功能完成之前发生改变（尽管我们希望这个方法仍然像下面所说一样继续可用）。
 
-在 Swift 中，两个 `String` 值如果他们 [*常规性等价*](https://unicode.org/reports/tr15/#Canon_Compat_Equivalence) 就会被人认为是相等。通过采用这些等价的语义，Swift 字符串的比较方式正如你在大多数情况下所想象的那样：如果两个字符串包含有相同的字符，不管它是任何独特的字符组合或者复合而成——结果就是，“é”（`U+00E9 带有锐音的拉丁小写字母 E`）等于“e”（`U+0065 拉丁小写字母 E`）+“◌́”（`U+0301T 和锐音组合`）。
+在 Swift 中，两个 `String` 值如果他们 [*标准等价*](https://unicode.org/reports/tr15/#Canon_Compat_Equivalence) 就会被人认为是相等。在大多数情况下，Swift 字符串的比较方式与我们的预期一致：即两个字符串包含有相同的字符就会相等，不管它是一个合成字符，还是将这个合成字符拆解成多个字符——举个例子来说，就是“é”（`U+00E9 带有锐音的拉丁小写字母 E`）等于“e”（`U+0065 拉丁小写字母 E`）+“◌́”（`U+0301T 和锐音组合`）。
 
-但是，如果你在特殊的情况下需要不同的相等语义呢？假设你需要一个 *不区分大小写* 的字符串相等概念？
+但是，如果你在特殊的情况下需要不同的相等语义呢？例如字符串相等的时候 *不区分大小写*？
 
 在今天，你可以使用许多方法，利用已有的语言特性解决这个问题：
 
-- 你可以随时对经过 `lowercased()` 处理的结果做 `==` 比较，但和任何手动处理一样，这个方法容易出错。
-- 你可以创建一个包含 `String` 值的自定义 `CaseInsensitive` 类型。但你必须要完成很多额外的工作，这样才能像标准的 `String` 类型一样符合人类工程学和功能主义。
-- 你可以自定义一个比较函数来封装整个比较过程——哎呀，你甚至可以定义一个 [自定义操作符](https://nshipster.com/swift-operators/#defining-custom-operators) 给它——但是在两个操作数之间的比较，没有什么可以接近绝对的 `==`。
+- 要完成这个功能，你可以在 `==` 比较的时候用 `lowercased()` 做一次处理，但和其他手动处理方式一样，这种方式容易出现人为的错误。
+- 你可以创建一个包含 `String` 值的自定义 `CaseInsensitive` 类型。但你必须要完成很多额外的工作，才能把它打磨的像标准的 `String` 类型一样即符合人因工程学的标准，又提供完全相同的功能。
+- 虽然你可以定义一个[自定义操作符](https://nshipster.com/swift-operators/#defining-custom-operators) 但又有什么操作符能比 `==` 更贴近相等的含义呢。
 
-这些方法中没有特别吸引人的，但幸好 Swift 5.1 中的属性修饰器，终于给我们找到了一个想要的解决方案。
+上面的方法并没有哪个能让人完全信服，还好在 Swift 5.1 中，属性修饰器的特性让我们拥有了一个完美的解决方案。
 
-> 和数字一样，Swift 采用面向协议的方式，通过一组狭义的类型委托字符串负责处理。对于好奇心强的读者，这里是一张关系图，里面展示了在 Swift 标准库中所有的字符串类型之间的关系。
+> 和文章开头提到状况一样（即实现一个自定义浮点数类型），Swift 采用面向协议的方式，将完成字符串的职责代理给一系列的更细粒度的类型（narrowly-defined types）.
+
+对于好奇心强的读者，这里是一张关系图，里面展示了在 Swift 标准库中所有字符串类型之间的关系。
 
 <svg xmlns="http://www.w3.org/2000/svg" class="bob" font-size="14" viewBox="0 0 920 736" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none">
   <defs>
@@ -978,13 +980,13 @@ quine.title // "@propertyWrapper" (still no leading or trailing spaces!)
 </svg>
 来自：[航空学院的 Swift 字符串指引](https://flight.school/books/strings/)
 
-当你 *能够* 创建自己的 `String` 等价类型时，[文档](https://developer.apple.com/documentation/swift/stringprotocol) 却有强烈的建议不要这样做：
+当你 *能够* 创建一个与 `String` 等价的自定义类型时，[文档](https://developer.apple.com/documentation/swift/stringprotocol) 却又强烈的建议不要这样做：
 
-> 不要声明 StringProtocol 新的遵循对象。保持在标准库中只有 `String` 和 `Substring` 是有效的遵循类型。
+> 不应该再有别的类型遵循 StringProtocol 。在标准库中应当只有 `String` 和 `Substring` 遵循它。
 
 ### 实现一个不区分大小写的属性修饰器
 
-下面的 `CaseInsensitive` 类型实现了一个修饰 `String`/`SubString` 的属性修饰器。该类型通过桥接了 `NSString` 的 API [`caseInsensitiveCompare(_:)`](https://developer.apple.com/documentation/foundation/nsstring/1414769-caseinsensitivecompare) 遵循于 `Comparable`（并且扩展了 `Equatable`）：
+下面的 `CaseInsensitive` 类型实现了一个修饰 `String`/`SubString` 的属性修饰器。通过桥接 `NSString` 的 API [`caseInsensitiveCompare(_:)`](https://developer.apple.com/documentation/foundation/nsstring/1414769-caseinsensitivecompare) ，`CaseInsensitive` 类型符合了 `Comparable` 协议（本质是通过扩展的方式实现了 `Equatable` 协议）：
 
 ```swift
 import Foundation
@@ -1025,9 +1027,9 @@ hello == HELLO // false
 CaseInsensitive(wrappedValue: hello) == CaseInsensitive(wrappedValue: HELLO) // true
 ```
 
-到目前为止，这个方法跟上面提到的自定义"修饰器类型"没有区别。对于 `ExpressibleByStringLiteral` 和其他所有协议的遵循实现，如果想让大家像对 `String` 感觉满意那样，也使得 `CaseInsensitive` 让人逐渐开始觉得满足，那这只是漫长道路的简单开始。
+到目前为止，这个方法看起来和前文提到的方案，即创建一个包含 `String` 值的自定义 `CaseInsensitive` 类型，没什么区别。不过想要让自定义的 `CaseInsensitive` 类型变得和 `String` 一样好用，我们还需要考虑实现诸如 `ExpressibleByStringLiteral` 在内的其他协议，所以这才是漫漫长路的开始。
 
-属性修饰器允许我们完全抛下所有这些繁琐的工作：
+不过属性修饰器允许我们抛开这些繁琐的工作：
 
 ```swift
 struct Account: Equatable {
@@ -1051,14 +1053,14 @@ johnny.name = "Johnny"
 johnny.name // "Johnny"
 ```
 
-这里，`Account` 对象通过对他们的 `name` 属性进行一个不区分大小写的比较，以此来检查他们是否相等。但是当我们去获取或设置 `name` 属性时，它是一个 *真正的* `String` 值。
+这里，`Account` 对象通过 `name` 属性进行了一次判等，且判等的过程中不区分字母的大小写。可是当我们去获取或设置 `name` 属性时，它又像一个 *真正的* `String` 值一样区分字母大小写了。
 
 *这很整洁，但这里到底发生了什么？*
 
-自 Swift 4 以来，编译器会在采用的类型声明中，自动生成 `Equatable` 的实现。并且其存储的属性本身都是 `Equatable`。由于编译器生成的都是实现好的（至少目前是），封装的属性是通过他们的修饰器进行比较，而不是他们背后的值。
+自 Swift 4 以后，如果某个类型里的存储属性都遵守了 `Equatable ` 协议的话，那么编译器将自动为这个类型增加 `Equatable` 的能力。因为这些实现是隐式的（至少目前看起来是这样），属性修饰器是通过被封装的值进行判等的，而不是对构成属性修饰器的值判等。
 
 ```swift
-// 有 Swift 编译器生成
+// 由 Swift 编译器生成
 extension Account: Equatable {
     static func == (lhs: Account, rhs: Account) -> Bool {
         lhs.$name == rhs.$name
@@ -1068,18 +1070,18 @@ extension Account: Equatable {
 
 #### 举一反三
 
-- 定义 `@CompatibilityEquivalence`，这样被修饰的 `String` 属性，在带有 `"①"` 和 `"1"` 的值会被认为是相等。
+- 定义 `@CompatibilityEquivalence` 属性修饰器，当修饰 `String` 类型的属性时，带有 `"①"` 和 `"1"` 时会被认为相等。
 - 实现一个 `@Approximate` 属性修饰器，来重新定义浮点数类型的相等语义 （另见 [SE-0259](https://github.com/apple/swift-evolution/blob/master/proposals/0259-approximately-equal.md)）。
-- 实现一个 `@Ranked` 属性修饰器，它会带有一个函数，函数中定义了枚举值的严格排序；这就会像打牌中的 `.ace` 排序，可以在不同的情况下分为高低两种。
+- 实现一个 `@Ranked` 属性修饰器，它会带有一个函数，函数中定义了枚举值的排序；而这个排序需要符合我们通常打牌时的规则，例如牌面为 A 时，它既有可能是最大值，也可能是最小值。
 
 <a name="auditing-property-access"></a>
 ## 审查属性访问
 
 业务要求可能会用某些控制措施，规定谁可以访问哪些记录，或者规定一些形式表格要随着时间变换。
 
-又来一次，这不是 iOS 应用程序通常执行的任务；许多业务逻辑是在服务器端定义的，并且大多数客户端开发者都希望保持这种方式。但当我们开始通过带有属性修饰器的眼镜看这个世界的时候，会发现这是另一种引人注目的用例，不容忽视。
+重申一下，类似这样的功能通常不会在 iOS 端上完成；大多数业务逻辑都是在服务端完成的，许多客户端开发者并不想与这样的业务逻辑打交道。而下面的这个例子打开了一个新的视角来看待这个问题，当然这也归功于属性修饰器的功劳。
 
-### 实现属性值的版本管理
+### 为属性值增加版本记录
 
 下面的 `Versioned` 结构体函数用作一个属性修饰器，拦截了输入的值，并在设置每个值的时候创建带时间戳的记录。
 
@@ -1106,7 +1108,7 @@ struct Versioned<Value> {
 }
 ```
 
-假设有一个 `ExpenseReport` 的类可以用带有 `@Versioned` 封装它的 `state` 属性，使得处理过程中的每个操作都保留有记录。
+下面是 `ExpenseReport` 类，它带有一个名为 `state` 的属性并被 `@Versioned` 属性修饰期所修饰。通过这种方式，我们可以回溯每一次的操作记录。
 
 ```swift
 class ExpenseReport {
@@ -1118,14 +1120,14 @@ class ExpenseReport {
 
 ### 举一反三
 
-- 实现一个 `@Audited` 属性修饰器可以每次读取或者写入的时候都打印到日志。
+- 实现一个 `@Audited` 属性修饰器，在每次读写属性的时候打印日志。
 - 实现一个 `@Decaying` 属性修饰器，它在每次值被读取的时候都会去除以一个设定的值。
 
 ---
 
-然而，这个特殊例子凸显出了一个当前属性修饰器主要的局限，这也是源于 Swift 存在已久的缺陷：**属性无法被标记为 `throws`。**
+不可否认的是，这个特定的示例还是暴露了属性修饰器的一些局限性：**属性无法被标记为 `throws`。**当然这个问题的根源还是在 Swift 语言自身上。
 
-缺少参与错误处理的能力，属性修饰器没有提供和合理的方式去执行和沟通策略。例如，如果我们拓展 `@Versioned` 属性修饰器，防止在 `state` 属性的时候，在前一个值被 `.denied` 之后，不会被设为 `.approved`，我们的最好选择是 `fatalError()`，但它不是太适合真实的应用场景：
+由于在错误处理上的能力欠缺，属性修饰器并没有什么好办法让代码完全按照你的设想执行。例如我们想让 `@Versioned` 属性修饰器支持这样一个特性，即在设置 `state` 属性时 ，当属性被设置为 `.denied` 后，就不能再被设置为 `.approved`，针对这种场景，现有的最佳方案是 `fatalError()`，但在实际的生产环境中，这可就不一定了：
 
 ```swift
 class ExpenseReport {
@@ -1145,50 +1147,50 @@ tripExpenses.state = .denied
 tripExpenses.state = .approved // Fatal error: "J'Accuse!"
 ```
 
-这只是我们目前遇到属性修饰器的几种局限之一。为了对这个新功能有一个公平的衡量角度，我们会用文章接下来的篇幅来列举它们。
+属性修饰器的局限性还有不少，这里提到的只是其中一点。所以为了更理性的看待这个特性，文章剩下的篇幅将会说说它的局限性都体现在哪里。
 
 ## 局限性
 
-> 下面描述的一些缺点可能更多地是我目前理解或者想象能力的局限，而不是已给出的语言本身。
-> 如果你在解决问题的过程中，有任何纠正或者建议，欢迎 [指出](https://twitter.com/NSHipster/) 。
+> 受我目前的理解能力和想象能力所限，下面给出的观点可能比较主观，有可能并不是属性修饰器这个提议本身造成的。
+> 如果你有任何好的建议或者意见，欢迎 [联系我们](https://twitter.com/NSHipster/) 。
 
 ### 属性不能参与错误处理
 
 属性不像函数，无法使用 `throws` 标记。
 
-原本，这是和类型成员两者之间少数的几个区别之一。由于属性同时有获取方法（getter）和设置方法（setter），而且怎么样才是正确的设计也没有很清晰的规定，如果我们要添加错误处理——尤其是当你考虑要如何写出优雅的语法，还有其他像访问控制，自定义获取方法/设置方法和回调。
+关于上面提到的问题，原本就是函数与属性之间为数不多的区别之一。由于属性同时拥有获取方法（getter）和设置方法（setter），所以在这里如何进行错误处理并没有明确的最佳实践。尤其是你需要在兼顾访问控制，自定义获取方法/设置方法和回调的状态下，还写出优雅的语句。
 
-如上一节所述，属性修饰器有两个方法可以求助，用以解决非法值：
+如上一节所示，可以通过下面两种方式来处理非法值问题：
 
 1. 忽略它们（静默地）
 2. 用 `fatalError()` 抛出崩溃。
 
-这些选项都不是特别的好，所以我们对解决这个问题的任何提议都很感兴趣。
+不论哪一种方案都不够优雅，所以如果你对这个问题有更好的解决方案，欢迎分享。
 
-### 已经被修饰的属性无法起别名
+### 属性修饰器无法起别名
 
-现在提议有另外一个限制，你不能使用属性修饰器的实例作为属性修饰器。
+这个提议的另外一个限制就是，你不能使用属性修饰器的实例作为属性修饰器。
 
-我们前面的 `UnitInterval` 例子中把修饰的值约束在 0 和 1（包含在内） 之间，它可以简述为：
+还记得前面提到的 `UnitInterval` 么？我们可以用它来限制属性值的范围在 0 到 1 之间。所以我们是不是可以用写成下面的样子呢？：
 
 ```swift
 typealias UnitInterval = Clamping(0...1) // ❌
 ```
 
-但是，这是不可能的。你也不能使用属性修饰的实例来修饰属性。
+可惜这样是不被允许的。同样你也不能使用属性修饰器的实例来修饰属性。
 
 ```swift
 let UnitInterval = Clamping(0...1)
 struct Solution { @UnitInterval var pH: Double } // ❌
 ```
 
-所有的这些事实上意味着，在实践中，更多的代码复制会比理想情况要好。但是，考虑到这个问题产生于一个语言中类型和值之间根本的区别，如果它意味这可以避免错误的抽象的话，我们可以稍微原谅一些重复的工作。
+上面的代码说明一个问题，在实际使用过程中，我们可能会写出比预期多的重复代码。但考虑到这个问题的本质是计算机编程语言中值与类型是两种完全不同的东西引起的。所以从避免错误抽象的角度来看，这一小点的重复是完全可以忍受的。
 
 ### 属性修饰器很难组合
 
 属性修饰器的组合不是一个可交换的操作；你声明它们的顺序影响了它们的作用顺序。
 
-属性在进行 [字符串变形](https://nshipster.com/valuetransformer/#thinking-forwards-and-backwards) 和其他字符串变换时，考虑下它们之间的相互影响。例如，有一个属性修饰器组合，是自动规范化博客文章中的 URL “slug” ，如果在空格被裁截之前或之后，用短划线替换空格，将会产生不同的结果。
+属性在进行 [字符串字符串的 string inflection 操作](https://nshipster.com/valuetransformer/#thinking-forwards-and-backwards) 和 string transforms 操作会互相影响。例如下面的属性修饰器组合，它的功能是将博客文章中的 URL “slug” 属性自动格式化，但这里的问题在于将短划线替换成空格的操作和去除空格的操作会互相影响，进而导致最终的结果发生变化。
 
 ```swift
 struct Post {
@@ -1220,17 +1222,17 @@ struct Post {
 }
 ```
 
-有个办法可以让这个起作用，但它不完全清晰或让人觉得舒服。这是否可以在实现中修复或者仅仅通过文档的纠正仍有待观察。
+目前是有一个办法实现这个特性，但并不怎么优雅。关于这个问题是会在后续的版本中进行修复，还是通过文档正式说明都需要我们耐心的等待。
 
 ### 属性修饰器不是一等依赖类型
 
 *依赖类型* 是由它的值定义的类型。例如，“一对后者比前者更大的整数”和“一个具有素数元素的数组”都是依赖类型，因为他们的类型定义取决与他们的值。
 
-Swift 在它的类型系统里面缺少对依赖类型的支持，这意味对依赖类型的保证必须在运行时执行。
+在 Swift 的类型系统里缺少对依赖类型的支持，如果想获得相关的特性需要在运行时完成。
 
-好消息是，属性修饰器在填补这一空白上，比目前提出的任何其他语言特征更近一步了。但是，他们仍然不是真正值依赖类型的完全替代品。
+好消息是，相比于其他语言，Swift 的属性修饰器算是第一个吃螃蟹的，不过即使这样，属性修饰器还不能算是一个完整的值依赖类型解决方案。
 
-有些事情你不能使用类型修饰器去做，例如定义一个新的类型，其中包含可能的值的约束。
+例如，你还是不能使用属性修饰器定义一个新类型，即使属性修饰器本身没什么毛病。
 
 ```swift
 typealias pH = @Clamping(0...14) Double // ❌
@@ -1247,9 +1249,9 @@ enum HTTP {
 }
 ```
 
-这些缺点绝不是不能接受的；属性修饰器非常有用，并且弥补了语言中的重要空白。
+这些缺点还是可以忍受的。属性修饰器非常有用，并且弥补了语言中的重要空白。
 
-不知道这些属性修饰器的附加功能会不会再次引起人们对 Swift 引入依赖类型的兴趣呢？这会很有趣。或者它们会被认为是已经“足够好”，因为它们避免进一步形式化概念的需要。
+不知道属性修饰器的诞生会不会重燃大家对依赖类型的关注，当然另外一种可能是大家觉得当前的状态“也不是不能用”，也就没必要将依赖类型这个概念进一步正式化。
 
 ### 属性修饰器难以被文档化
 
@@ -1261,25 +1263,25 @@ enum HTTP {
 
 公平地讲，这种失败不是属性修饰器所特有的。
 
-如果你的任务是确定在标准库中哪一个协议是对一个特定 API 负责的，或者确定哪一个运算符是否支持 `developer.apple.com` 中文档记载的一对类型，你可能要开始考虑在职业生涯中从计算机行业转行了。
+如果你的任务是明确标准库中某个 API 都需要哪些协议响应，或是在 `developer.apple.com` 文档中明确某个运算符都支持哪些类型时，你其实就可以考虑转行了。
 
-这种对可理解性的缺乏让事情变得更加可怕，也让 Swift 变得越来越复杂。
+随着 Swift 的复杂性不断增加，它的可理解性就会不断下降，我想没有比这更让人头疼了吧。
 
 ### 属性修饰器让 Swift 进一步复杂化
 
-Swift 是一门比 Objective-C 更复杂 *许多* 的语言。自 Swift 1.0 以来，这一直都是真的，并且随着时间的推移变得更加如此。
+Swift 是一门比 Objective-C *更加* 复杂的语言。自 Swift 1.0 以来，这就是一条不变的真理。
 
-Swift 中 `@` 前缀的丰富功能——不管它是不是 [`@dynamicMemberLookup`](https://github.com/apple/swift-evolution/blob/master/proposals/0195-dynamic-member-lookup.md) 还是从 Swift 4 以来的 [`@dynamicCallable`](https://github.com/apple/swift-evolution/blob/master/proposals/0216-dynamic-callable.md)，或者 [Swift for Tensorflow](https://github.com/tensorflow/swift) 中的 [`@differentiable` 和 `@memberwise`](https://forums.swift.org/t/pre-pitch-swift-differentiable-programming-design-overview/25992)——仅基于文档方面的 Swift APIs，这已经让它变得越来越难以形成合理的理解。在这方面，`@propertyWrapper` 的引入将是有力的增效器。
+在 Swift 中有大量的 `@` 前缀，从 Swift 4 提出的 [`@dynamicMemberLookup`](https://github.com/apple/swift-evolution/blob/master/proposals/0195-dynamic-member-lookup.md) 和 [`@dynamicCallable`](https://github.com/apple/swift-evolution/blob/master/proposals/0216-dynamic-callable.md) ，到 [Swift for Tensorflow](https://github.com/tensorflow/swift) 里的 [`@differentiable` 和 `@memberwise`](https://forums.swift.org/t/pre-pitch-swift-differentiable-programming-design-overview/25992)，即使有文档在手，这些东西也使得 Swift 的 API 越来越难理解。从这个角度来看，`@propertyWrapper` 无疑是加重了这个问题的严重性。
 
 我们要如何理解这一切？（这是一个客观的真是问题，不是反问。）
 
 ---
 
-好吧，让我们试着把这件事总结一下——
+好了，现在让我们总结一下这个新特性——
 
-Swift 属性修饰器允许库作者使用之前为语言特性保留的那种高级方式。它们对提高代码安全性和降低代码复杂性潜力巨大，我们只是开始尽可能的抓住一些表层的东西。
+属性修饰器能够让开发者使用到更高层级的语言特性，而这在以前是不可能的。这个提议在提高代码安全性和降低代码复杂性上有巨大的潜力，现阶段我们只是看到了它的一些基本可能性而已。
 
-然而，他们有所承诺，属性修饰器及其他语言特性与 SwiftUI 一起的首次亮相将给 Swift 带来了巨大的变化。
+然而，他们有所承诺，属性修饰器及其他语言特性与 SwiftUI 一起的首次亮相将给 Swift 带来了巨大的变化。果不其然，如他们之前承诺的一样，属性修饰器和其他的新特性随着 SwitUI 在这个夏天闪亮登场，而这一次亮相，为整个 Swift 生态环境带来了巨大的变化。
 
 或者，正如 Nataliya Patsovska 在 [一篇推特](https://twitter.com/nataliya_bg/status/1140519869361926144) 中所提到的:
 
