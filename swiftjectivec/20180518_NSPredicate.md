@@ -23,13 +23,13 @@ custom_title: "NSPredicate"
 
 <!--more-->
 
-[对不起这段我真不知道他在说什么，麻烦校对了……] So in 2018, the blog posts overfloweth with Swift hackery (even on my blog 🤷🏻‍♂️) and the conference talks wax poetic of its future using functional programming parlance (yup, I’ve done that too 🙋🏻‍♂️).
+因此在 2018 年，技术博客中充斥着各种 Swift 黑魔法（我的博客也不例外🤷🏻‍♂️），会议演讲也都在讨论 Swift 的函数式编程未来（没错，我也做了这种演讲🙋🏻‍♂️）。
 
-所有人都看起来对在 Swift 中使用集合（collection）很激动，**但是**我们从 iOS 3 开始就可以用 Objective-C 来做相似的事了。所以今天我会讨论 `NSPredicate` 的威力，以及如何用🦖筛选集合。
+所有人都对在 Swift 中使用集合（collection）感到激动，**但是**我们从 iOS 3 开始就可以用 Objective-C 来做相似的事了。所以今天我会讨论 `NSPredicate` 的威力，以及如何用🦖筛选集合。
 
-因为我觉得和今天讲的话题有关系，有必要提一嘴：我们最近看到了一些开发者一开始学了 Swift，后来又得回去维护 Objective-C 的代码。如果说的就是你，那你很可能被在 Objective-C 中用到集合不得不写的大量的冗余代码或循环烦扰。
+因为我觉得和今天讲的话题有关系，有必要提一嘴：我们最近看到了一些开发者一开始学了 Swift，后来又得回去维护 Objective-C 的代码。如果说的就是你，那你很可能正在发愁如何优雅地在 Objective-C 中处理集合。
 
-今天，我可能也有写给你看的东西。
+在这里，你也可能在这找到对你有用的东西。
 
 ## 用例
 
@@ -55,20 +55,20 @@ for (NSString *str in anArray)
 {
     if ([str isEqualToString:@"The Key"])
     {
-        // Do something
+        // 做些什么
     }
 }
 ```
 很多情况下，这样写是可以接受的。但是当需求越来越复杂，关系更加多种多样，代码就会变得不确定。如果你认同『更少的代码就代表着更少的 bug 和更轻松的后期维护』这个观念，那么一个简单的对集合的查询操作就可能成为麻烦。
 
-Predicate 可以改善这个状况。不是说我们会耍些小聪明，而是变得简洁和务实。
+Predicate 可以改善这个状况。不是要在代码中耍些小聪明，而是写出简洁和务实的代码。
 
-## 从 10000 英尺高度看（概览？）
-`NSPredicate` 的核心用途是限制或定义对内存中的数据过滤或进行取回（fetch）时的参数。当它和 Core Data 一起使用的时候才会真正的获得骨架。它和 SQL 很像，只不过没那么糟糕*。
+## 概览
+`NSPredicate` 的核心用途是限制或定义对内存中的数据过滤，或进行取回（fetch）时的参数。当它和 Core Data 一起使用的时候才会如虎添翼。它和 SQL 很像，只不过没那么糟糕\*。
 
 > 开个玩笑，只是那些以集合为基础的操作（set based operations）从来就没有让我感到说得通过。
 
-你给它提供一个逻辑条件，然后它就会返回符合条件的东西。这意味着它可以提供基础比较，复合 predicate，键路径（key path）集合查询，子查询，合计（aggregates）以及更多的支持。
+你给它提供一个逻辑条件，然后它就会返回符合条件的东西。这意味着它可以提供基础比较、复合 predicate、键路径（key path）集合查询、子查询、合计（aggregates）以及更多的支持。
 
 因为它用来筛选集合，它可以获得 Foundation 的类的原生支持。可变（mutable）版本从结果中直接修改，而他们的不可变版本会返回一个新实例：
 
@@ -80,7 +80,7 @@ Predicate 可以改善这个状况。不是说我们会耍些小聪明，而是�
 [mutableArray filteredArrayUsingPredicate:/*NSPredicate*/];
 ```
 
-虽然 predicate 可以从 `NSExpression`，`NSCompoundPredicate` 或 `NSComparsionPredicate` 中实例化，它还可以用一个字符串的语法中生成。这和可视化格式语言（Visual Format Language）类似，我们可以用它定义排版约束（layout constraint）。
+虽然 predicate 可以从 `NSExpression`、`NSCompoundPredicate` 或 `NSComparsionPredicate` 中实例化，它还可以用一个字符串的语法中生成。这和可视化格式语言（Visual Format Language）类似，我们可以用它定义排版约束（layout constraint）。
 
 在这里我们会集中于用字符串语法生成的方法。
 
@@ -112,7 +112,7 @@ NSArray *employees
 }
 ```
 
-现在，我们想通过这些识别符（identifier）从一个现存的 `Person` 数组中获取 `Person` 对象。我们可以使用一个双层嵌套的 `for` 循环来解决这个问题：
+现在，我们想通过这些识别符（identifier）从一个现存的 `Person` 数组中获取 `Person` 对象。可以使用一个双层嵌套的 `for` 循环来解决这个问题：
 
 ```Objective-C
 // 假设 "employees" 是一个存有 Person 对象的数组
@@ -180,7 +180,7 @@ NSPredicate *morningAttendees = [NSPredicate predicateWithFormat:@"SELF.identifi
 - "||" 或 "OR"（猜的（（
 - "!" 或 "NOT"
 
-可能像你想象的一样，他们经常会出使用在基本的比较操作之间，聚合在一个 predicate 里。[原文这里是冒号，感觉像是 typo]
+可能像你想象的一样，他们经常会出使用在基本的比较操作之间，聚合在一个 predicate 里。
 
 ## 字符串比较
 
@@ -376,6 +376,6 @@ NSArray  *longEmployeeIDs = [[employeeArray filteredArrayUsingPredicate:predicat
 
 你可以用语法糖烧穿 Objective-C 的集合，也可以不使用嵌套循环从一个特定的子集中提取数据。使用 `NSPredicate` 可以让眼睛轻松很多。
 
-虽然 Swift 从语言级别支持对集合进行切片操作，但用一个为了做相同的事情而被创造出来的对象也不会让人很烦。如果你发现你在维护一个成熟的代码库，或是一个新的 Objetive-C 项目，让 predicate 自由地流动吧。
+虽然 Swift 从语言级别支持对集合进行切片操作，但 predicate 专门为其设计，使用它来解决问题也未尝不是一个方法。如果你发现你在维护一个成熟的代码库，或是一个新的 Objetive-C 项目，让 predicate 自由地流动吧。
 
 下次见吧✌️。
