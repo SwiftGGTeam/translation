@@ -25,7 +25,7 @@ Swift 刚出现的时候，我们因它比 Objective-C 简洁而着迷。接着�
 
 因此在 2018 年，技术博客中充斥着各种 Swift 黑魔法（我的博客也不例外🤷🏻‍♂️），会议演讲也都在讨论 Swift 的函数式编程未来（没错，我也做了这种演讲🙋🏻‍♂️）。
 
-所有人都对在 Swift 中使用集合（collection）感到激动，**但是**我们从 iOS 3 开始就可以用 Objective-C 来做*相似*的事了。所以今天我会讨论 `NSPredicate` 的威力，以及如何用🦖筛选集合。
+所有人都对在 Swift 中使用集合感到激动，**但是**我们从 iOS 3 开始就可以用 Objective-C 来做*相似*的事了。所以今天我会讨论 `NSPredicate` 的威力，以及如何用🦖筛选集合。
 
 有必要提一下：我们最近看到了一些开发者一开始学了 Swift，后来又得回去维护 Objective-C 的代码。如果说的就是你，那你很可能正在发愁如何优雅地在 Objective-C 中处理集合。
 
@@ -39,7 +39,7 @@ Swift 刚出现的时候，我们因它比 Objective-C 简洁而着迷。接着�
 NSString *aString = (NSString *)[anArray indexOfObject:0];
 ```
 
-感谢老天、库比提诺[^1]和朋友们©终于用类型擦除（type erasure）的方式添加了泛型。这是一个很大的进步：
+感谢老天、库比提诺[^1]和朋友们©终于用类型擦除的方式添加了泛型。这是一个很大的进步：
 
 [^1]: 译者注：Cupertino, CA，苹果总部所在城市。
 
@@ -64,7 +64,7 @@ for (NSString *str in anArray)
 Predicate 可以改善这个状况。不是要在代码中耍些小聪明，而是写出简洁和实用的代码。
 
 ## 概览
-`NSPredicate` 的核心用途是限制或定义对内存中的数据过滤，或进行取回（fetch）时的参数。当它和 Core Data 一起使用的时候才会如虎添翼。它和 SQL 很像，只不过没那么糟糕\*。
+`NSPredicate` 的核心用途是限制或定义对内存中的数据过滤，或进行取回时的参数。当它和 Core Data 一起使用的时候才会如虎添翼。它和 SQL 很像，只不过没那么糟糕\*。
 
 > 开个玩笑，只是我对基于集合的操作都无感🙃。
 
@@ -80,7 +80,7 @@ Predicate 可以改善这个状况。不是要在代码中耍些小聪明，而�
 [mutableArray filteredArrayUsingPredicate:/*NSPredicate*/];
 ```
 
-虽然 predicate 可以从 `NSExpression`、`NSCompoundPredicate` 或 `NSComparsionPredicate` 中实例化，但它还可以用一个字符串的语法中生成。这和可视化格式语言（Visual Format Language）类似，我们可以用它定义排版约束（layout constraint）。
+虽然 predicate 可以从 `NSExpression`、`NSCompoundPredicate` 或 `NSComparsionPredicate` 中实例化，但它还可以用一个字符串的语法生成。这和可视化格式语言类似，我们可以用它定义排版约束。
 
 在这里我们主要关注能用字符串语法生成的能力。
 
@@ -102,7 +102,7 @@ NSArray *employees
 ## 查询⚡️
 本文剩下都在用直接的例子来介绍如何用字符串格式语法来配置查询。
 
-我们可以从一个简单的搜索的情景开始。先假设我们有一个含有表示 `Person` 对象的识别符的数组：
+我们可以从一个简单的搜索的情景开始。先假设我们有一个含有表示 `Person` 对象标识符的数组：
 
 ```Objective-C
 {
@@ -112,7 +112,7 @@ NSArray *employees
 }
 ```
 
-现在，我们想通过这些识别符（identifier）从一个现存的 `Person` 数组中获取 `Person` 对象。可以使用一个双层嵌套的 `for` 循环来解决这个问题：
+现在，我们想通过这些识别符从一个现存的 `Person` 数组中获取 `Person` 对象。可以使用一个双层嵌套的 `for` 循环来解决这个问题：
 
 ```Objective-C
 // 假设 "employees" 是一个存有 Person 对象的数组
@@ -143,11 +143,11 @@ NSArray *peopleAttendingMorningEvent = [employees filteredArrayUsingPredicate:mo
 
 💫。
 
-Predicate 的语法允许我们使用 SELF，它在这里发挥了很大的作用。它代表了在数组里的正在被操作的对象，在这里对于我们来说就是 `Person` 的对象。
+Predicate 的语法允许我们使用 SELF，它在这里发挥了很大的作用。它表示数组里正在被操作的对象，在这里就是 `Person` 对象。
 
 > 另一个额外的好处是我们不用把数组定义成可变的了。
 
-正是因为这个原因，我们可以访问与 SELF 代表的对象关联的 KeyPath。在上面的代码中，`identifier` 属性被引用了。
+正是因为这个原因，我们可以访问与 SELF 所表示对象关联的 KeyPath。在上面的代码中，引用了 `identifier` 属性。
 
 如果你喜欢的话，任何 KeyPath 可以用放在 "%K" 位置的变量来表示。这个版本和上面的效果一样：
 
@@ -175,16 +175,16 @@ if ([person.identifier isEqualToString:userID] && (person.paygrade.integerValue 
 NSPredicate *morningAttendees = [NSPredicate predicateWithFormat:@"SELF.identifier IN %@ && SELF.paygrade.integerValue BETWEEN {50000, 60000}", peopleAttendingMorningEvent];
 ```
 
-它允许用不同的操作符表示同样的作用，可以根据你的偏好帮助提升可读性。比如：
+它允许用不同的操作符表示同样的作用，可以根据你的偏好来提升可读性。比如：
 - "&&" 或 "AND"
 - "||" 或 "OR"
 - "!" 或 "NOT"
 
-可能像你想象的一样，他们经常会出使用在基本的比较操作之间，聚合在一个 predicate 里。
+如你所想，它们经常会在基本比较操作之间出现，聚合在一个 predicate 里。
 
 ## 字符串比较
 
-我们经常会处理一些基于字符串比较的匹配。大家都知道 Objective-C 对冗余的代码的无止尽追求，在处理 NSString 的时候丝毫不减：
+我们经常会处理一些基于字符串比较的匹配。大家都知道 Objective-C 对冗余代码的无止尽追求，在处理 NSString 的时候也丝毫不减：
 
 ```Objective-C
 NSString *name = @"Jordan";
@@ -229,13 +229,13 @@ NSPredicate *namesStringWithK = [NSPredicate predicateWithFormat:predicateFormat
 [NSPredicate predicateWithFormat:@"SELF.phoneNumber MATCHES %@", phoneNumberRegex];
 ```
 
-然而是时候指出 predicate 语法十分严格。它就是一个字符串。除非你是 Mavis Beacon[^2], 否则你总会一遍又一遍地不小心打错字。
+然而是时候该指出一点，predicate 语法十分严格。它就是一个字符串。除非你是 Mavis Beacon[^2], 否则你总会一遍又一遍地不小心打错字。
 
 [^2]: 译者注：*Mavis Beacon Teaches Typing*，一款在 1987 年发售的教盲打的软件。
 
 好消息是你会很快的发现问题 — 运行时的异常在等着你。我们获得了能力和灵活性，但在某种程度上失去了静态检查的安全性。
 
-为了说明这一点，这段从上面的代码稍微改过的代码会导致崩溃。你能看出来是为什么吗？
+为了说明这一点，这段从上面代码稍微修改而来的代码会导致崩溃。你能看出来是为什么吗？
 
 ```Objective-C
 NSString *predicateFormat = @"SELF.name LIKE 'Kar*') AND (SELF.paygrade.intValue >= 10)"
@@ -246,7 +246,7 @@ NSPredicate *namesStartingWithK = [NSPredicate predicateWithFormat:predicateForm
 [mutablePersonAr filterUsingPredicate:namesStartingWithK];
 ```
 
-为了对付这些问题，我经常把 predicate 和 `NSStringFromSelector()` 结合在一起用，以此应对错别字和为以后的重构提供多一层安全保障。
+为了减轻这些问题，我经常把 predicate 和 `NSStringFromSelector()` 结合在一起用，以此应对错别字和为以后的重构提供多一层安全保障。
 
 ```Objective-C
 NSString *predicateFormat = @"(SELF.%@ LIKE 'Kar*') AND (SELF.paygrade.intValue >= 10)"
@@ -256,7 +256,7 @@ NSString *kpPaygrade = NSStringFromSelector(@selector(paygrade));
 
 NSPredicate *namesStartingWithK = [NSPredicate predicateWithFormat:predicateFormat, kpName, kpPaygrade];
 
-// Now only contains Karl  
+// 现在只有 Karl 了
 [mutablePersonAr filterUsingPredicate:namesStartingWithK];
 ```
 
@@ -264,17 +264,17 @@ NSPredicate *namesStartingWithK = [NSPredicate predicateWithFormat:predicateForm
 
 ## KeyPath 集合查询
 
-由于基于 KeyPath 的用法，`NSPredicate` 拥有一全套工具去操作他们，以提供一个更好的搜索。考虑下面的代码：
+由于基于 KeyPath 的用法，`NSPredicate` 拥有一全套工具去操作它们，以提供一个更好的搜索。考虑下面的代码：
 
 ```Objective-C
 // 假设一个 Person 对象现在有一个下面的属性：
 // NSArray *previousPay
 
-// 找到满足之前的所有工资的平均值大于 10 的人
+// 找到所有满足过去工资的平均值大于 10 的人
 NSString *predicateFormat = @"SELF.previousPay.@avg.doubleValue > 10";
 NSPredicate *previousPayOverTen = [NSPredicate predicateWithFormat:predicateFormat];
 
-// 所有之前的所有工资的平均值大于 10 的人
+// 所有过去工资的平均值大于 10 的人
 [mutablePersonAr filterUsingPredicate:previousPayOverTen];
 ```
 
@@ -284,11 +284,11 @@ NSPredicate *previousPayOverTen = [NSPredicate predicateWithFormat:predicateForm
 * `@min`
 * `@count`
 
-想象下如果不使用 predicate 情况下完成同样的工作，就不得不写大量尽管很简单的代码。你可以开始将这些技巧用在你日常工具链里。
+想象下如果不使用 predicate 情况下完成同样的工作，就不得不写大量尽管很简单的代码。你可以开始将这些技巧用在你日常的工具链里。
 
 ## 对数组的深究
 
-和 KeyPath 查询很像，predicate 以更细的维度检查数组：
+和 KeyPath 查询很像，predicate 也支持以更细的维度检查数组：
 - `array[FIRST]`
 - `array[LAST]`
 - `array[SIZE]`
@@ -297,19 +297,19 @@ NSPredicate *previousPayOverTen = [NSPredicate predicateWithFormat:predicateForm
 应用在上面的代码样例上，我们就可以这样查询：
 
 ```Obejective-C
-// 找到所有过去有三个不同的工资的人
+// 找到所有过去有三份不同工资的人
 NSString *predicateFormat = @"previousPay[SIZE] == 3";
 
 NSPredicate *threePreviousSalaries = [NSPredicate predicateWithFormat:predicateFormat];
 
-// 这些 Person 对象过去有三个不同的工资
+// 这些 Person 对象过去有三份不同的工资
 [mutablePersonAr filterUsingPredicate:threePreviousSalaries];
 ```
 
 和在上面提到的一样，我们也可以应用多个条件：
 
 ```Objective-C 
-// 找到所有过去有三个不同的工资以及第一个工资大于 8 的人
+// 找到所有过去有三个不同的工资以及第一份工资大于 8 的人
 NSString *predicateFormat = @"(previousPay[SIZE] == 3) AND (previousPay[FIRST].intValue > 8)";
 
 NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateFormat];
@@ -322,7 +322,7 @@ NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateFormat];
 - `@unionOfObjects`
 - `@distinctUnionOfObjects`
 
-假设我们有一个数组的含有 `Person` 对象的数组，我们需要的是找出在所有数组中识别符不同的 `Person` 实例：
+假设我们有一个含有 `Person` 对象的数组，我们需要的是找出在所有数组中识别符不同的 `Person` 实例：
 
 ```Objective-C
 // 假设 p1/2/3/4 都是 Person 对象
@@ -349,7 +349,7 @@ NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateFormat];
 [employeeAr filterUsingPredicate:predicate];
 ```
 
-当你发现你需要在一个含有对象的数组里搜索，而这些对象含有的属性自己就是一个集合的时候，子查询十分有用。所以在上面的例子里，我们有一个 `Person` 对象的数组，并且查询它的 `teamMember` 数组。
+当你发现你需要在一个含有对象的数组里搜索，而这些对象含有的属性本身就是一个集合的时候，子查询十分有用。所以在上面的例子里，我们有一个 `Person` 对象的数组，并且查询它的 `teamMember` 数组。
 
 ## 便捷才是关键[^3]
 
@@ -357,7 +357,7 @@ NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateFormat];
 
 尽管 `NSPredicate` 是为了搜索而设计出来的，但如果你不把它用在和原本设计*稍微*偏离的地方那它就不是 Objective-C 了。这里也不例外。
 
-当你想到 predicate，你想到的是从一个集合里筛选 — 也就是说它的返回值（或更改过的原来数组（in place mutation））还含有相同的东西。
+当你想到 predicate，你想到的是从一个集合里筛选 — 也就是说它的返回值（或更改过的原来数组）还含有相同的东西。
 
 但是也可以让他们含有*不*同的东西。其实我们在之前的代码中已经这样操作过了。上面的二维数组被用来返回一个识别符的数组 — `NSString` 实例。KeyPath 让这些变得可能。
 
@@ -376,6 +376,6 @@ NSArray  *longEmployeeIDs = [[employeeArray filteredArrayUsingPredicate:predicat
 
 马上在 Objective-C 的集合里使用这些语法糖，这样就可以不使用嵌套循环从一个特定的子集中提取数据。使用 `NSPredicate` 可以让眼睛轻松很多。
 
-虽然 Swift 从语言级别支持对集合进行切片操作，但使用创建的 NSPredicate 对象来解决相同的问题也不难。如果你发现你在维护一个成熟的代码库，或是一个新的 Objetive-C 项目，随心所欲的使用 predicate 吧。
+虽然 Swift 从语言级别支持对集合进行切片操作，但使用创建的 NSPredicate 对象来解决相同的问题也不难。如果你发现你在维护一个成熟的代码库，或是需要用上古时代 Objective-C 的新项目，随心所欲的使用 predicate 吧。
 
 下次见吧✌️。
