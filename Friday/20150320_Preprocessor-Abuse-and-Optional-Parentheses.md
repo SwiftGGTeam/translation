@@ -29,9 +29,9 @@ C 语言预处理器是一个相当盲目的文本替换引擎，它并不理解
 XCTAssertEqualObjects(someArray, @[ @"one", @"two" ], @"Array is not as expected");
 ```
 
-这会无法编译，并且会出现非常古怪的错误提示。预处理器查找分隔宏参数的逗号时，没能将数组结构 `@ [...]` 中的东西理解为一个单一的元素。结果代码尝试比较 `someArray` 和 `@[@"one"`。断言失败消息 `@"two"]` 和 `@"Array is not as expected"` 是另外的实参。这些半成品部分用于 `XCTAssertEqualObjects` 的宏扩展中，生成的代码当然错的离谱。
+这会无法编译，并且会出现非常古怪的错误提示。预处理器查找分隔宏参数的逗号时，没能将数组结构 `@ [...]` 中的东西理解为一个单一的元素。结果代码尝试比较 `someArray` 和 `@[@"one"`。断言失败消息 `@"two"]` 和 `@"Array is not as expected"` 是另外的实参。这些半成品部分用于 `XCTAssertEqualObjects` 的宏扩展中，生成的代码当然错得离谱。
 
-要解决这个问题也很容易：添加括号就行。预编译器不能识别 `[]`，但它*确实*知道 `()` 并且能够理解需要忽略里面的逗号。下面的代码就能正常运行：
+要解决这个问题也很容易：添加括号就行。预编译器不能识别 `[]`，但它*确实*知道 `()` 并且能够理解应该忽略里面的逗号。下面的代码就能正常运行：
 
 ```objc
 XCTAssertEqualObjects(someArray, (@[ @"one", @"two" ]), @"Array is not as expected");
@@ -145,7 +145,7 @@ GETTER((id<NSCopying,NSCoding>),someCopyableAndCodeableThing)
 #define EXTRACT(...) EXTRACT __VA_ARGS__
 ```
 
-现在如果你写 `EXTRACT(x)`，结果是 `EXTRACT x`。当然，如果你写 `EXTRACT x`，结果也是 `EXTRACT x`，毕竟没有宏扩展的情况。这仍然给我们留下一个 `EXTRACT`。虽然不能用 `#define` 直接解决，但这已经进步了。
+现在如果你写 `EXTRACT(x)`，结果是 `EXTRACT x`。当然，如果你写 `EXTRACT x`，结果也是 `EXTRACT x`，就像没有宏扩展的情况。这仍然给我们留下一个 `EXTRACT`。虽然不能用 `#define` 直接解决，但这已经进步了。
 
 ## 标识符粘合
 
@@ -276,4 +276,4 @@ ONCE(NSSet *,AllowedFileTypes,[NSSet setWithArray:@[ @"mp3",@"m4a",@"aiff" ]])
 
 仅仅写这个宏，我就发现了很多艰涩的知识。我希望接触这些知识也不会影响你的思维。请谨慎使用这些知识。
 
-今天就这样。以后还会有更多令人兴奋的探索，可能比这还要再不可思议。在此之前，如果你对此的主题有任何建议，请发送给 [我们](mike@mikeash.com)！
+今天就这样。以后还会有更多令人兴奋的探索，可能比这还要再不可思议。在此之前，如果你对此主题有任何建议，请发送给 [我们](mike@mikeash.com)！
