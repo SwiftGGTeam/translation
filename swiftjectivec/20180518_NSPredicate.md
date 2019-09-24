@@ -342,7 +342,7 @@ NSArray *unqiuePreviousEmployeeIDs = [previousEmployees valueForKeyPath:@"@disti
 // 假设 Person 对象有了一个新的属性表示他们的队伍：
 // NSArray  *team;
   
-// 找到所有满足队伍里有工资超过 1，且没有其他工资历史的人的要求的人
+// 从雇员数组中找出这样的人，他们的团队中有人满足这个条件：没有历史工资数据并且工资大于 1
 NSString *predicateFormat = @"SUBQUERY(team, $teamMember, $teamMember.paygrade.intValue > 1 AND $teamMember.previousPay == nil).@count > 0";
 
 NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateFormat];
