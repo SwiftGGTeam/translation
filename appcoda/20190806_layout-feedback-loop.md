@@ -18,34 +18,34 @@ description: 本文详细讲解了如何利用在运行时编程来帮助开发�
 <!--此处开始正文-->
 让我们想象这样一个场景：你有一个很成功的应用程序，这个应用程序有大量的日活用户并且崩溃率为 0。你很开心并且认为生活很美好。但是某天开始，你在应用商店上看到关于应用程序总是崩溃的负面评价。检查 Fabric 也没有起到任何帮助————没有出现新的崩溃记录。那么，这个现象可能是什么原因呢？
 
-答案是 OOM（内存不足），从而导致应用程序运行终止。
+答案是内存不足（Out Of Memory），从而导致应用程序运行终止。
 <!--more-->
 
 当你在终端用户的设备上使用 RAM 时，操作系统可以决定是否为其他进程而回收该内存，并终止你的应用程序。我们把这个叫做内存不足导致的运行终止。
 可能有各种原因：
-*  保留周期;
+*  循环引用;
 *  竞争条件;
 *  废弃的线程;
 *  死锁;
-*  布局反馈循环（Layout Feedback Loop）。
+*  布局反馈循环。
 
 Apple 提供了很多方法来解决这类问题：
-* 用于解决保留周期的分配和泄漏工具和 [其他类型的泄漏](https://developer.apple.com/videos/play/wwdc2015/230/)
-* 在 Xcode 8 中引入的 [内存调试器](https://developer.apple.com/videos/play/wwdc2016/410/)，该内存调试器替换了一些分配和泄漏工具中的功能
-* [线程清理器](https://developer.apple.com/videos/play/wwdc2016/412/) 帮助你找到竞争条件、废弃的线程或者死锁
+* Instruments 里的 Allocations 和 Leaks 工具用于解决循环引用和 [其他类型的泄漏](https://developer.apple.com/videos/play/wwdc2015/230/)
+* 在 Xcode 8 中引入的 [Memory Debugger](https://developer.apple.com/videos/play/wwdc2016/410/) 代替了 Allocations 和 Leaks 的一部分功能
+* [Thread Sanitizer](https://developer.apple.com/videos/play/wwdc2016/412/) 帮助你找到竞争条件、废弃的线程或者死锁
 
 ## 布局反馈循环
-下面我们来讨论下布局反馈循环。它不是一个频繁出现的问题，但是一旦你遇到了，可能让你很头痛。
-> 当视图正在运行它们的布局代码，但某种方法导致它们再一次开始布局传递（Layout passing），此时布局反馈循环就会出现。这可能是因为某个视图正在改变某个父视图的大小，或者因为你有一个模棱两可的布局。无论哪种原因，这个问题表现为你的 CPU 使用率最大化和 RAM 使用量稳步上升，所有这些是因为视图正在一次又一次地运行它们的布局代码，却没有返回。
-> \- [Paul Hudson from HackingWithSwift](https://www.hackingwithswift.com/articles/59/debugging-auto-layout-feedback-loops)
+下面我们来讨论下布局反馈循环。它不是一个频繁出现的问题，一旦遇到了，可能让你很头痛。
+> 当视图正在运行它们的布局代码，但某种方法导致它们再一次开始布局传递，此时布局反馈循环就会出现。这可能是因为某个视图正在改变某个父视图的大小，或者因为你有一个模棱两可的布局。无论哪种原因，这个问题的表现是你的 CPU 使用率最大化和 RAM 使用量稳步上升，所有这些是因为视图正在一次又一次地运行它们的布局代码，却没有返回。
+> \- [来自 HackingWithSwift 的 Paul Hudson](https://www.hackingwithswift.com/articles/59/debugging-auto-layout-feedback-loops)
 
-幸运的是，在 WWDC 16 中 Apple 花了整整 15 分钟来介绍布局反馈循环调试器。这个调试器有助于识别在调试过程中发生循环的时间点。这就是一个符号断点，它的工作方式非常简单：它会计算在单个运行循环迭代中调用每个视图上的 `layoutSubviews()` 方法的次数。一旦这个计数值超过某个临界值（比如，100），这个应用程序将会停在这个断点并打印出日志，来帮助你找到根本原因。[这篇文章](https://www.hackingwithswift.com/articles/59/debugging-auto-layout-feedback-loops) 快速地介绍如何使用这个调试器。
+幸运的是，在 WWDC 16 中 Apple 花了整整 15 分钟（！）来介绍“布局反馈循环调试器”。这个调试器有助于识别在调试过程中发生循环的时间点。这就是一个符号断点，它的工作方式非常简单：它会计算在单个 run loop 迭代中调用每个视图上的 `layoutSubviews()` 方法的次数。一旦这个计数值超过某个临界值（比如，100），这个应用程序将会停在这个断点并打印出日志，来帮助你找到根本原因。[这篇文章](https://www.hackingwithswift.com/articles/59/debugging-auto-layout-feedback-loops) 快速地介绍如何使用这个调试器。
 
 
 
 这个方法在你可以重现问题的情况下十分有效。但是如果你有几十个屏幕，几百个视图，但应用商店中你的应用程序的评价仅仅是：“这个应用程序糟透了，总是崩溃，再也不用了！”。你希望可以将这些人带到办公室并为他们设置布局反馈循环调试器。虽然因为通用数据保护条例（GDPR），这部分无法完全实现，但是你可以尝试把 `UIViewLayoutFeedbackLoopDebuggingThreshold` 的代码复制到生产代码中。
 
-让我们回顾一下符号断点是如何工作的：它会计算 `layoutSubviews()` 的调用次数并在单个运行循环迭代中超过某个临界值时发送一个事件。听起来很简单，对吧？
+让我们回顾一下符号断点是如何工作的：它会计算 `layoutSubviews()` 的调用次数并在单个 run loop 迭代中超过某个临界值时发送一个事件。听起来很简单，对吧？
 
 ```
 class TrackableView: UIView {
@@ -97,7 +97,7 @@ struct LayoutLoopHunter {
 ```
 
 `objc_allocateClassPair()` 方法的文档告诉我们这个方法何时失败：
-> 新类，或者如果无法创建类，则为 Nil （例如，所需名称已在使用中）。
+> 新类，或者如果无法创建类，则为 Nil （例如，所需名称已被使用）。
 
 这就意味着不能拥有两个同名的类。我们的策略是为单个视图类创建一个单独的运行时类。这就是我们在原始类名前加上前缀来形成新类的名称的原因。
 
@@ -105,7 +105,7 @@ struct LayoutLoopHunter {
 1. 添加一个保存计数器的属性。
 2. 为这个类创建一个关联对象（Associated object）。
 
-但是目前，只有一个方法奏效。你可以把一个属性当成是一个存储在内存中的东西，而这段内存是分配给你的类使用的，然而一个关联对象则储存在一个完全不同的地方。因为分配给一个存在的对象的内存是固定的，所以新添加在我们自定义类上的属性将会从其他资源里“窃取”内存。它可能导致意料之外的行为和难以调试的程序崩溃（点击 [这里](https://stackoverflow.com/questions/3346427/object-setclass-to-bigger-class) 查看更多信息）。但是在使用关联对象的情况下，它们将会存储在运行时创建的一个哈希表里，这是完全安全的。
+但是目前，**只有一个方法奏效**。你可以想象属性是存储在分配给类的内存里的东西，然而关联对象则储存在一个完全不同的地方。因为分配给已存在对象的内存是固定的，所以我们在自定义类上新添加的属性将会从其他资源里“窃取”内存。它可能导致意料之外的行为和难以调试的程序崩溃（点击 [这里](https://stackoverflow.com/questions/3346427/object-setclass-to-bigger-class) 查看更多信息）。但是在使用关联对象的情况下，它们将会存储在运行时创建的一个哈希表里，这是完全安全的。
 
 
 ```
@@ -145,19 +145,19 @@ struct objc_method {
 }
 ```
 
-尽管我们再也不会在 Swift 中直接使用这个结构体，它也很清楚地解释了一个方法实际上是由什么组成的：
+尽管我们再也不会在 Swift 中直接使用这个结构体，但它很清楚地解释了一个方法实际上是由什么组成的：
 * 方法的实现，这是调用方法时要执行的确切函数。这部分始终把接收者和消息选择器当作它的前两个参数。
-* 方法类型字符串包括方法的签名。你可以在 [这里](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html) 详细了解其格式。但是在现在的情况下，需要明确说明的字符串是 `“v@:”`。作为返回类型，`v` 代表 `void`，而 `@` 和 `:` 分别代表接收者和消息选择器。
+* 包含方法签名的方法类型字符串。你可以在 [这里](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html) 详细了解其格式。但是在现在的情况下，需要明确说明的字符串是 `“v@:”`。作为返回类型，`v` 代表 `void`，而 `@` 和 `:` 分别代表接收者和消息选择器。
 * 选择器是在运行时期间查找方法实现的关键。
 
-你可以把 Witness Table（在其他编程语言中，它也被称作分发表）想象成一个简单的字典数据结构。那么选择器会成为对应的键（Key），且实现部分则为对应的值。
+你可以把 Witness Table（在其他编程语言中，它也被称作方法派发表）想象成一个简单的字典数据结构。那么选择器为键，且实现部分则为对应的值。
 在下面这行代码中:
 ```
 class_addMethod(trackableClass,#selector(originalClass.layoutSubviews), implementation, "v@:")
 ``` 
-我们所做的是为与 `layoutSubviews()` 方法对应的键分配新值。我们获得这个计数器，使它的计数值加一。如果计数值超过临界值，我们会发送分析事件，其中包含类名和想要的任何数据体。
+我们所做的是给 `layoutSubviews()` 方法对应的键分配新值。我们获得这个计数器，使它的计数值加一。如果计数值超过临界值，我们会发送分析事件，其中包含类名和想要的任何数据体。
 
-让我们回顾一下如何为关联对象实现和使用键：
+让我们回顾一下如何对关联对象实现和使用键：
 
 ```
 static var CounterKey = “_counter”
@@ -185,12 +185,12 @@ closure()
 // 最后两个函数调用的地址将始终不同 
 ```
 
-通过引用的方式传递这个键总是一个好想法，因为有时，即使你没有使用闭包，变量的地址仍然可以因内存管理而被更改。举个例子，如果你把上面的代码运行多次，可能看到前两个 `printAddress()` 的调用会输出不同的地址。
+用引用的方式来传递键的主意总是好的，因为有时，即使你没有使用闭包，变量的地址仍可能因内存管理而更改。在我们例子中，如果你把上面的代码运行多次，即使是前两个 printAddress() 的调用也可能会输出不同的地址。
 
-让我们回到运行时的魔法里来。在新 `layoutSubviews()` 的实现里，还有一件很重要的事情没有完成。这件事是每次重写父类的方法时通常都会做的事情——调用父类实现。`layoutSubviews()` 的文档提及：
-> 在 iOS 5.1 及更早版本中，这个方法的默认实现不执行任何操作。反之，默认实现使用你设置的任何约束来确定任何子视图的大小和位置。
+让我们回到运行时的魔法里来。在新 `layoutSubviews()` 的实现里，还有一件很重要的事情没有完成。这件事是每次重写父类的方法时通常都会做的事情——调用父类实现。`layoutSubviews()` 的文档里提到：
+> 在 iOS 5.1 及更早版本中，这个方法的默认实现不执行任何操作。而之后的默认实现会使用你设置的任何约束来确定任何子视图的大小和位置。
 
-为了避免任何难以预料的布局行为，我们得调用父类的实现，但这不会和往常一样简单明了：
+为了避免发生一些难以预料的布局行为，我们得调用父类的实现，但这不像平常那样简单明了：
 
 ```
 let selector = #selector(originalClass.layoutSubviews)
@@ -207,7 +207,7 @@ originalLayoutSubviews(view, selector)
 
 这里实际发生的是：我们检索方法所需的实现部分，并直接从代码中调用它，而不是用常见的方式来调用方法（即执行一个会在 Witness Table 中寻找对应实现的选择器）。
 
-现在我们的代码部分是这样：
+目前为止，让我们看看实现部分：
 
 ```
 static func setUp(for view: UIView, threshold: Int = 100, onLoop: @escaping () -> ()) {
@@ -276,11 +276,11 @@ class ViewController: UIViewController {
 }
 ```
 是不是忘记了什么事情？让我们再次回顾一下 `UIViewLayoutFeedbackLoopDebuggingThreshold` 断点的工作原理：
-> 在被认为是一个反馈循环之前，定义某个视图必须在单个运行循环中布置其子视图的次数
+> 在确认为反馈循环之前，定义某个视图的子视图在单个 run loop 里必须布局的次数
 
-我们从未把“单个运行循环”这一条件考虑进来。如果视图在屏幕上停留了相当长的时间，并经常被反复布置，计数器迟早会超过临界值。但这不是因为内存的问题。
+我们从未把“单个 run loop ”这一条件考虑进来。如果视图在屏幕上停留了相当长的时间，并经常被反复布局，计数器迟早会超过临界值。但这可不是因为内存的问题。
 
-我们该怎么解决这个问题呢？只需在每次运行循环迭代时重置计数器。为了做到这一点，我们可以创建一个 [DispatchWorkItem](https://www.appcoda.com/grand-central-dispatch/) ，它重置计数器，并在主队列上异步传递它。通过这种方式，它会在运行循环下一次进入主线程时被调用：
+我们该怎么解决这个问题呢？只需在每次 run loop 迭代时重置计数器。为了做到这一点，我们可以创建一个 [DispatchWorkItem](https://www.appcoda.com/grand-central-dispatch/) ，它重置计数器，并在主队列上异步传递它。通过这种方式，它会在 run loop 下一次进入主线程时被调用：
 
 ```
 static var ResetWorkItemKey = “_resetWorkItem”
@@ -348,7 +348,7 @@ struct LayoutLoopHunter {
                     objc_setAssociatedObject(view, &RuntimeConstants.CounterKey, counter+1, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
                 }
  
-                // 为重置计数器，在每个新的运行循环遍历中分发 work item
+                // 为重置计数器，在每个新的 run loop 遍历中分发 work item
                 if let previousResetWorkItem = objc_getAssociatedObject(view, &RuntimeConstants.ResetWorkItemKey) as? DispatchWorkItem {
                     previousResetWorkItem.cancel()
                 }
@@ -371,7 +371,7 @@ struct LayoutLoopHunter {
 ```
 
 ## 结论
-是的！现在你可以为所有可疑的视图设置分析事件了，发布应用程序，并找到这个问题准确出现在哪里。你可以把这个问题的范围缩小到某个特定的视图，并在用户不知情的情况下借助于他们来解决这个问题。
+是的！现在你可以为所有可疑的视图设置分析事件了，发布应用程序，并找到这个问题的确切出处。你可以把这个问题的范围缩小到某个特定的视图，并在用户不知情的情况下借助于他们来解决这个问题。
 
 最后要提到的一件事是：能力越大责任越大。运行时编程（Runtime Programming）非常容易出错，因此很容易在不知情的情况下为应用程序引入另一个严重的问题。这就是为什么总是建议将应用程序中的所有危险代码包装在某种可停止开关中，你可以从后端触发并在你看到它导致问题时禁用该功能。这有一篇介绍 Firebase 的 Feature Flags 的 [好文章](https://medium.com/@rwbutler/feature-flags-a-b-testing-mvt-on-ios-718339ac7aa1)
 
