@@ -146,16 +146,18 @@ struct objc_method {
 ```
 
 尽管我们再也不会在 Swift 中直接使用这个结构体，但它很清楚地解释了一个方法实际上是由什么组成的：
-* 方法的实现，这是调用方法时要执行的确切函数。这部分始终把接收者和消息选择器当作它的前两个参数。
+* 方法的实现，这是调用方法时要执行的实际函数。它的前两个形参总是方法接收者和消息选择器。
 * 包含方法签名的方法类型字符串。你可以在 [这里](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html) 详细了解其格式。但是在现在的情况下，需要明确说明的字符串是 `“v@:”`。作为返回类型，`v` 代表 `void`，而 `@` 和 `:` 分别代表接收者和消息选择器。
-* 选择器是在运行时期间查找方法实现的关键。
+* 选择器作为键，用于在运行时查找方法的实现。
 
 你可以把 Witness Table（在其他编程语言中，它也被称作方法派发表）想象成一个简单的字典数据结构。那么选择器为键，且实现部分则为对应的值。
 在下面这行代码中:
 ```
 class_addMethod(trackableClass,#selector(originalClass.layoutSubviews), implementation, "v@:")
 ``` 
-我们所做的是给 `layoutSubviews()` 方法对应的键分配新值。我们获得这个计数器，使它的计数值加一。如果计数值超过临界值，我们会发送分析事件，其中包含类名和想要的任何数据体。
+我们所做的是给 `layoutSubviews()` 方法对应的键分配新值。    
+
+这个方法直截了当。我们获得这个计数器，使它的计数值加一。如果计数值超过临界值，我们会发送分析事件，其中包含类名和想要的任何数据体。
 
 让我们回顾一下如何对关联对象实现和使用键：
 
@@ -166,7 +168,7 @@ static var CounterKey = “_counter”
 objc_setAssociatedObject(trackableClass, &RuntimeConstants.CounterKey, counter+1, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
 ```
 
-为什么我们使用 `var` 作为计数器变量的静态键属性（Static key property）并通过引用将它传递到其他地方？这个原因隐藏在 Swift 语言的基础内容——字符串之中。字符串像其他所有的值类型一样，是按值传递的。那么，当你把它传入这个闭包时，这个字符串将会被复制到一个不同的地址，这会导致在关联对象表中产生一个完全不同的键。`&` 符号总是保证将相同的地址作为键参数的值。你可以尝试以下代码：
+为什么我们使用 `var` 修饰计数器变量的静态键属性（Static key property）并在传递到其他地方时使用引用？答案隐藏在 Swift 语言基础——字符串之中。字符串像其他所有的值类型一样，是按值传递的。那么，当你把它传入这个闭包时，这个字符串将会被复制到一个不同的地址，这会导致在关联对象表中产生一个完全不同的键。`&` 符号总是保证将相同的地址作为键参数的值。你可以尝试以下代码：
 
 ```
 func printAddress(_ string: UnsafeRawPointer) {
@@ -280,7 +282,7 @@ class ViewController: UIViewController {
 
 我们从未把“单个 run loop ”这一条件考虑进来。如果视图在屏幕上停留了相当长的时间，并经常被反复布局，计数器迟早会超过临界值。但这可不是因为内存的问题。
 
-我们该怎么解决这个问题呢？只需在每次 run loop 迭代时重置计数器。为了做到这一点，我们可以创建一个 [DispatchWorkItem](https://www.appcoda.com/grand-central-dispatch/) ，它重置计数器，并在主队列上异步传递它。通过这种方式，它会在 run loop 下一次进入主线程时被调用：
+我们该怎么解决这个问题呢？只需在每次 run loop 迭代时重置计数器。为了做到这一点，我们可以创建一个 [**DispatchWorkItem**](https://www.appcoda.com/grand-central-dispatch/)，它重置计数器，并在主队列上异步传递它。通过这种方式，它会在 run loop 下一次进入主线程时被调用：
 
 ```
 static var ResetWorkItemKey = “_resetWorkItem”
@@ -373,7 +375,7 @@ struct LayoutLoopHunter {
 ## 结论
 是的！现在你可以为所有可疑的视图设置分析事件了，发布应用程序，并找到这个问题的确切出处。你可以把这个问题的范围缩小到某个特定的视图，并在用户不知情的情况下借助于他们来解决这个问题。
 
-最后要提到的一件事是：能力越大责任越大。运行时编程（Runtime Programming）非常容易出错，因此很容易在不知情的情况下为应用程序引入另一个严重的问题。这就是为什么总是建议将应用程序中的所有危险代码包装在某种可停止开关中，你可以从后端触发并在你看到它导致问题时禁用该功能。这有一篇介绍 Firebase 的 Feature Flags 的 [好文章](https://medium.com/@rwbutler/feature-flags-a-b-testing-mvt-on-ios-718339ac7aa1)
+最后要提到的一件事是：能力越大责任越大。运行时编程非常容易出错，因此很容易在不知情的情况下为应用程序引入另一个严重的问题。这就是为什么总是建议将应用程序中的所有危险代码包装在某种可停止开关中，你可以从后端触发并在你看到它导致问题时禁用该功能。这有一篇介绍 Firebase 的 Feature Flags 的 [好文章](https://medium.com/@rwbutler/feature-flags-a-b-testing-mvt-on-ios-718339ac7aa1)
 
 完整代码可以从这个 [GitHub 仓库](https://github.com/rsrbk/LayoutLoopHunter) 里获取，并且也将会发布到 CocoPods 上，以跟踪项目中的布局循环。
 
