@@ -41,7 +41,7 @@ description:
 > > At the time, Swift was called ‘Shiny’.
 > > 在那时，Swift 还叫 ‘Shiny’
 > 
-> Bertrand 负责苹果公司所有的软件项目，因此他基本没什么时间。但他总是会让我在工作结束时顺便拜访一下他，看他是不是有空。他经常会呆到很晚，然后我们会在白板上进行非常认真的讨论。我们会谈论非常非常多的东西：新语言要达成的目标、一些奇怪的细节如打字系统，并且我们最终都会把这些讨论变成一份计划书。因此我为他做了这份计划书并演变成构建一个新语言的想法。那时这个新语言还叫做 "Shiny"，寓意着你正在建造一个 [很酷的](https://www.youtube.com/watch?v=8q_lsRLJhcA) 新东西。[^1] 当然我也是 Firefly 电视节目的粉丝之一。（译者注："Shiny" 的梗源自 2002 年美国电视节目 [Firefly](https://en.wikipedia.org/wiki/Firefly_(TV_series))，意思相当于真实世界中的 "cool"。）
+> Bertrand 负责苹果公司所有的软件项目，因此他基本没什么时间。但他总是会让我在工作结束时顺便拜访一下他，看他是不是有空。他经常会呆到很晚，然后我们会在白板上进行非常认真的讨论。我们会谈论非常非常多的东西：新语言要达成的目标、一些奇怪的细节如类型系统，并且我们最终都会把这些讨论变成一份计划书。因此我为他做了这份计划书并演变成构建一个新语言的想法。那时这个新语言还叫做 "Shiny"，寓意着你正在建造一个 [很酷的](https://www.youtube.com/watch?v=8q_lsRLJhcA) 新东西。[^1] 当然我也是 Firefly 电视节目的粉丝之一。（译者注："Shiny" 的梗源自 2002 年美国电视节目 [Firefly](https://en.wikipedia.org/wiki/Firefly_(TV_series))，意思相当于真实世界中的 "cool"。）
 > 
 > **John Sundell:** 当时的文件后缀是 `.shiny` 吗？
 >
