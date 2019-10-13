@@ -36,7 +36,7 @@ description:
 
 > **Crhis Lattner:** 关于这件事，我必须从 [WWDC](https://en.wikipedia.org/wiki/Apple_Worldwide_Developers_Conference) 2010 开始讲起。当时我们刚刚上线了 [Clang](https://en.wikipedia.org/wiki/Clang) 对 [C++](https://en.wikipedia.org/wiki/C%2B%2B) 的支持，非常多的人在这件事上面花费了极其巨大的精力。我对这件事感到非常开心的同时，也有一些烦躁，因为我们做了太多的细节工作。而且你很难不经过思考直接编写 C++ 代码，“天呐，应该有比现在更好的实现方法吧！”
 >
-> 因此，我与一个叫 [Bertrand Serlet](https://en.wikipedia.org/wiki/Bertrand_Serlet) 的哥们儿进行了许多次讨论。Bertrand 当时是软件团队的老大，同时也是一位出类拔萃的工程师。它是一个令人惊叹的人，并且在语言方面有点极客范。当时他正在推进对 [Objective-C](https://en.wikipedia.org/wiki/Objective-C) 的优化工作。我和他进行了许多次一对一的白板会议。
+> 因此，我与一个叫 [Bertrand Serlet](https://en.wikipedia.org/wiki/Bertrand_Serlet) 的哥们儿进行了许多次讨论。Bertrand 当时是软件团队的老大，同时也是一位出类拔萃的工程师。他是一个令人惊叹的人，并且在语言方面有点极客范。当时他正在推进对 [Objective-C](https://en.wikipedia.org/wiki/Objective-C) 的优化工作。我和他进行了许多次一对一的白板会议。
 >
 > > At the time, Swift was called ‘Shiny’.
 > > 在那时，Swift 还叫 ‘Shiny’
@@ -71,7 +71,7 @@ description:
 
 *（开始于 22:49）*
 
-> **Chris Lattner:** 苹果曾经拥有着一支非常强大的工程师队伍。那时有非常多的人一起维护 Objective-C，这其实是有点固执的一件事，但同时这也让我们在动态库、应用和其他类似的东西上拥有了十足的深度和背景。正因如此，那时有许多关于优化 Objective-C 的想法涌现。自从乔布斯离开并创立 [NeXT](https://en.wikipedia.org/wiki/NeXT) 之后，许多杰出的人物都一直参与这项工作并写下了大量相关的白皮书。因此，Objective-C 背后有一个极其庞大的社区在推动着。
+> **Chris Lattner:** 苹果拥有着一支非常强大的工程师队伍。那时有非常多的人一起维护 Objective-C，这其实是有点固执的一件事，但同时这也让我们在动态库、应用和其他类似的东西上拥有了十足的深度和背景。正因如此，那时有许多关于优化 Objective-C 的想法涌现。自从乔布斯离开并创立 [NeXT](https://en.wikipedia.org/wiki/NeXT) 之后，许多杰出的人物都一直参与这项工作并写下了大量相关的白皮书。因此，Objective-C 背后有一个极其庞大的社区在推动着。
 >
 > 当时，我和 Bertrand 以及 Dave 讨论过一些想法，我也开始着手编写一个编译器的原型。不过结果很显然，我很难靠自己去构建出所有的东西。所以最后的事情也理所当然地发生了——大约在 2011 年四月的时候我们与管理层讨论了关于 Swift 的事情，然后也获得批准去调动一小部分人员。[Ted Kremenek](https://twitter.com/tkremenek)、[Doug Gregor](https://twitter.com/dgregor79)、[John McCall](https://twitter.com/pathofshrines) 以及一些其他的杰出工程师都是在那时调入 Swift 项目的。现在回头看看，其实挺有意思的，因为当时是第一次有一些语言和设计专家对 Swift 做了批判性的评价。他们反馈了很多严厉的批判。虽然他们的本意并不是打击我们，但他们的确说的很对——这个语言当时实在是糟透了。
 >
@@ -137,7 +137,7 @@ description:
 > 
 > > 如果你能在设计阶段就考虑到如何像大家解释这门语言的话，工作会进行得更顺利。
 >
-> 我见过很多次这种事情，当你构建玩一个系统后你还要尝试着解释它。然后当你开始解释这个系统时，真的会陷入一个尴尬的处境，比如：“天啊，我竟然还要去解释这个东西是如何工作的”。如果你可以在设计阶段就处理好反馈信息，并引入文档，引入这些关于如何向大家解释的工作，你会进行得更顺利。
+> 我见过很多次这种事情，当你构建完一个系统后你还要尝试着解释它。然后当你开始解释这个系统时，真的会陷入一个尴尬的处境，比如：“天啊，我竟然还要去解释这个东西是如何工作的”。如果你可以在设计阶段就处理好反馈信息，并引入文档，引入这些关于如何向大家解释的工作，你会进行得更顺利。
 
 ------
 
