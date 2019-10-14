@@ -45,7 +45,7 @@ description:
 > 
 > **John Sundell:** 当时的文件后缀是 `.shiny` 吗？
 >
-> **Chris Lattner:** 确实没错。你知道在那个时候，这还是个很小型的项目。真的就只有我和 Bertrand 在讨论这件事。另外就只有一个同样非常出色的工程师 [Dave Zarzycki](https://github.com/davezarzycki) 参与了早期的一些概念上的讨论。
+> **Chris Lattner:** 确实如此。你知道在那个时候，这还是个很小型的项目。真的就只有我和 Bertrand 在讨论这件事。另外就只有一个同样非常出色的工程师 [Dave Zarzycki](https://github.com/davezarzycki) 参与了早期的一些概念上的讨论。
 >
 > 一开始，我们就自然而然地展开了关于内存管理的讨论。当时，我们都确信一点就是：必须要有一个好的方法来解决或改善内存管理，并且我们需要确保 [内存安全](https://docs.swift.org/swift-book/LanguageGuide/MemorySafety.html)。因而，你必须有一个自动内存管理功能。
 >
@@ -133,7 +133,7 @@ description:
 >
 > > 我们直接把这些科技编辑拉入了设计讨论会
 >
-> 我记得当时我们直接把这些科技编辑拉入了设计讨论会。像 [Tim Isted](https://twitter.com/timisted)、Brian Lanier 和 Alex Martini 这些人，他们在周会上花了大量的时间争论着一些细节问题——“我们是否应该使用点语法？”“我们应该使用这个关键字还是那个关键字？”或者是“我们是应该把 `func` 改为 `def` 吗？”同时还讨论着——类型系统的深度以及 [代码生成]([codegen](https://en.wikipedia.org/wiki/Code_generation_(compiler)) 算法应如何工作；我们如何达到较好的性能？[字符串](https://developer.apple.com/documentation/swift/string) 应如何运作？还有各种各样的问题。
+> 我记得当时我们直接把这些科技编辑拉入了设计讨论会。像 [Tim Isted](https://twitter.com/timisted)、Brian Lanier 和 Alex Martini 这些人，他们在周会上花了大量的时间争论着一些细节问题——“我们是否应该使用点语法？”“我们应该使用这个关键字还是那个关键字？”或者是“我们是应该把 `func` 改为 `def` 吗？”同时还讨论着——类型系统的深度以及 [代码生成](https://en.wikipedia.org/wiki/Code_generation_(compiler)) 算法应如何工作；我们如何达到较好的性能？[字符串](https://developer.apple.com/documentation/swift/string) 应如何运作？还有各种各样的问题。
 > 
 > > 如果你能在设计阶段就考虑到如何像大家解释这门语言的话，工作会进行得更顺利。
 >
