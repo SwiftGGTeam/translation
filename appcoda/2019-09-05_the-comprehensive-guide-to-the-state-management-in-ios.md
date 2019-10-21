@@ -25,22 +25,22 @@ description: 处理程序状态时的常见问题和解决这些问题的方法�
 
 ### 处理状态时常见的问题
 
-1. **[竞态条件](https://searchstorage.techtarget.com/definition/race-condition)** - 在并发环境中同步访问数据。导致许多难以查找的 bug，例如在竞争后非预期或者错误的结果、数据错误甚至应用奔溃。
-2. **[非预期副作用](https://en.wikipedia.org/wiki/Side_effect_(computer_science))**。当程序中多个实体通过持有一个状态值的引用来共享状态时，其中一个实体对状态做的修改可能会给其他实体带来非预期的影响。这样通常是因为数据访问不受限制导致的。造成的后果无论是 UI 显示错误，还是 [死锁](https://en.wikipedia.org/wiki/Deadlock) 跟奔溃的都有.
+1. **[竞态条件](https://searchstorage.techtarget.com/definition/race-condition)** - 在并发环境中非同步访问数据。导致许多难以查找的 bug，例如在竞争后非预期或者错误的计算结果、数据错误甚至应用奔溃。
+2. **[非预期的副作用](https://en.wikipedia.org/wiki/Side_effect_(computer_science))**。当程序中多个实体通过持有一个状态值的引用来共享状态时，其中一个实体对状态做的修改可能会给其他实体带来非预期的影响。这样通常是因为数据访问不受限制导致的。造成的后果千差万别，从 UI 显示问题，到 [死锁](https://en.wikipedia.org/wiki/Deadlock)，甚至是崩溃。.
 3. **[值共生性](https://en.wikipedia.org/wiki/Connascence#Connascence_of_Values_(CoV))**。程序中，当多个实体通过存储自己对状态的拷贝来共享状态时，对拷贝进行修改不会自动的应用到其他拷贝。当任意一份拷贝更新时，就需要额外的代码来更新其他拷贝。由于无法正确地同步这些状态的拷贝，当用户或者系统跟这些数据交互时，通常会导致应用把后续带有错误的状态数据展示给用户。
-4. **[类型共生性](https://en.wikipedia.org/wiki/Connascence#Connascence_of_Type_(CoT))** 在 [动态类型](https://stackoverflow.com/questions/1517582/what-is-the-difference-between-statically-typed-and-dynamically-typed-languages) 语言中，指的是一个变量在它的生命周期过程中，值和类型都被改变了。尽管这项技术有些 [实际用处](https://softwareengineering.stackexchange.com/questions/115520/should-i-reuse-variables)，但它通常被当作一种 [错误的做法](https://softwareengineering.stackexchange.com/questions/187332/is-changing-the-type-of-a-variable-partway-through-a-procedure-in-a-dynamically)。它会让算法变得难以读懂，也让我们在维护这样的代码时更容易造成人为的错误。即使经验丰富的程序员在修改类型的时候，也有可能在无意中赋值了错误的变量。这样的错误造成的结果因语言而异，但你说能有什么好事发生。
+4. **[类型共生性](https://en.wikipedia.org/wiki/Connascence#Connascence_of_Type_(CoT))** 在 [动态类型](https://stackoverflow.com/questions/1517582/what-is-the-difference-between-statically-typed-and-dynamically-typed-languages) 语言中，指的是一个变量在它的生命周期过程中，值和类型都被改变了。尽管这项技术有些 [实际用处](https://softwareengineering.stackexchange.com/questions/115520/should-i-reuse-variables)，但通常被当作一种 [错误的做法](https://softwareengineering.stackexchange.com/questions/187332/is-changing-the-type-of-a-variable-partway-through-a-procedure-in-a-dynamically)。它会让算法变得难以读懂，也让我们在维护这样的代码时更容易造成人为的错误。即使经验丰富的程序员在修改类型的时候，也有可能在无意中赋值了错误的变量。这样的错误造成的结果因语言而异，但你说能有什么好事发生。
 5. **[约定共生性](https://en.wikipedia.org/wiki/Connascence#Connascence_of_Meaning_(CoM)_or_Connascence_of_Convention_(CoC))**。如果对值的含义有误解时，就会不小心用另一个有相同类型的参数替换掉这个值。例如，如果我们有两个声明为 `String` 类型的 `UserID` 和 `BlogID`，就可能误把 `UserID` 传给需要 `BlogID` 的函数。错误的值可能会被服务器调用，或者被存在本地应用的状态里，无论哪一种 — 都是错误的情况。有一种解决办法就是使用 `struct` 封装原有的值，这样可以让编译器区分开这些类型，并且在类型不匹配的时候发出警告。
-6. **[内存泄漏](https://en.wikipedia.org/wiki/Memory_leak)**。像其他程序中的资源一样，如果处理不当，状态对象即使没有再被使用，也可以存在内存当中。太多的内存泄漏（例如分配了上百兆内存的图片）最终会导致大量可用内存的减少，以及后续的奔溃。当状态对象内存泄漏时，我们可能最多失去几 KB 的内存，但谁知道我们的程序会泄漏 _多少次_ 呢？最终的后果就是性能变得更低还有崩溃。
+6. **[内存泄漏](https://en.wikipedia.org/wiki/Memory_leak)**。像程序中其他的资源一样，如果处理不当，状态会驻留在内存中，即便它不再被访问。太多的内存泄漏（例如分配了上百兆内存的图片）最终会导致大量可用内存的减少，以及后续的奔溃。当状态对象内存泄漏时，我们可能最多失去几 KB 的内存，但谁知道我们的程序会泄漏 _多少次_ 呢？最终的后果就是性能变得更低还有崩溃。
 7. **[有限的可测试性](https://en.wikipedia.org/wiki/Software_testing)**。状态对象在 [单元测试](https://en.wikipedia.org/wiki/Unit_testing) 中扮演着一个重要的角色。通过共享状态的值或者引用其他的实体对像造成 [耦合](https://en.wikipedia.org/wiki/Coupling_(computer_programming))，导致他们在各自的处理逻辑中相互依赖。在程序中不当的状态管理设计，会让测试变得更加低效，甚至会导致无法编写测试。
 
 ---
-当引入一个新的状态时，开发者总要面对两个问题：_“状态数据存在哪里？”_ 和 _“状态更新时如何通知应用中的其他实体？”_。让我们详细地分析一下每个问题，看这些问题是否有存在银弹。
+当引入一个新的状态时，开发者总要面对两个问题：_“状态数据存在哪里？”_ 和 _“状态更新时如何通知应用中的其他实体？”_。让我们详细地分析一下每个问题，看看是否存在解决这些问题的银弹。
 
 ## 1. 状态数据存在哪里？
 
 我们可以在方法中访问本地变量，或者在类中访问实例变量，或者在任何地方访问全局变量 — 它们的主要区别是在程序中可以读或写的范围不同。
 
-当我们决定在 _哪里_ 来存储新的值时，我们需要考虑状态的主要特征 - 它的区域，或者说是可访问范围。
+当我们决定在 _哪里_ 来存储新的值时，我们需要考虑状态的主要特征 - 它所存放的位置，或者说是可访问范围。
 
 有一个通用的规则是 __尽可能地缩小可访问范围__。在方法中定义一个本地变量比一个全局变量更好，不仅为了避免我们一下子没注意，就在其他的区域将状态数据改成了意料之外的其他值，也为了给其他使用到相关数据的模块增加可测试性。
 
@@ -83,9 +83,9 @@ description: 处理程序状态时的常见问题和解决这些问题的方法�
 * **[代理](https://nalexn.github.io/callbacks-part-1-delegation-notificationcenter-kvo/#delegate)**。虽然这个技巧在 iOS 社区仍然很受欢迎，但我是 [闭包](https://medium.cobeisfresh.com/why-you-shouldn-t-use-delegates-in-swift-7ef808a7f16b) 的支持者，作为 `代理` 的替代品它显得更灵活、便利。它们的使用目的相同，但是使用 `闭包` 可以让我们写更少胶水代码的同时拥有更高的 [内聚性](https://en.wikipedia.org/wiki/Cohesion_(computer_science))。
 * **[Target-Action](https://nalexn.github.io/callbacks-part-2-closure-target-action-responder-chain/#Target-Action)**。它和 `代理` 的受欢迎程度相似。我仍然会用它的唯一原因，就是当我声明了 `UIControl` 或 `UIGestureRecognizer` 子类的时候，因为它们本身就支持 `Target-Action`。
 * **[闭包](https://nalexn.github.io/callbacks-part-2-closure-target-action-responder-chain/#Closure_Block)**。在两个模块之间做最简单的交互时，这是我的首选。只有在情况复杂起来时，例如后续的异步任务也带有 `闭包` 回调，或者当我需要通知的模块数量超过一个时 - 我会考虑 `Promise`，`Event` 或者 `数据流` 的方式。
-* **[Promise](https://nalexn.github.io/callbacks-part-3-promise-event-stream/#Promise)** 是我最喜欢用来处理链式异步回调的工具，例如后端 API 的接口调用。使用 `数据流` 也可以处理这种情形，但是 `Promise` 提供了更简单的 API，并且可以避免工程师团队用任何理由采用 `Rx` 和其他响应式工具。
-* **[Event](https://nalexn.github.io/callbacks-part-3-promise-event-stream/#Event)** 是观察者模式的一种既轻量又强大的实现，一个 `NotificationCenter` 和 `KVO` 伟大的替代品。不管你是要广播一个带或不带数据的通知 - 这个工具提供了一个种便捷的订阅方式，可以安全地执行逻辑并且也容易测试。它也能够用作被观察的属性 - 一个一直带有值的变量，并且对于任意数量的订阅者，它都提供了转换为 “KVO” 监听的方式。
-* **[数据流](https://nalexn.github.io/callbacks-part-3-promise-event-stream/#Stream)**。这是一种可以被 `Promise` 和 `Event` 替换的通用工具，同时也提供 `UI 绑定` 和其他功能。不过要注意！我自己是 [函数响应式编程](https://en.wikipedia.org/wiki/Functional_reactive_programming) 的重度粉丝，但仍然没有多少人能 _完全_ 明白它的思想，并在实践中 _恰当_ 地使用这个工具。在一次大型技术交流会中，有一位团队经理偷偷地跟我说了他的担忧，他们不得不聘请有 _特长_ 的高级工程师，__只因为__ 他们的 app 完全是用 `RxSwift` 编写的，并且 __无法__ 被低水平的工程师维护（他们尝试聘请过的）。
+* **[Promise](https://nalexn.github.io/callbacks-part-3-promise-event-stream/#Promise)** 是我最喜欢用来处理链式异步回调的工具，例如后端 API 的接口调用。使用 `数据流` 也可以处理这种情形，但 `Promise` 提供了更简洁的 API，适合那些想要极力避免采用 `Rx` 和其他响应式工具的工程师团队。。
+* **[Event](https://nalexn.github.io/callbacks-part-3-promise-event-stream/#Event)** 是观察者模式的一种既轻量又强大的实现，一个 `NotificationCenter` 和 `KVO` 了不起的替代品。不管你是要广播一个带或不带数据的通知 - 这个工具提供了一个种便捷的订阅方式，可以安全地执行逻辑并且也容易测试。它也能够用作被观察的属性 - 一个一直带有值的变量，并且对于任意数量的订阅者，它都提供了转换为 “KVO” 监听的方式。
+* **[数据流](https://nalexn.github.io/callbacks-part-3-promise-event-stream/#Stream)**。这是一种可以被 `Promise` 和 `Event` 替换的通用工具，同时也提供 `UI 绑定` 和其他功能。不过要注意！我自己是 [函数响应式编程](https://en.wikipedia.org/wiki/Functional_reactive_programming) 的重度粉丝，但仍然没有多少人能 _完全_ 明白它的思想，并在实践中 _恰当_ 地使用这个工具。在一次大型技术交流会中，有一位团队经理偷偷地跟我说了他的担忧，他们不得不聘请有 _特长_ 的高级工程师，__只因为__ 他们的 app 完全是用 `RxSwift` 编写的，并且 __无法__ 被低水平的工程师维护（他们尝试聘请过的）。一个工具本意是想着让开发变得更容易，而实际上却是相反！在另一个采访中，是一个在俄罗斯排行前三的银行，他们在所有超过 10 个的产品团队中，他们严令禁止使用响应式编程，正也是因为相同的原因。
 * **[NotificationCenter](https://nalexn.github.io/callbacks-part-1-delegation-notificationcenter-kvo/#NotificationCenter)**。在我的项目中，我使用了一个自定义的 [SwiftLint](https://github.com/realm/SwiftLint) 规则以 _避免_ `NotificationCenter` 被滥用。我相信这是在你的 app 中做数据传递 可以用的 [最有害的工具之一](https://davidnix.io/post/stop-using-nsnotificationcenter/)。不仅因为需要依赖使用  [单例](https://stackoverflow.com/questions/12755539/why-is-singleton-considered-an-anti-pattern)（会让单元测试变得更难），它也会导致数据流的不可控。*它是编程噩梦的前兆！* 只有当 Apple 没有提供可替代的 API，而我又需要监听一些来自 Apple 官方框架的通知时，我才仍会用它们。如果你需要一些观察者模式完好的实现 - 考虑使用 `Event` 或者 `数据流`。
 * **[KVO](https://nalexn.github.io/callbacks-part-1-delegation-notificationcenter-kvo/#KeyValueObserving)**。一个非常强大的技术，当我需要对一个邻近的类进行监听，并且没有其他办法可以监听它的状态改变时，我会把它作为最后的手段。我们都应该感谢 `KVO` - 没有它（数据流）我们不会拥有 UIKit 的响应式扩展。当你需要监听一个属性时，`Event` 是一个更加实用的选择。
 * **[响应者链](https://nalexn.github.io/callbacks-part-2-closure-target-action-responder-chain/#Responder_chain)**。自从它无法在通知中携带数据，这个技巧对于我们想做的事情显得十分有限。即使我们有一个对状态对象的引用，并且只需要触发它来刷新 UI，这个技巧也仍然是个糟糕的选择。它建立了一个隐式并且十分不稳定的通知通道，导致它很难被测试和维护。
