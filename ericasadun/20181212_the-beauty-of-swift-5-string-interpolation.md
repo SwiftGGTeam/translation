@@ -12,7 +12,7 @@ description: "本文对 Swift 5 中 SE-0228 对 String Interpolation 相关功�
 原文链接=https://ericasadun.com/2018/12/12/the-beauty-of-swift-5-string-interpolation/ 
 作者=Erica Sadun 
 原文日期=2018-12-12 
-译者=RocZhang
+译者=Roc Zhang
 校对=numbbbbb,pmst
 定稿=Forelax
 
