@@ -102,7 +102,7 @@ extension EnvironmentValues {
 
 > [EnvironmentValues](https://developer.apple.com/documentation/swiftui/environmentvalues) 这个结构体代表了视图当前使用中的值。开发者不能直接访问到它底层的数据。想要访问的当前状态，下标值需要用 **type** 作为 key 。
 
-所以我们应该如何使用它呢？还是跟之前展示过的一样！有的 View 通过使用 [@Environment](https://developer.apple.com/documentation/swiftui/environment) 属性封装器访问了我们新开发的优秀 key —— `fancyColor`：
+所以我们应该如何使用它呢？还是跟之前展示过的一样！让某个 View 通过使用 [@Environment](https://developer.apple.com/documentation/swiftui/environment) 属性封装器访问我们崭新的 key —— `fancyColor`：
 ```swift
 struct FancyText: View {
   
@@ -117,7 +117,7 @@ struct FancyText: View {
 }
 ```
 
-并且由一个 View 提供了它：
+另一个 View 来提供它的值：
 ```swift
 struct MyPage: View {
   
@@ -131,15 +131,15 @@ struct MyPage: View {
 }
 ```
 
-顺着视图层次结构传递值显得简单并相当高效。
+顺着视图层次结构传递值多么简单和高效。
 
-> 那如果是 [EnvironmentObject](https://developer.apple.com/documentation/swiftui/environmentobject) 呢？它们和常规的 environment 值很相似，但他们也规定了相应的值需要是一个遵循了 ObservableObject 协议的类。要做的这些事情对一些简单的行限制或者颜色限制规则来说，显得有点太多了。
+> 那如果是 [EnvironmentObject](https://developer.apple.com/documentation/swiftui/environmentobject) 呢？它们和常规的 environment 值很相似，但规定了对应值的类型需要遵循 ObservableObject 协议。对一些简单的行限制或者颜色限制规则来说，这显得有点太繁琐了。
 
 # SwiftUI 规则
 
-这已经是个相当棒而且强大的概念了！但目前为止 environment key 仍需要有静态值的支持。它们需要显式地推入到当前那个用 `.environment` 视图封装器（如果为空则是 `defaultValue` ）的 enviroment 中。
+这个概念已经是相当棒而且强大了！但目前为止 environment key 仍需要有静态值的支持。它们需要通过 `.environment` 视图封装器（如果为空则是 `defaultValue` ）来赋值到当前的 enviroment。
 
-如果我们能够避免 `.environment(\.fancyColor, .red)` 这样的声明，然后基于其他 environment key 的值，定义我们自己的 `fancyColor`。甚至可以 **制定** 如何从其他 key 值衍生的规则。**欢迎来到 [SwiftUI 规则](https://github.com/DirectToSwift/SwiftUIRules)**：
+如果我们能够避免 `.environment(\.fancyColor, .red)` 这样的声明，然后基于其他 environment key 的值定义我们自己的 `fancyColor` 呢？这甚至可以 **制定** 如何从其他 key 值衍生的规则。**欢迎来到 [SwiftUI 规则](https://github.com/DirectToSwift/SwiftUIRules)**：
 
 ```swift
 let ruleModel : RuleModel = [
@@ -164,7 +164,7 @@ let ruleModel : RuleModel = [
 
 ### Environment Key
 
-**environment key** 适用于我们例子中的 `fancyColor`。那意味着如果一个 View 想要 `fancyColor` 环境值，规则引擎将会查找每一个规则，看哪一个可以应用到那个 key。
+**environment key** 适用于我们例子中的 `fancyColor`。那意味着如果一个 View 想要 `fancyColor` 环境值，规则引擎将会找到规则中可以给 key 用的那个。
 之后它会检查对应谓词是否匹配，如果匹配的话……
 
 ### 规则值
@@ -208,27 +208,27 @@ let ruleModel : RuleModel = [
 
 大概意思就是：给导航栏使用这个标题。这个标题是待办的标题。除非待办的是 "IMPORTANT"，我们才用 "Can wait." 重写它。
 
-详细讲讲过程中发生了的事情：
+详细讲讲过程中发生的事情：
 
 1. `PageView` 中的 `@Environment` 想获取 `navigationBarTitle`，
-2. 规则系统查看了模型，并给标题查找到了这个规则：`\.navigationBarTitle <= \.title`，
-3. 规则系统向自己请求 `title` 的值，
+2. 规则系统查看了模型，并找到了标题的这个规则：`\.navigationBarTitle <= \.title`，
+3. 规则系统从自身请求 `title` 的值，
 4. 规则系统查看了模型，然后给标题找到了 *两个* 规则：
    1. `\.todo.title == "IMPORTANT" => \.title <= "Can wait."`
    2. ` \.title              <= \.todo.title`
 5. 对于 `title` 有两个选项，一个带有谓词的规则而另外一个没有。它首先检查了更高优先级的谓词 “complexity” - 它评估出 `\.todo.title == "IMPORTANT"`。
 6. 它去查找了在 environment 中的 `todo` 对象，然后将它标题和常量 “IMPORTANT” 对比。假若情况是谓词匹配到了，规则就会被使用，`title` 的值将会是 `“Can wait.”`。
-7. 规则系统现在决策出 `title` 的值 - `"Can wait."`，然后返回给 `navigationBarTitle`，并把值推入给 `PageView`。
+7. 规则系统现在决策出 `title` 的值 - `"Can wait."`，然后返回给 `navigationBarTitle`，并把值赋值到 `PageView`。
 
-要留意的关键点是一个规则可以通过其他规则中声明。
+要留意的关键点是一个规则可以从其他规则中声明。
 
 > 在这里示例中，规则的顺序没有太大关系，因为他们有一个基于谓词关系复杂度继承的顺序。但是，有可能会有多个规则同时匹配。在这情况下，你可以给规则设一个显式的优先级例如（例如：在规则中调用 `.priority(.high)`）。
 
 # 使用 SwiftUI 规则
 
-这个 [仓库](https://github.com/DirectToSwift/SwiftUIRules) 主要是以在 
+这个 [仓库](https://github.com/DirectToSwift/SwiftUIRules) 的主要组成是在 
 [`Samples`](https://github.com/DirectToSwift/SwiftUIRules/tree/develop/Samples/)
-子目录下一个很小型的 [示例应用](https://github.com/DirectToSwift/SwiftUIRules/tree/develop/Samples/RulesTestApp) 为主要组成，去看看吧。它是一个没有条理可言的示例，但是展示了如何设置和运行整个架构。
+子目录下一个很小型的 [示例应用](https://github.com/DirectToSwift/SwiftUIRules/tree/develop/Samples/RulesTestApp)，去看看吧。它虽然是个没什么条理的示例，但是展示了如何设置和运行整个架构。
 
 ## 在你的 View 中使用基于规则的属性
 一般规则系统不关心中你的 View 是否有 SwiftUI 规则。所有的值都被当作常规的 [Environment](https://developer.apple.com/documentation/swiftui/environment) 属性：
@@ -279,7 +279,7 @@ let ruleModel : RuleModel = [
 ]
 ```
 
-你可以在 SwiftUI 视图层次架构中的任何地方拦截注入到规则系统，但我们再一次推荐在每个最上层的视图中做。例如，在 Xcode 中新生成一个应用，你可以给生成的 `ContentView` 做如下的修改：
+你可以在 SwiftUI 视图层次架构中的任何地方拦截注入规则系统，但我们依旧推荐在每个最上层的视图中做。例如，在 Xcode 中新生成一个应用，你可以给生成的 `ContentView` 做如下的修改：
 
 ```swift
 struct ContentView: View {
@@ -367,7 +367,7 @@ struct TaskView: View {
 ```swift
 \.todos.count > 10 => \.person.status <= "VIP"
 ```
-也就是赋值给一个多组合关键路径（`\.person.status`）。那 **运行不了** 的。
+也就是赋值给一个多组合关键路径（`\.person.status`）。这样是 **无法运行** 的。
 
 ### SwiftUI 的 Bug
 
@@ -401,7 +401,7 @@ struct MyNavLink<Destination, Content>: View {
 
 ## 联系方式
 
-嘿！我们希望你喜欢这篇文章，并且我们喜欢反馈！Twitter，或他们任一一位：
+嘿！我们希望你喜欢这篇文章，并且我们喜欢反馈！这下面任意一个的 Twitter：
 [@helje5](https://twitter.com/helje5)，[@ar_institute](https://twitter.com/ar_institute)。
 邮箱：[wrong@alwaysrightinstitute.com](mailto:wrong@alwaysrightinstitute.com)。
 Slack：在 SwiftDE，swift-server，noze，ios-developers 可以找到我们。
