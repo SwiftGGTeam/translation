@@ -16,37 +16,37 @@ description:
 定稿=
 
 <!--此处开始正文-->
-在法律上，拉丁短语 *stare decisis* (遵循先例) 常指的是先例原则——这个概念是：当判决一个案例时，法院应该查阅先前相似案例所做的决定。该原则是美国法律体系以及由此产生的英国普通法的基础。
+在法律里，拉丁短语 *stare decisis* (遵循先例) 常指的是先例原则——这个概念是：当判决一个案例时，法院应该查阅先前相似案例所做的决定。该原则是美国法律体系以及由此产生的英国普通法的基础。
 
-举个例子，考虑 Apple 和 Pepper 的 [诉讼案](https://www.oyez.org/cases/2018/17-204)。这个案子在美国最高法院最近的会议上遭到争议，且试图解决以下问题：
-> 如果 Apple 和它的 App Store 构成垄断，那么消费者能以高于竞争价格提供应用程序的理由起诉 Apple 吗？甚至这个价格是由第三方开发者设定的。
+Apple 和 Pepper 的 [诉讼案](https://www.oyez.org/cases/2018/17-204) 最近在美国最高法院的会议上引起争议，试图辩论下面的问题：
+> 如果 Apple 和它的 App Store 构成垄断，那么消费者能以应用程序价格高于竞争价格为由起诉 Apple 吗？尽管这个价格是由第三方开发者设定的。
 <!--more-->
 
-在判决中，法院依据 1977 年一个名为 *Illinois Brick* 的 [案例](https://www.oyez.org/cases/1976/76-404) 所定的先例。而这个案例申明了十年前在一个名为 *Hanover Shoe* 的 [案例](https://www.oyez.org/cases/1967/335) 中作出的判决。表面上，2010 年的 iPhone 似乎和 1970 年的砖块没有什么联系（除了 [明显的含义](https://www.theiphonewiki.com/wiki/Brick)），但在 [美国反托拉斯法](https://en.wikipedia.org/wiki/United_States_antitrust_law) 的范畴内，两者之间的联系是不可避免的。
+在最终判决中，法院依据 1977 年 *Illinois Brick* [案例](https://www.oyez.org/cases/1976/76-404) 中的判决，而它本身肯定了十年前在 *Hanover Shoe* [案例](https://www.oyez.org/cases/1967/335) 中的判决。表面上，2010 年的 iPhone 似乎和 1970 年的砖块没有什么联系（除了 [明显的含义](https://www.theiphonewiki.com/wiki/Brick)），但在 [美国反托拉斯法](https://en.wikipedia.org/wiki/United_States_antitrust_law) 的范畴内，两者之间有不可避免的联系。
 
-> 当然，也有许多其他更简单更全面的案例来诠释先例在美国法学中的作用，但是我们认为这个案例是最不可能导致读者联想到 NSHipster 被 [Atrium](https://www.atrium.co/) 收购或其他事情。
+> 当然，也有*许多*其他更简单更全面的案例来诠释先例在美国法学中的作用，但是我们认为这个案例是最不可能导致读者联想到 NSHipster 被 [Atrium](https://www.atrium.co/) 还是其他什么的收购这件事情。
 
-坚持优先考虑先例赋予决策惯性。它促进了整个法律体系和依赖一致的法律实施的机构的稳定性。
+坚持优先考虑先例会带来决策惯性，它提高了整个法律体系和依赖法律实施一致性的机构的稳定性。
 
-但是，像惯性一样，在有足够有说服力的理由下，我们也可以克服优先权；我们仅在恰当的思考之后接受过去的约束。
+然而，像惯性一样，在有足够说服力的理由下，我们也可以打破优先考虑先例的原则；我们只在深思熟虑之后才接受过去的约束。
 
 在心中牢记这些，让我们快速切入本周文章的主题：Apple Push Notification Device Tokens——且特别地，iOS 13 的一个改变会不经意地破坏上千个 App 的推送通知功能。
 
 ## 推送通知的基础入门
 推送通知使应用能在未被使用时与用户沟通，以响应远程事件。
 
-不像短信或电子邮件那样能使发送者利用唯一标识符（对应的是手机号码和电子邮箱地址）来和接收者直接沟通，应用程序的远程服务器与用户本地设备之间的沟通是在 Apple Push Notification service（APNS）的帮助下达成的。
+不像短信或电子邮件那样能使发送者利用唯一标识符（即手机号码和电子邮箱地址）来和接收者直接沟通，应用程序的远程服务器与用户本地设备之间的沟通是在 Apple Push Notification service（APNS）的帮助下达成的。
 
 这是它的工作原理：
-* 在启动应用程序之后，这个应用程序调用 `registerForRemoteNotifications()` [方法](https://developer.apple.com/documentation/uikit/uiapplication/1623078-registerforremotenotifications)，提示用户同意这个应用程序发送推送通知的请求。
-* 这个应用程序的 delegate 调用 `application(_:didRegisterForRemoteNotificationsWithDeviceToken:)` [方法](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1622958-application) 来响应被用户同意的请求。
+* 在启动应用程序之后，这个应用程序调用 `registerForRemoteNotifications()` [方法](https://developer.apple.com/documentation/uikit/uiapplication/1623078-registerforremotenotifications)，提示用户授予这个应用程序发送推送通知的权限。
+* 这个应用程序的 delegate 调用 `application(_:didRegisterForRemoteNotificationsWithDeviceToken:)` [方法](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1622958-application) 来响应用户授予的权限。
 
-应用程序 delegate 方法中的 `deviceToken` 参数是一个不透明 `Data` 值，这个值有点像非常长的唯一的手机号码或电子邮件地址。这个应用程序的推送通知提供程序通过 APNs 使用这个值安排发送通知，从而到达这个应用程序的某个安装设备。
+应用程序 delegate 方法中的 `deviceToken` 参数是一个不透明 `Data` 值，这个值像是很长的唯一的手机号码或电子邮件地址。这个应用程序的推送通知提供程序通过 APNs 使用这个值安排发送通知，从而使推送通知到达这个应用程序的某个安装设备。
 
-原则上，用 `Data` 值来表示这个参数很有意义——这个值本身是无意义的。但是，实际上，这个 API 的设计决策是造成无数心痛的根源。
+原则上，用 `Data` 值来表示这个参数很有意义——这个值本身是无意义的。但是，实际上，这个 API 的设计决策是造成无数开发者心痛的根源。
 
 ## 把 device token 发回服务器，这是个长久的挑战
-当这个应用程序的 delegate 收到了它的 `deviceToken`，这还不是故事的结尾。为了使其用于发送推送通知，我们需要把它从客户端发送到服务器。
+当这个应用程序的 delegate 收到了它的 `deviceToken` 之后，这还不是故事的结尾。为了使其用于发送推送通知，我们需要把它从客户端发送到服务器。
 
 问题是，“怎么发送呢？”
 
@@ -55,21 +55,21 @@ description:
 ### “回到旧时光...”
 你创建一个 `NSURLRequest` 对象，把它的 `httpBody` 属性设置为 `deviceToken`，接着使用 `NSURLConnection` 发送它。但你可能想加入额外信息——比如用户名或电子邮件地址——将其与应用程序中的账户相关联。这就意味着作为 HTTP 请求体的 `Data` 不仅仅只是 device token。
 
-发送一个请求体带有 `application/x-www-form-urlencoded` 的 `Post` HTTP 请求（举个例子：`username=jappleseed&deviceToken=____`）是将多个字段编码为单个有效载荷的方法之一，但那么问题变为，“你如何把二进制数据编码为文本？”
+发送一个请求体带有 `application/x-www-form-urlencoded` 的 `Post` 类型 HTTP 请求（举个例子：`username=jappleseed&deviceToken=____`）是将多个字段编码为单个有效载荷的方法之一，但那么问题变为，“你如何把二进制数据编码为文本？”
 
-[**Base 64**](https://en.wikipedia.org/wiki/Base64) 是个极好的二进制转文本编码方法，但是 `NSData -base64EncodedStringWithOptions:` 这个方法直到 iOS 7 才出现，这是在 iOS 3 中首次引入推送通知四年后的事情了。在没有 [CocoaPods](https://nshipster.com/cocoapods/) 或其他强大的开源生态系统的帮助下，你只能去关注这篇讲如何自己完成这部分实现的 [博客文章](https://nshipster.com/apns-device-tokens/)，且希望一切能如愿。
+[**Base 64**](https://en.wikipedia.org/wiki/Base64) 是个很好的二进制转文本编码方法，但是 `NSData -base64EncodedStringWithOptions:` 这个方法直到 iOS 7 才出现，这是在 iOS 3 中首次引入推送通知四年后的事情了。在没有 [CocoaPods](https://nshipster.com/cocoapods/) 或其他强大的开源生态系统的帮助下，你只能去关注这篇讲如何自己完成这部分实现的 [博客文章](https://nshipster.com/apns-device-tokens/)，且希望一切能如愿。
 
 > 回想起来，将带有 device token 和其他信息的 `NSDictionary` 序列化为属性列表可能是最好的答案（至少在利用内置功能范畴内）。
 > 服务器端对 `.plist` 文件的支持在历史上是很少的，所有这种方式不会说比其他方法要好。
 
-鉴于在低于 iOS 7 的版本下使用 Base64 编码的复杂性，大多数开发者转而选择使用他们所见到的更简单的内置替代方法：
+鉴于在低于 iOS 7 的版本下使用 Base64 编码的复杂性，大多数开发者转而选择使用更简单的内置替代方法：
 
 ### 用 NSData 来理解 Device Token
 在尝试理解 `deviceToken` 参数到底是什么的过程中，开发者往往使用 `NSLog` 语句把它打印出来：
 
 ```
 NSLog(@"%@", deviceToken);
-// Prints "<965b251c 6cb1926d e3cb366f dfb16ddd e6b9086a 8a3cac9e 5f857679 376eab7C>"
+// 打印 "<965b251c 6cb1926d e3cb366f dfb16ddd e6b9086a 8a3cac9e 5f857679 376eab7C>"
 ```
 
 不幸的是，对于那些在数据和编码方面缺少经验的开发者来说，`NSLog` 的输出内容可能会误导他们：
@@ -84,16 +84,16 @@ NSString *token = [[[[deviceToken description]
                     stringByReplacingOccurrencesOfString:@">" withString:@""];
 ```
 
-是推送通知服务提供者从一开始就要求用 Base16 / 十六进制表示 deviceToken，还是因为开发者已经习惯这种做法，所以推送通知服务提供者采取了这种做法？这已无从得知，但无论怎么样，这种做法有些死板。近十年内，很多应用程序都采用这种做法来注册推送通知 device token。
+是推送通知服务提供者从一开始就要求用 Base16 / 十六进制表示 deviceToken，还是因为开发者早就习惯这种做法，所以推送通知服务提供者采取了同样做法？这已无从得知，但无论怎么样，这种做法有些死板。近十年内，很多应用程序都采用这种做法来注册推送通知 device token。
 
 这种情况一直持续到 Swift 3 和 iOS 10。
 
 > 必须承认的一点是：用文本的形式来表示二进制数据的方法不是唯一的——同样的 token 可以用 Base64 编码方式表示为 "llslHGyxkm3jyzZv37Ft3ea5CGqKPKyeX4V2eTduq3w=" 或者用 [Ascii85 编码方式](https://en.wikipedia.org/wiki/Ascii85) 表示为 "Q\<PXTCpB.?j3'?!hm%%Sk.(b4MEIu3?\NZK2f>\[D"。甚至可以用 [Base🧑 编码方式](https://github.com/Flight-School/Guide-to-Swift-Strings-Sample-Code#base-encoding) 表示为 "👩🏻‍🦱👩🏻‍🦱👩🏼‍🦳👩🏻‍🦱👨🏻‍🦱👨🏻‍🦰👩🏾👩🏽‍🦳👩🏻‍🦰👩🏻‍🦲👩🏿👩🏻👩🏾👩🏾‍🦰👨🏿👩🏽‍🦱👩🏿👩🏿‍🦳👨🏻👩🏽👩🏿👩👨🏿‍🦰👩🏿‍🦱👨‍🦱👨🏻‍🦰👩🏼‍🦱👨🏼👨🏽👨🏼👩🏾👩👨🏾‍🦲👩🏿‍🦰👨🏾‍🦰👩🏾‍🦳👩👨🏽‍🦳👨🏿‍🦳👩🏽‍🦰👩🏼‍🦱👩🏿👩🏽‍🦲🤡"。但是如果你的推送通知服务提供商希望以经典的 Base16 十六进制字符串来表示 device token，你应该采用如上所述的做法。
 
 ### 再次控诉和 Swift 3 的过去
-到 2016 年，Swift 趋于稳定和成熟，以至于大多数开发人员选择使用 Swift 编写新应用，或者至少使用 Swift 为现有应用编写所有新代码。
+到 2016 年，Swift 趋于稳定和成熟，以至于大多数开发人员选择使用 Swift 编写新应用，或者至少使用 Swift 为现有应用编写新代码。
 
-对于这样做的开发者来说，向 Swift 3 过渡中最令人难忘的是从 Swift 2 到 Swift 3 的痛苦迁移。作为常见基础类型 [API 重命名](https://github.com/apple/swift-evolution/blob/master/proposals/0005-objective-c-name-translation.md) 的一部分，包括 `NSData` ，剔除掉它们的 `NS` 前缀，使用一个桥接的 Swift 值类型来取代它们。在大多数情况下，一切如愿以偿。但是在一些没有文档说明的行为，或者偶然的行为上存在一些差异，这些差异导致了巨大的变化。举例来说，考虑下面这个在 `application(_:didRegisterForRemoteNotificationsWithDeviceToken:)` 方法中的变化：
+对于这样做的开发者来说，向 Swift 3 过渡过程中最令人难忘的是从 Swift 2 到 Swift 3 的痛苦迁移。作为常见基础类型的 [API 重命名](https://github.com/apple/swift-evolution/blob/master/proposals/0005-objective-c-name-translation.md) 的一部分，包括 `NSData` ，剔除掉它们的 `NS` 前缀，使用一个桥接的 Swift 值类型来取代它们。在大多数情况下，一切如愿以偿。但是在一些没有文档说明的行为，或不常见的行为上却存在一些差异，这些差异导致了巨大的变化。举例来说，考虑下面这个在 `application(_:didRegisterForRemoteNotificationsWithDeviceToken:)` 方法中的变化：
 
 
 ```
@@ -104,7 +104,7 @@ deviceToken.description // "<965b251c 6cb1926d e3cb366f dfb16ddd e6b9086a 8a3cac
 deviceToken.description // "32 bytes"
 ```
 
-但是许多开发者未被这点小麻烦阻挡住。他们一意孤行，把 `Data` 改写为 `NSData` 及其以前的行为来解决这个问题。
+但是许多开发者未被这点小麻烦阻挡住。他们一意孤行，把 `Data` 类型转化为 `NSData` ，再用之前的做法来解决这个问题。
 
 
 ```
@@ -117,7 +117,7 @@ let token = "\(deviceToken)".replacingOccurrences(of: " ", with: "")
                             .replacingOccurrences(of: ">", with: "")
 ```
 
-用这种错误的方式想方设法使事情照旧进行，这又持续了好几年。
+用这种错误的方式想方设法使事情照旧进行，这一情况又持续了好几年。
 
 但这一切随着 iOS 13 的到来走向一个句号。
 
@@ -144,9 +144,9 @@ iOS 13 改变对基础对象的描述的格式，包括 `NSData`：
 let deviceTokenString = deviceToken.map { String(format: "%02x", $0) }.joined()
 ```
 
-为了条理清晰，让我们拆分这句代码且解释每个部分：
+为了条理清晰，让我们拆分这句代码且解释各个部分：
 * `map` 方法操作这个序列的每个元素。因为 `Data` 在 Swift 中是一个字节序列，所以被传递的闭包对 `deviceToken` 中的每个字节都执行一遍。
-* `String(format:)` 构造器使用 `%02x` [格式说明符](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Strings/Articles/formatSpecifiers.html) 评估数据中的每个字节（每个字节以匿名参数 `$0` 表示），以生成以零填充（当输出宽度小于 2 时）的两位十六进制表示形式的字节 / 8 位整数。
+* `String(format:)` 构造器使用 `%02x` [格式说明符](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Strings/Articles/formatSpecifiers.html) 计算数据中的每个字节（每个字节以匿名参数 `$0` 表示），以生成以零填充（当输出宽度小于 2 时）的两位十六进制表示形式的字节 / 8 位整数。
 * 在收集完每个由 `map` 方法创建的字节表示形式后，`joined()` 把每个元素拼凑成一个字符串。
 
 
@@ -173,13 +173,13 @@ let deviceTokenString = deviceToken.map { String(format: "%02x", $0) }.joined()
 >     String(format: "%02.2hhx", $0) == String(format: "%02x", $0)
 > }.contains(false) // false
 > ```
-> 别担心 `reduce` 和 `map` 加 `join` 之间任何声称的性能差异。任何的差距都是可以忽略不计的，并对这样的不频繁操作完全不相关。
+> 别担心 `reduce` 和 `map` 加 `join` 之间任何声称的性能差异。任何的性能差异都是可以忽略不计的，而且与像这样的不频繁操作完全没有关联。
 
 
 Apple 是不负责任地做出这一特定的改变吗？
 我们为此讨论过，结果是：不，不是。
 
-**开发者不应该依赖对象特定格式的** [description](https://developer.apple.com/documentation/objectivec/nsobjectprotocol/1418746-description)。
+**开发者不应该依赖对象特定格式的** [描述](https://developer.apple.com/documentation/objectivec/nsobjectprotocol/1418746-description)。
 
 在某个时候，转储整个 `Data` 值的内容的方式变得不可靠。更改为更简洁的摘要使调试更大的二进制数据更加容易。
 
