@@ -30,7 +30,7 @@ Apple 和 Pepper 的 [诉讼案](https://www.oyez.org/cases/2018/17-204) 最近�
 
 然而，像惯性一样，在有足够说服力的理由下，我们也可以打破优先考虑先例的原则；我们只在深思熟虑之后才接受过去的约束。
 
-在心中牢记这些，让我们快速切入本周文章的主题：Apple Push Notification Device Tokens——且特别地，iOS 13 的一个改变会不经意地破坏上千个 App 的推送通知功能。
+在心中牢记这些，让我们快速切入本周文章的主题：Apple Push Notification Device Tokens——且特别地，iOS 13 的一个改变会不经意地破坏上千个应用程序的推送通知功能。
 
 ## 推送通知的基础入门
 推送通知使应用能在未被使用时与用户沟通，以响应远程事件。
@@ -50,14 +50,14 @@ Apple 和 Pepper 的 [诉讼案](https://www.oyez.org/cases/2018/17-204) 最近�
 
 问题是，“怎么发送呢？”
 
-在你跳转到一个具体的答案之前，考虑一下 iOS 3 的历史背景（约为 2009 年），那时首次引入推送通知：
+在你跳转到一个具体的答案之前，考虑一下 iOS 3 的历史背景（约为 2009 年），那时 Apple 首次引入推送通知：
 
 ### “回到旧时光...”
 你创建一个 `NSURLRequest` 对象，把它的 `httpBody` 属性设置为 `deviceToken`，接着使用 `NSURLConnection` 发送它。但你可能想加入额外信息——比如用户名或电子邮件地址——将其与应用程序中的账户相关联。这就意味着作为 HTTP 请求体的 `Data` 不仅仅只是 device token。
 
-发送一个请求体带有 `application/x-www-form-urlencoded` 的 `Post` 类型 HTTP 请求（举个例子：`username=jappleseed&deviceToken=____`）是将多个字段编码为单个有效载荷的方法之一，但那么问题变为，“你如何把二进制数据编码为文本？”
+发送一个请求体带有 `application/x-www-form-urlencoded` 的 `Post` 类型 HTTP 请求（举个例子：`username=jappleseed&deviceToken=____`）是将多个字段编码为单个有效载荷的方法之一，但那么问题变为，“如何把二进制数据编码为文本？”
 
-[**Base 64**](https://en.wikipedia.org/wiki/Base64) 是个很好的二进制转文本编码方法，但是 `NSData -base64EncodedStringWithOptions:` 这个方法直到 iOS 7 才出现，这是在 iOS 3 中首次引入推送通知四年后的事情了。在没有 [CocoaPods](https://nshipster.com/cocoapods/) 或其他强大的开源生态系统的帮助下，你只能去关注这篇讲如何自己完成这部分实现的 [博客文章](https://nshipster.com/apns-device-tokens/)，且希望一切能如愿。
+[**Base 64**](https://en.wikipedia.org/wiki/Base64) 是个很好的二进制转文本编码方法，但是 `NSData -base64EncodedStringWithOptions:` 这个方法直到 iOS 7 才出现，这是在 iOS 3 中 Apple 首次引入推送通知四年后的事情了。在没有 [CocoaPods](https://nshipster.com/cocoapods/) 或其他强大的开源生态系统的帮助下，你只能去关注这篇讲如何自己完成这部分实现的 [博客文章](https://nshipster.com/apns-device-tokens/)，且希望一切能如愿。
 
 > 回想起来，将带有 device token 和其他信息的 `NSDictionary` 序列化为属性列表可能是最好的答案（至少在利用内置功能范畴内）。
 > 服务器端对 `.plist` 文件的支持在历史上是很少的，所有这种方式不会说比其他方法要好。
@@ -73,7 +73,7 @@ NSLog(@"%@", deviceToken);
 ```
 
 不幸的是，对于那些在数据和编码方面缺少经验的开发者来说，`NSLog` 的输出内容可能会误导他们：
-“哇，`deviceToken` 实际上是一个字符串！（我很好奇为什么起初 Apple 要弄这么复杂）但是无所谓啦，我可以从这里取到它。”
+“哇，`deviceToken` 实际上是一个字符串！（我很好奇为什么起初 Apple 要弄这么复杂）但是无所谓啦，我可以从这里获取到它。”
 
 
 ```
@@ -173,7 +173,7 @@ let deviceTokenString = deviceToken.map { String(format: "%02x", $0) }.joined()
 >     String(format: "%02.2hhx", $0) == String(format: "%02x", $0)
 > }.contains(false) // false
 > ```
-> 别担心 `reduce` 和 `map` 加 `join` 之间任何声称的性能差异。任何的性能差异都是可以忽略不计的，而且与像这样的不频繁操作完全没有关联。
+> 别担心 `reduce` 和 `map` 加 `join` 之间任何声称的性能差异。任何性能差异都是可以忽略不计的，而且与像这样的不频繁操作完全没有关联。
 
 
 Apple 是不负责任地做出这一特定的改变吗？
@@ -183,7 +183,7 @@ Apple 是不负责任地做出这一特定的改变吗？
 
 在某个时候，转储整个 `Data` 值的内容的方式变得不可靠。更改为更简洁的摘要使调试更大的二进制数据更加容易。
 
-如在本文开篇所谈及的法律条文一样，优先考虑是惯性的一种形式，而不是一成不变的真理。
+如在本文开篇所谈及的法律条文一样，优先考虑先例是惯性的一种形式，而不是一成不变的真理。
 
 *stare decisis* （遵循先例）在整个软件工程中扮演着很重要的角色。
 举些例子，如 ["Referer" [sic] Header"](https://en.wikipedia.org/wiki/HTTP_referer)[^1] 和我们对 [电流方向](https://en.wikipedia.org/wiki/Electric_current#Conventions) 的约定。这些实例都展示了坚持决策的价值，除非有时候不得不做出改变。
