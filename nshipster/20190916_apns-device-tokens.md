@@ -22,7 +22,7 @@ Apple 和 Pepper 的 [诉讼案](https://www.oyez.org/cases/2018/17-204) 最近�
 > 如果 Apple 和它的 App Store 构成垄断，那么消费者能以应用程序价格高于竞争价格为由起诉 Apple 吗？尽管这个价格是由第三方开发者设定的。
 <!--more-->
 
-在最终判决中，法院依据 1977 年 *Illinois Brick* [案例](https://www.oyez.org/cases/1976/76-404) 中的判决，而它本身肯定了十年前在 *Hanover Shoe* [案例](https://www.oyez.org/cases/1967/335) 中的判决。表面上，2010 年的 iPhone 似乎和 1970 年的砖块没有什么联系（除了 [明显的含义](https://www.theiphonewiki.com/wiki/Brick)），但在 [美国反托拉斯法](https://en.wikipedia.org/wiki/United_States_antitrust_law) 的范畴内，两者之间有不可避免的联系。
+在最终判决中，法院依据 1977 年 *Illinois Brick* [案例](https://www.oyez.org/cases/1976/76-404) 中的判决，而它本身肯定了十年前在 *Hanover Shoe* [案例](https://www.oyez.org/cases/1967/335) 中的判决。表面上，2010 年的 iPhone 似乎和 1970 年的砖块没有什么联系（除了 [砖头和变砖的 iPhone](https://www.theiphonewiki.com/wiki/Brick)），但在 [美国反托拉斯法](https://en.wikipedia.org/wiki/United_States_antitrust_law) 的范畴内，两者之间有不可避免的联系。
 
 > 当然，也有*许多*其他更简单更全面的案例来诠释先例在美国法学中的作用，但是我们认为这个案例是最不可能导致读者联想到 NSHipster 被 [Atrium](https://www.atrium.co/) 还是其他什么的收购这件事情。
 
@@ -153,7 +153,7 @@ let deviceTokenString = deviceToken.map { String(format: "%02x", $0) }.joined()
 > 对于每个 `UInt8` 字节值，我们偏好使用 `String(_:radix:)` 构造器来创建一个 16 进制字符串表示形式。但在 Swift 标准库里没有内置可以从左边填充到两位数的 [Lpad 函数](https://www.theregister.co.uk/2016/03/23/npm_left_pad_chaos/)，所以我们选择 `printf` 格式说明符（[尽管有点令人担忧](https://nshipster.com/expressiblebystringinterpolation/)）
 
 > 在 Stack Overflow 网站上，这个评价最高的 [回答](https://stackoverflow.com/questions/9372815/how-can-i-convert-my-device-token-nsdata-into-an-nsstring/24979958#24979958) 主张使用 `"%02.2hhx"` 格式说明符，而不是 `"02x"` 格式说明符。
-> 开发者很容易迷失在 [IEEE 规范] (https://pubs.opengroup.org/onlinepubs/009695399/functions/printf.html) 中，所以这里用一些最少的代码示例来说明两种格式说明符之间的区别：
+> 开发者很容易迷失在 [IEEE 规范] (https://pubs.opengroup.org/onlinepubs/009695399/functions/printf.html) 中，所以这里用一点点代码示例来说明两种格式说明符之间的区别：
 
 > ```
 > //大于 UInt.max (255) 时
