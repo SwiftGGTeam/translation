@@ -28,7 +28,7 @@ Apple 和 Pepper 的 [诉讼案](https://www.oyez.org/cases/2018/17-204) 最近�
 
 坚持优先考虑先例会带来决策惯性，它提高了整个法律体系和依赖法律实施一致性机构的稳定性。
 
-然而，像惯性一样，在有足够说服力的理由下，我们也可以打破优先考虑先例的原则；我们只在深思熟虑之后才遵循过去的约束。
+然而，像惯性一样，在有足够说服力的理由下，我们也可以打破优先考虑先例的原则；只在深思熟虑之后才遵循过去的约束。
 
 记住上面这些，让我们马上切入本周文章的主题：Apple Push Notification Device Tokens——且特别地，iOS 13 的一个改变会不经意地破坏上千个应用程序的推送通知功能。
 
@@ -43,7 +43,7 @@ Apple 和 Pepper 的 [诉讼案](https://www.oyez.org/cases/2018/17-204) 最近�
 
 应用程序 delegate 方法中的 `deviceToken` 参数是一个不透明 `Data` 值，这个值像一长串唯一手机号或电子邮件地址。这个应用程序的推送通知提供程序通过 APNs 使用这个值来发送通知到安装了这个应用程序的设备上。
 
-本质上，用 `Data` 值来表示这个参数是有意义的——但这个值本身是没有意义的。但是，实际上，这个 API 的设计决策是造成无数开发者心痛的根源。
+本质上，用 `Data` 值来表示这个参数是有意义的——但这个值本身是没有意义的。然而事实上，这个 API 的设计决策是造成无数开发者心痛的根源。
 
 ## device token 发到服务器是个持久战
 当这个应用程序的 delegate 收到了它的 `deviceToken` 之后，这还没完。为了使其用于发送推送通知，我们需要把它从客户端发送到服务器。
@@ -53,11 +53,11 @@ Apple 和 Pepper 的 [诉讼案](https://www.oyez.org/cases/2018/17-204) 最近�
 在你查找具体的答案之前，考虑一下 iOS 3 的历史背景（约为 2009 年），那时 Apple 首次引入推送通知：
 
 ### “回到旧时光...”
-你可以创建一个 `NSURLRequest` 对象，把它的 `httpBody` 属性设置为 `deviceToken`，接着使用 `NSURLConnection` 发送它。但你可能想加入额外信息——比如用户名或电子邮件地址——将其与应用程序中的账户相关联。这就意味着作为 HTTP 请求体的 `Data` 不仅仅只是 device token。
+你可以创建一个 [`NSURLRequest`](https://developer.apple.com/documentation/foundation/nsurlrequest) 对象，把它的 `httpBody` 属性设置为 `deviceToken`，接着使用 [`NSURLConnection`](https://developer.apple.com/documentation/foundation/nsurlconnection) 发送它。但你可能想加入额外信息——比如用户名或电子邮件地址——将其与应用程序中的账户相关联。这就意味着作为 HTTP 请求体的 `Data` 不仅仅只是 device token。
 
 发送一个请求体带有 `application/x-www-form-urlencoded` 的 `Post` 类型 HTTP 请求（举个例子：`username=jappleseed&deviceToken=____`）是将多个字段编码为单个有效载荷（a single payload）的方法之一，但那么问题变为，“如何把二进制数据编码为文本？”
 
-[**Base 64**](https://en.wikipedia.org/wiki/Base64) 是个很好的二进制转文本编码方法，但是，`NSData -base64EncodedStringWithOptions:` 这个方法直到 iOS 7 才出现，这是在 iOS 3 中 Apple 首次引入推送通知四年后的事情了。在没有 [CocoaPods](https://nshipster.com/cocoapods/) 或其他强大的开源生态系统的帮助下，你只能去关注这篇讲如何自己完成这部分实现的 [博客文章](https://nshipster.com/apns-device-tokens/)，且希望一切能如愿。
+[**Base 64**](https://en.wikipedia.org/wiki/Base64) 是个很好的二进制转文本编码方法，但是，[`NSData -base64EncodedStringWithOptions:`](https://developer.apple.com/documentation/foundation/nsdata/1413546-base64encodedstringwithoptions?language=objc) 这个方法直到 iOS 7 才出现，这是在 iOS 3 中 Apple 首次引入推送通知四年后的事情了。在没有 [CocoaPods](https://nshipster.com/cocoapods/) 或其他强大的开源生态系统的帮助下，你只能去关注这篇讲如何自己完成这部分实现的 [博客文章](https://www.cocoawithlove.com/2009/06/base64-encoding-options-on-mac-and.html)，且希望一切能如愿。
 
 > 回想起来，将带有 device token 和其他信息的 `NSDictionary` 序列化为属性列表可能是最好的答案（至少在利用内置功能范畴内）。
 > 服务器端对 `.plist` 文件的支持在历史上是很少的，所有这种方式不会说比其他方法要好。
@@ -146,7 +146,7 @@ let deviceTokenString = deviceToken.map { String(format: "%02x", $0) }.joined()
 
 为了条理清晰，让我们拆分这句代码且解释各个部分：
 * `map` 方法操作这个序列的每个元素。因为 `Data` 在 Swift 中是一个字节序列，所以被传递的闭包对 `deviceToken` 中的每个字节都执行一遍。
-* `String(format:)` 构造器使用 `%02x` [格式说明符](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Strings/Articles/formatSpecifiers.html) 计算数据中的每个字节（每个字节以匿名参数 `$0` 表示），以生成以零填充（当输出宽度小于 2 时）的两位十六进制表示形式的字节/8 位整数。
+* `String(format:)` [构造器](https://developer.apple.com/documentation/swift/string/3126742-init) 使用 `%02x` [格式说明符](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Strings/Articles/formatSpecifiers.html) 计算数据中的每个字节（每个字节以匿名参数 `$0` 表示），以生成以零填充（当输出宽度小于 2 时）的两位十六进制表示形式的字节/8 位整数。
 * 在收集完每个由 `map` 方法创建的字节表示形式后，`joined()` 把每个元素拼凑成一个字符串。
 
 
@@ -181,7 +181,7 @@ Apple 是不负责任地做出这一特定的改变吗？
 
 **开发者不应该依赖对象特定格式的** [描述](https://developer.apple.com/documentation/objectivec/nsobjectprotocol/1418746-description)。
 
-在某个时候，转储整个 `Data` 值的内容的方式变得不可靠。更改为更简洁的摘要使调试更大的二进制数据更加容易。
+在某个时候，转储整个 `Data` 值的内容的方式变得不可靠。使用更简洁的摘要能让调试大的二进制数据更加容易。
 
 如在本文开篇所谈及的法律条文一样，优先考虑先例是惯性的一种形式，而不是一成不变的真理。
 
