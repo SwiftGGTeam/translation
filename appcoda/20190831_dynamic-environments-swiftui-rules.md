@@ -79,7 +79,7 @@ var body: some View {
 
 ## 声明自己的 Environment 键
 
-SwiftUI environments 对内置键的数量是不限制的，你可以添加自己的键。除了 `foregroundColor` 之外，我们如果说想要添加一个自己的 environment 键，叫做 `fancyColor`。
+SwiftUI environments 对内置键的数量是不限制的，你可以添加自己的键。除了 `foregroundColor` 之外，假设我们想添加一个 environment 键，叫做 `fancyColor`。
 
 我们首先需要一个对 [`EnvironmentKey`](https://developer.apple.com/documentation/swiftui/environmentkey) 进行声明：
 ```swift
@@ -98,7 +98,7 @@ extension EnvironmentValues {
   }
 }
 ```
-这样就可以了。我们可以开始使用我们的新 key 了。
+这样就可以了。可以开始使用新 key 了。
 
 > [EnvironmentValues](https://developer.apple.com/documentation/swiftui/environmentvalues) 这个结构体代表了视图当前使用中的值。开发者不能直接访问到它底层的数据。想要访问的当前状态，下标值需要用 **type** 作为 key。
 
@@ -139,7 +139,7 @@ struct MyPage: View {
 
 这个概念已经是相当棒而且强大了！但目前为止 environment key 仍需要有静态值的支持。它们需要通过 `.environment` 视图封装器（如果为空则是 `defaultValue` ）来赋值到当前的 enviroment。
 
-如果我们能够避免 `.environment(\.fancyColor, .red)` 这样的声明，然后基于其他 environment key 的值定义我们自己的 `fancyColor` 呢？这甚至可以**制定**如何从其他 key 值衍生的规则。**欢迎来到 [SwiftUI 规则](https://github.com/DirectToSwift/SwiftUIRules)**：
+如果能够避免 `.environment(\.fancyColor, .red)` 这样的声明，然后基于其他 environment key 的值定义我们自己的 `fancyColor` 呢？这甚至可以**制定**如何从其他 key 值衍生的规则。**欢迎来到 [SwiftUI 规则](https://github.com/DirectToSwift/SwiftUIRules)**：
 
 ```swift
 let ruleModel : RuleModel = [
@@ -326,7 +326,7 @@ struct TodoList: View {
 ]
 ```
 
-但它也可以被用得很高级，例如在一个工作流系统：
+但它也有一些高级用法，例如在一个工作流系统：
 ```swift
 [
   \.task.status == "done"    => \.view <= TaskFinishedView(),
@@ -336,11 +336,11 @@ struct TodoList: View {
 ]
 
 struct TaskView: View {
-  @Environment(\.view) var body // body derived from rules
+  @Environment(\.view) var body // body 由规则生成
 }
 ```
 
-因为 SwiftUI Views 也只是一个轻量的结构体，你可以构建动态的属性携带它们！
+因为 SwiftUI Views 也只是一个轻量的结构体，你可以构建动态的属性携带它们（例如：生成一个 view）！这是推动了 [Direct to SwiftUI](http://www.alwaysrightinstitute.com/directtoswiftui/) 的其中一部分内容，它是基于规则模型（同时结合数据库模型）来自动构建 SwiftUI 视图层次结构的。
 
 不管怎么说：我们对任何关于它的使用方法都感兴趣！
 
@@ -386,6 +386,8 @@ struct MyNavLink<Destination, Content>: View {
 # 总结
 
 我们希望你喜欢它！
+
+更新：也同时检出我们的新版 [Direct to SwiftUI](http://www.alwaysrightinstitute.com/directtoswiftui/)，它不管在什么时候都用 SwiftUI 构建了精美的数据库前端。
 
 ## 链接
 
