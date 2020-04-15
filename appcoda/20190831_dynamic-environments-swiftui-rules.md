@@ -62,7 +62,7 @@ struct ShowLineLimit: View {
 }
 ```
 
-请注意 environment 可以在任意一视图层次中_变换_：
+请注意 environment 可以在任意一视图层次中*变换*：
 ```swift
 var body: some View {
   VStack {
@@ -168,7 +168,7 @@ let ruleModel : RuleModel = [
 之后它会检查对应谓词是否匹配，如果匹配的话……
 
 ### 规则值
-……就返回**返回规则值**，例如示例中高优先级的待办所对应的 `Color.red`。规则值也不需要是一个常量键，它可以是一个关键路径（key path）。也就是说一个规则值可以通过获取 _另外一个键_ 的值来表示！
+……就返回**返回规则值**，例如示例中高优先级的待办所对应的 `Color.red`。规则值也不需要是一个常量键，它可以是一个关键路径（key path）。也就是说一个规则值可以通过获取*另外一个键*的值来表示！
 
 ## 编码
 
@@ -340,7 +340,7 @@ struct TaskView: View {
 }
 ```
 
-因为 SwiftUI Views 也只是一个轻量的结构体，你可以构建动态的属性携带它们（例如：生成一个 view）！这是推动了 [Direct to SwiftUI](http://www.alwaysrightinstitute.com/directtoswiftui/) 的其中一部分内容，它是基于规则模型（同时结合数据库模型）来自动构建 SwiftUI 视图层次结构的。
+SwiftUI Views 本身也是一个轻量的结构体，因此你也可以生成带有它们的动态属性（例如：生成一个视图）！这是促成 [Direct to SwiftUI](http://www.alwaysrightinstitute.com/directtoswiftui/) 的其中一部分内容，它是基于一个规则模型（同时结合数据库模型）来自动构建 SwiftUI 视图层次结构的。
 
 不管怎么说：我们对任何关于它的使用方法都感兴趣！
 
@@ -387,7 +387,7 @@ struct MyNavLink<Destination, Content>: View {
 
 我们希望你喜欢它！
 
-更新：也同时检出我们的新版 [Direct to SwiftUI](http://www.alwaysrightinstitute.com/directtoswiftui/)，它不管在什么时候都用 SwiftUI 构建了精美的数据库前端。
+更新：也欢迎大家检出我们的新版 [Direct to SwiftUI](http://www.alwaysrightinstitute.com/directtoswiftui/)，它可以让你用 SwiftUI 规则快速构建精美的数据库前端。
 
 ## 链接
 
