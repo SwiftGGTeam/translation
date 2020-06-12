@@ -17,7 +17,7 @@ description:
 
 <!--此处开始正文-->
 
-回想 [Crusty 教我们使用面向协议编程](https://developer.apple.com/videos/play/wwdc2015/408/)之前的日子，我们大多使用继承来共享代码的实现。通常在 UIKit 编程中，你可能会用 `UIView` 的子类去添加一些子视图，重写 `-layoutSubviews`，然后重复这些工作。也许你还会重写 `-drawRect`。但当你需要做一些特别的事情时，就需要看看 `UIView` 中其他可以被重写的方法。
+回想 [Crusty 教我们使用面向协议编程](https://developer.apple.com/videos/play/wwdc2015/408/) 之前的日子，我们大多使用继承来共享代码的实现。通常在 UIKit 编程中，你可能会用 `UIView` 的子类去添加一些子视图，重写 `-layoutSubviews`，然后重复这些工作。也许你还会重写 `-drawRect`。但当你需要做一些特别的事情时，就需要看看 `UIView` 中其他可以被重写的方法。
 
 <!--more-->
 
@@ -130,7 +130,7 @@ override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
 
 现在我们有了一个参考的实现，可以开始修改它来实现具体的行为。
 
-在之前的这篇播客[《Changing the size of a paging scroll view》](http://khanlou.com/2013/04/changing-the-size-of-a-paging-scroll-view/)中，我就已经讨论过其中一种行为。我谈到一种“落后并该被废弃”的方法来产生这种效果。本质上，你必须：
+在之前的这篇播客 [《Changing the size of a paging scroll view》](http://khanlou.com/2013/04/changing-the-size-of-a-paging-scroll-view/) 中，我就已经讨论过其中一种行为。我谈到一种“落后并该被废弃”的方法来产生这种效果。本质上，你必须：
 
 1. 关掉 `clipsToBounds`
 2. 在滑动区域中放一个非隐藏视图
@@ -140,7 +140,7 @@ override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
 
 让我们看一下另一个例子。如果你已经用过 [Beacon](http://beacon.party/) 今年的版本，你会注意到滑动删除事件行为的物理效果感觉上和其他用原生系统实现的效果有点不一样。这是因为用系统的途径不能完全获得我们想要的表现，所以需要自己重新实现这个功能。
 
-如你所想，重写滑动和反弹物理效果不需要那么复杂，所以我们用一个 `UIScrollView` 和将 `pagingEnabled` 设为 true 来获得尽可能自由的反弹力。用和[这篇旧博客](http://khanlou.com/2013/04/changing-the-size-of-a-paging-scroll-view/)里说的类似的技术，将滑动的视图的 `bounds` 设置得更小一些并将 `panGestureRecognizer` 移到事件的 cell 顶层的一个覆盖视图中，来设置一个自定义页面大小。
+如你所想，重写滑动和反弹物理效果不需要那么复杂，所以我们用一个 `UIScrollView` 和将 `pagingEnabled` 设为 true 来获得尽可能自由的反弹力。用和 [这篇旧博客](http://khanlou.com/2013/04/changing-the-size-of-a-paging-scroll-view/) 里说的类似的技术，将滑动的视图的 `bounds` 设置得更小一些并将 `panGestureRecognizer` 移到事件的 cell 顶层的一个覆盖视图中，来设置一个自定义页面大小。
 
 然而，当覆盖视图正确的传递触摸事件到 scroll view 时，那里会有覆盖视图不能正确拦截的其他事件。cell 包含着按钮，像 “join event” 按钮和 “delete event” 按钮，都需要接收触摸。有几种自定义实现在 `-hitTest:` 中可以处理这种情况，其中一种实现就是直接检查这两个按钮的子视图：
 
